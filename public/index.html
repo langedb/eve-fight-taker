@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EVE Fight Taker - Combat Analysis Tool</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1><i class="fas fa-rocket"></i> EVE Fight Taker</h1>
+            <nav class="nav">
+                <div id="auth-section">
+                    <button id="login-btn" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i> Login with EVE SSO
+                    </button>
+                    <div id="user-info" class="user-info" style="display: none;">
+                        <span id="character-name"></span>
+                        <button id="logout-btn" class="btn btn-secondary">Logout</button>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <section class="intro">
+                <h2>Ship Combat Analysis</h2>
+                <p>Analyze your ship's combat effectiveness against enemy fits using AI-powered tactical recommendations.</p>
+            </section>
+
+            <div class="analysis-grid">
+                <div class="card">
+                    <h3><i class="fas fa-ship"></i> Your Ship</h3>
+                    <div id="current-ship-section">
+                        <button id="load-current-ship" class="btn btn-secondary" disabled>
+                            <i class="fas fa-download"></i> Load Current Ship
+                        </button>
+                        <div id="current-ship-info" class="ship-info" style="display: none;">
+                            <h4 id="current-ship-name"></h4>
+                            <div id="current-ship-stats" class="stats-grid"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-crosshairs"></i> Target Ship</h3>
+                    <div id="target-ship-section">
+                        <textarea id="eft-input" placeholder="Paste EFT fit here...
+Example:
+[Rifter, PvP Fit]
+200mm AutoCannon II, Republic Fleet EMP S
+200mm AutoCannon II, Republic Fleet EMP S
+[Empty High slot]
+
+1MN Y-S8 Compact Afterburner
+Warp Scrambler II
+X5 Prototype Engine Enervator
+
+Damage Control II
+Small Ancillary Armor Repairer
+Adaptive Nano Plating II
+
+Small Anti-EM Pump I
+Small Auxiliary Thrusters I
+Small Trimark Armor Pump I
+
+Hobgoblin II x5" rows="15" class="eft-textarea"></textarea>
+                        <button id="parse-eft" class="btn btn-primary">
+                            <i class="fas fa-cog"></i> Parse Fit
+                        </button>
+                        <div id="target-ship-info" class="ship-info" style="display: none;">
+                            <h4 id="target-ship-name"></h4>
+                            <div id="target-ship-stats" class="stats-grid"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="analysis-section" id="analysis-section" style="display: none;">
+                <div class="card">
+                    <h3><i class="fas fa-brain"></i> AI Combat Analysis</h3>
+                    <button id="analyze-combat" class="btn btn-success btn-large">
+                        <i class="fas fa-chart-line"></i> Analyze Combat
+                    </button>
+                    <div id="analysis-results" style="display: none;">
+                        <div class="analysis-header">
+                            <div class="win-chance">
+                                <h4>Win Chance</h4>
+                                <div class="win-percentage" id="win-percentage">0%</div>
+                            </div>
+                            <div class="time-to-kill">
+                                <h4>Est. Time to Kill</h4>
+                                <div class="ttk-value" id="ttk-value">N/A</div>
+                            </div>
+                        </div>
+                        
+                        <div class="analysis-details">
+                            <div class="advantages">
+                                <h4><i class="fas fa-plus-circle"></i> Your Advantages</h4>
+                                <ul id="advantages-list"></ul>
+                            </div>
+                            <div class="disadvantages">
+                                <h4><i class="fas fa-minus-circle"></i> Your Disadvantages</h4>
+                                <ul id="disadvantages-list"></ul>
+                            </div>
+                        </div>
+
+                        <div class="tactics-section">
+                            <h4><i class="fas fa-chess"></i> Tactical Recommendations</h4>
+                            <div class="tactics-grid">
+                                <div class="tactic">
+                                    <h5>Range</h5>
+                                    <p id="tactic-range"></p>
+                                </div>
+                                <div class="tactic">
+                                    <h5>Movement</h5>
+                                    <p id="tactic-movement"></p>
+                                </div>
+                                <div class="tactic">
+                                    <h5>Engagement</h5>
+                                    <p id="tactic-engagement"></p>
+                                </div>
+                                <div class="tactic">
+                                    <h5>Disengagement</h5>
+                                    <p id="tactic-disengagement"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="summary-section">
+                            <h4><i class="fas fa-lightbulb"></i> Summary</h4>
+                            <p id="analysis-summary"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 EVE Fight Taker. EVE Online and all related materials are property of CCP Games.</p>
+        </div>
+    </footer>
+
+    <div id="loading" class="loading" style="display: none;">
+        <div class="loading-content">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Analyzing combat scenario...</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
