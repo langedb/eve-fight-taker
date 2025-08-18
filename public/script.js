@@ -1,7 +1,9 @@
 class EVEFightTaker {
     constructor() {
         this.currentShipStats = null;
+        this.currentShipFit = null;
         this.targetShipStats = null;
+        this.targetShipFit = null;
         this.isAuthenticated = false;
         
         this.initializeEventListeners();
@@ -18,9 +20,9 @@ class EVEFightTaker {
             this.logout();
         });
 
-        // Ship loading
-        document.getElementById('load-current-ship').addEventListener('click', () => {
-            this.loadCurrentShip();
+        // Your ship EFT parsing
+        document.getElementById('parse-your-eft').addEventListener('click', () => {
+            this.parseYourEFTFit();
         });
 
         // EFT parsing
@@ -48,7 +50,6 @@ class EVEFightTaker {
         this.isAuthenticated = true;
         document.getElementById('login-btn').style.display = 'none';
         document.getElementById('user-info').style.display = 'flex';
-        document.getElementById('load-current-ship').disabled = false;
         
         // Clear URL parameters
         window.history.replaceState({}, document.title, window.location.pathname);
@@ -62,60 +63,96 @@ class EVEFightTaker {
             });
     }
 
-    async loadCurrentShip() {
-        this.showLoading();
+    async parseYourEFTFit() {
+        const input = document.getElementById('your-eft-input').value.trim();
         
-        try {
-            const response = await fetch('/api/character/ship');
-            
-            if (!response.ok) {
-                throw new Error('Failed to load ship data');
-            }
-            
-            const data = await response.json();
-            this.displayCurrentShip(data);
-            this.updateAnalysisVisibility();
-            
-        } catch (error) {
-            console.error('Error loading current ship:', error);
-            alert('Failed to load current ship. Please ensure you are logged in and in a ship.');
-        } finally {
-            this.hideLoading();
-        }
-    }
-
-    displayCurrentShip(shipData) {
-        const shipInfo = document.getElementById('current-ship-info');
-        const shipName = document.getElementById('current-ship-name');
-        const shipStats = document.getElementById('current-ship-stats');
-
-        // Store ship stats
-        this.currentShipStats = shipData.stats || this.generateMockStats();
-        
-        shipName.textContent = shipData.ship?.ship_type_name || 'Current Ship';
-        shipStats.innerHTML = this.generateStatsHTML(this.currentShipStats);
-        shipInfo.style.display = 'block';
-    }
-
-    async parseEFTFit() {
-        const eftText = document.getElementById('eft-input').value.trim();
-        
-        if (!eftText) {
-            alert('Please enter an EFT fit to parse.');
+        if (!input) {
+            alert('Please enter your EFT fit or zKillboard URL.');
             return;
         }
 
         this.showLoading();
 
         try {
-            const response = await fetch('/api/parse-eft', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ eftText })
-            });
+            let response;
+            
+            // Check if input is a zKillboard URL
+            if (this.isZKillboardURL(input)) {
+                response = await fetch('/api/parse-zkill', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ zkillUrl: input })
+                });
+            } else {
+                // Assume it's EFT format
+                response = await fetch('/api/parse-eft', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ eftText: input })
+                });
+            }
 
             if (!response.ok) {
-                throw new Error('Failed to parse EFT fit');
+                throw new Error('Failed to parse your fit data');
+            }
+
+            const data = await response.json();
+            this.displayYourShip(data);
+            this.updateAnalysisVisibility();
+
+        } catch (error) {
+            console.error('Error parsing your fit:', error);
+            alert('Failed to parse your fit data. Please check the format and try again.');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    displayYourShip(fitData) {
+        const shipInfo = document.getElementById('your-ship-info');
+        const shipName = document.getElementById('your-ship-name');
+        const shipStats = document.getElementById('your-ship-stats');
+
+        // Store complete fit data
+        this.currentShipStats = fitData.stats || this.generateMockStats();
+        this.currentShipFit = fitData.fit;
+        
+        shipName.textContent = `${fitData.fit.shipType} - ${fitData.fit.fitName}`;
+        shipStats.innerHTML = this.generateStatsHTML(this.currentShipStats);
+        shipInfo.style.display = 'block';
+    }
+
+    async parseEFTFit() {
+        const input = document.getElementById('eft-input').value.trim();
+        
+        if (!input) {
+            alert('Please enter an EFT fit or zKillboard URL.');
+            return;
+        }
+
+        this.showLoading();
+
+        try {
+            let response;
+            
+            // Check if input is a zKillboard URL
+            if (this.isZKillboardURL(input)) {
+                response = await fetch('/api/parse-zkill', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ zkillUrl: input })
+                });
+            } else {
+                // Assume it's EFT format
+                response = await fetch('/api/parse-eft', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ eftText: input })
+                });
+            }
+
+            if (!response.ok) {
+                throw new Error('Failed to parse fit data');
             }
 
             const data = await response.json();
@@ -123,8 +160,8 @@ class EVEFightTaker {
             this.updateAnalysisVisibility();
 
         } catch (error) {
-            console.error('Error parsing EFT fit:', error);
-            alert('Failed to parse EFT fit. Please check the format and try again.');
+            console.error('Error parsing fit:', error);
+            alert('Failed to parse fit data. Please check the format and try again.');
         } finally {
             this.hideLoading();
         }
@@ -135,8 +172,9 @@ class EVEFightTaker {
         const shipName = document.getElementById('target-ship-name');
         const shipStats = document.getElementById('target-ship-stats');
 
-        // Store ship stats
+        // Store complete fit data
         this.targetShipStats = fitData.stats || this.generateMockStats();
+        this.targetShipFit = fitData.fit;
         
         shipName.textContent = `${fitData.fit.shipType} - ${fitData.fit.fitName}`;
         shipStats.innerHTML = this.generateStatsHTML(this.targetShipStats);
@@ -182,7 +220,7 @@ class EVEFightTaker {
     }
 
     async analyzeCombat() {
-        if (!this.currentShipStats || !this.targetShipStats) {
+        if (!this.currentShipStats || !this.targetShipStats || !this.currentShipFit || !this.targetShipFit) {
             alert('Please load both your current ship and a target ship first.');
             return;
         }
@@ -194,8 +232,8 @@ class EVEFightTaker {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    currentFit: { stats: this.currentShipStats },
-                    targetFit: { stats: this.targetShipStats }
+                    currentFit: this.currentShipFit,
+                    targetFit: this.targetShipFit
                 })
             });
 
@@ -246,21 +284,39 @@ class EVEFightTaker {
             disadvantagesList.appendChild(li);
         });
 
+        // Update ammo recommendations
+        const ammoRecommendationsList = document.getElementById('ammo-recommendations-list');
+        ammoRecommendationsList.innerHTML = '';
+        (analysis.ammoRecommendations || []).forEach(recommendation => {
+            const li = document.createElement('li');
+            li.innerHTML = this.markdownToHtml(recommendation);
+            ammoRecommendationsList.appendChild(li);
+        });
+
+        // Update module recommendations  
+        const moduleRecommendationsList = document.getElementById('module-recommendations-list');
+        moduleRecommendationsList.innerHTML = '';
+        (analysis.moduleRecommendations || []).forEach(recommendation => {
+            const li = document.createElement('li');
+            li.innerHTML = this.markdownToHtml(recommendation);
+            moduleRecommendationsList.appendChild(li);
+        });
+
         // Update tactics
         if (analysis.tactics) {
-            document.getElementById('tactic-range').textContent = 
-                analysis.tactics.range || 'Assess optimal range for your weapons';
-            document.getElementById('tactic-movement').textContent = 
-                analysis.tactics.movement || 'Maintain good positioning';
-            document.getElementById('tactic-engagement').textContent = 
-                analysis.tactics.engagement || 'Engage when you have advantage';
-            document.getElementById('tactic-disengagement').textContent = 
-                analysis.tactics.disengagement || 'Disengage if taking heavy damage';
+            document.getElementById('tactic-range').innerHTML = 
+                this.markdownToHtml(analysis.tactics.range || 'Assess optimal range for your weapons');
+            document.getElementById('tactic-movement').innerHTML = 
+                this.markdownToHtml(analysis.tactics.movement || 'Maintain good positioning');
+            document.getElementById('tactic-engagement').innerHTML = 
+                this.markdownToHtml(analysis.tactics.engagement || 'Engage when you have advantage');
+            document.getElementById('tactic-disengagement').innerHTML = 
+                this.markdownToHtml(analysis.tactics.disengagement || 'Disengage if taking heavy damage');
         }
 
         // Update summary
-        document.getElementById('analysis-summary').textContent = 
-            analysis.summary || 'Combat analysis completed. Review tactical recommendations above.';
+        document.getElementById('analysis-summary').innerHTML = 
+            this.markdownToHtml(analysis.summary || 'Combat analysis completed. Review tactical recommendations above.');
 
         // Show results
         document.getElementById('analysis-results').style.display = 'block';
@@ -328,6 +384,31 @@ class EVEFightTaker {
             return (meters / 1000).toFixed(1) + ' km';
         }
         return Math.round(meters) + ' m';
+    }
+
+    isZKillboardURL(input) {
+        // Check if the input looks like a zKillboard URL
+        const zkillRegex = /^https?:\/\/(www\.)?zkillboard\.com\/kill\/\d+\/?/i;
+        return zkillRegex.test(input.trim());
+    }
+
+    markdownToHtml(text) {
+        if (!text) return '';
+        
+        // Convert common Markdown patterns to HTML
+        return text
+            // Bold text: **text** or __text__
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/__(.*?)__/g, '<strong>$1</strong>')
+            // Italic text: *text* or _text_
+            .replace(/\*(.*?)\*/g, '<em>$1</em>')
+            .replace(/_(.*?)_/g, '<em>$1</em>')
+            // Code: `code`
+            .replace(/`(.*?)`/g, '<code>$1</code>')
+            // Line breaks
+            .replace(/\n/g, '<br>')
+            // Links: [text](url)
+            .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
     }
 
     showLoading() {

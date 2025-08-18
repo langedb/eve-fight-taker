@@ -7,6 +7,7 @@ const { ESIAuth } = require('./lib/esi-auth');
 const { CacheManager } = require('./lib/cache-manager');
 const { FitCalculator } = require('./lib/fit-calculator');
 const { AIAnalyzer } = require('./lib/ai-analyzer');
+const { ZKillboardParser } = require('./lib/zkillboard-parser');
 
 // Load environment variables
 require('dotenv').config();
@@ -29,6 +30,7 @@ app.use(session({
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Initialize services
+console.log('ESI_CLIENT_ID:', process.env.ESI_CLIENT_ID ? 'Set' : 'Not set');
 const esiAuth = new ESIAuth({
   clientId: process.env.ESI_CLIENT_ID,
   clientSecret: process.env.ESI_CLIENT_SECRET,
@@ -38,6 +40,7 @@ const esiAuth = new ESIAuth({
 const cacheManager = new CacheManager('./cache');
 const fitCalculator = new FitCalculator();
 const aiAnalyzer = new AIAnalyzer(process.env.GOOGLE_API_KEY);
+const zkillboardParser = new ZKillboardParser();
 
 // Routes
 app.get('/', (req, res) => {
@@ -53,7 +56,11 @@ app.get('/auth', (req, res) => {
 app.get('/callback', async (req, res) => {
   try {
     const { code, state } = req.query;
+    console.log('OAuth callback - code received:', code ? 'Yes' : 'No');
+    
     const tokenData = await esiAuth.exchangeCodeForTokens(code);
+    console.log('Token data received:', tokenData ? 'Yes' : 'No');
+    console.log('Access token:', tokenData.access_token ? tokenData.access_token.substring(0, 20) + '...' : 'None');
     
     req.session.accessToken = tokenData.access_token;
     req.session.refreshToken = tokenData.refresh_token;
@@ -64,7 +71,8 @@ app.get('/callback', async (req, res) => {
     
     res.redirect('/?authenticated=true');
   } catch (error) {
-    console.error('OAuth callback error:', error);
+    console.error('OAuth callback error:', error.message);
+    console.error('Error details:', error.response?.data || 'No response data');
     res.redirect('/?error=auth_failed');
   }
 });
@@ -77,9 +85,40 @@ app.get('/api/character/ship', async (req, res) => {
     }
     
     const ship = await esiAuth.getCurrentShip(req.session.accessToken);
-    const fit = await esiAuth.getShipFitting(req.session.accessToken, ship.ship_type_id);
     
-    res.json({ ship, fit });
+    // Get ship type name from static data
+    const shipInfo = await fitCalculator.staticData.getItemInfo(ship.ship_type_id);
+    const shipTypeName = shipInfo ? shipInfo.name : `Ship Type ${ship.ship_type_id}`;
+    
+    // Use the actual ship name from ESI if available, otherwise use ship type name
+    const shipName = ship.ship_name || shipTypeName;
+    const fitName = ship.ship_name ? ship.ship_name : 'Current Ship';
+    
+    // Create a basic EFT format for the current ship 
+    // Note: ESI doesn't provide fitted modules for security reasons
+    const eftFormat = `[${shipTypeName}, ${fitName}]\n[Empty High slot]\n[Empty High slot]\n\n[Empty Med slot]\n[Empty Med slot]\n\n[Empty Low slot]\n[Empty Low slot]\n\n[Empty Rig slot]\n\n\n\nNote: ESI API does not provide access to fitted modules for security reasons.\nThis shows only ship type and name. For full fitting analysis,\nplease paste your EFT fit in the Target Ship section.`;
+    
+    // Calculate stats for current ship hull only
+    const parsedFit = { 
+      shipType: shipTypeName, 
+      fitName: fitName, 
+      modules: { high: [], med: [], low: [], rig: [], subsystem: [] },
+      drones: [],
+      cargo: [],
+      implants: []
+    };
+    const stats = await fitCalculator.calculateFitStats(parsedFit);
+    
+    res.json({ 
+      ship: { 
+        ...ship, 
+        ship_type_name: shipTypeName,
+        display_name: shipName
+      }, 
+      fit: parsedFit,
+      stats: stats,
+      eft: eftFormat
+    });
   } catch (error) {
     console.error('Error getting character ship:', error);
     res.status(500).json({ error: 'Failed to get ship data' });
@@ -94,12 +133,25 @@ app.post('/api/analyze-combat', async (req, res) => {
       return res.status(400).json({ error: 'Both current and target fits required' });
     }
     
+    console.log('DEBUG: Received fit data');
+    console.log('Current fit ship:', currentFit.shipType);
+    console.log('Target fit ship:', targetFit.shipType);
+    console.log('Current fit high slots:', currentFit.modules?.high?.length || 0);
+    console.log('Target fit high slots:', targetFit.modules?.high?.length || 0);
+    
     // Calculate stats for both fits
     const currentStats = await fitCalculator.calculateFitStats(currentFit);
     const targetStats = await fitCalculator.calculateFitStats(targetFit);
     
-    // Get AI analysis
-    const analysis = await aiAnalyzer.analyzeCombat(currentStats, targetStats);
+    // Get AI analysis with complete fit data
+    const analysis = await aiAnalyzer.analyzeCombat(
+      { stats: currentStats, fit: currentFit },
+      { stats: targetStats, fit: targetFit }
+    );
+    
+    console.log('DEBUG: AI analysis result');
+    console.log('Has ammo recommendations:', !!(analysis.ammoRecommendations?.length));
+    console.log('Has module recommendations:', !!(analysis.moduleRecommendations?.length));
     
     res.json({
       currentStats,
@@ -127,6 +179,41 @@ app.post('/api/parse-eft', async (req, res) => {
   } catch (error) {
     console.error('Error parsing EFT:', error);
     res.status(500).json({ error: 'Failed to parse EFT fit' });
+  }
+});
+
+app.post('/api/parse-zkill', async (req, res) => {
+  try {
+    const { zkillUrl } = req.body;
+    
+    if (!zkillUrl) {
+      return res.status(400).json({ error: 'zKillboard URL required' });
+    }
+    
+    console.log('Parsing zKillboard URL:', zkillUrl);
+    
+    // Parse the zKillboard URL and get EFT format
+    const zkillData = await zkillboardParser.parseZKillboardURL(zkillUrl);
+    
+    console.log('=== EFT TEXT FROM ZKILLBOARD ===');
+    console.log(zkillData.eftText);
+    console.log('=== END EFT TEXT ===');
+    
+    // Parse the EFT format using our existing parser
+    const parsedFit = await fitCalculator.parseEFT(zkillData.eftText);
+    const stats = await fitCalculator.calculateFitStats(parsedFit);
+    
+    // Add zkillboard metadata
+    parsedFit.zkillboard = {
+      killID: zkillData.killID,
+      originalUrl: zkillData.originalUrl,
+      killTime: zkillData.killTime
+    };
+    
+    res.json({ fit: parsedFit, stats });
+  } catch (error) {
+    console.error('Error parsing zKillboard URL:', error);
+    res.status(500).json({ error: 'Failed to parse zKillboard URL: ' + error.message });
   }
 });
 

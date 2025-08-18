@@ -289,6 +289,85 @@ body {
     font-weight: bold;
 }
 
+/* Recommendations Section */
+.recommendations-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.ammo-recommendations, .module-recommendations {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1.5rem;
+    border-radius: 8px;
+}
+
+.ammo-recommendations h4 {
+    color: #ffc107;
+    margin-bottom: 1rem;
+}
+
+.module-recommendations h4 {
+    color: #17a2b8;
+    margin-bottom: 1rem;
+}
+
+.ammo-recommendations ul, .module-recommendations ul {
+    list-style: none;
+}
+
+.ammo-recommendations li, .module-recommendations li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ammo-recommendations li::before {
+    content: "🎯 ";
+    margin-right: 0.5rem;
+}
+
+.module-recommendations li::before {
+    content: "⚙️ ";
+    margin-right: 0.5rem;
+}
+
+/* Markdown-converted content styling */
+.ammo-recommendations strong, .module-recommendations strong {
+    color: #ffc107;
+}
+
+.ammo-recommendations code, .module-recommendations code {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+}
+
+.tactic strong {
+    color: #00d4ff;
+}
+
+.tactic code {
+    background: rgba(0, 212, 255, 0.1);
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+}
+
+#analysis-summary strong {
+    color: #28a745;
+}
+
+#analysis-summary code {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+}
+
 /* Tactics */
 .tactics-section {
     margin-bottom: 2rem;
@@ -392,6 +471,10 @@ body {
         grid-template-columns: 1fr;
     }
     
+    .recommendations-section {
+        grid-template-columns: 1fr;
+    }
+    
     .tactics-grid {
         grid-template-columns: 1fr;
     }
@@ -424,4 +507,31 @@ body {
 
 #analysis-results {
     animation: fadeIn 0.6s ease-out;
+}
+
+/* EFT Display */
+.fit-display {
+    margin-top: 15px;
+    border-top: 1px solid rgba(52, 144, 220, 0.3);
+    padding-top: 15px;
+}
+
+.fit-display h5 {
+    margin: 0 0 10px 0;
+    color: #3490dc;
+    font-size: 0.9rem;
+}
+
+.eft-text {
+    background: #1a1a1a;
+    border: 1px solid rgba(52, 144, 220, 0.3);
+    border-radius: 4px;
+    padding: 10px;
+    color: #e2e8f0;
+    font-family: 'Consolas', 'Monaco', 'Lucida Console', monospace;
+    font-size: 0.8rem;
+    line-height: 1.2;
+    white-space: pre;
+    overflow-x: auto;
+    margin: 0;
 }
