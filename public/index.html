@@ -35,13 +35,24 @@
             <div class="analysis-grid">
                 <div class="card">
                     <h3><i class="fas fa-ship"></i> Your Ship</h3>
-                    <div id="current-ship-section">
-                        <button id="load-current-ship" class="btn btn-secondary" disabled>
-                            <i class="fas fa-download"></i> Load Current Ship
+                    <div id="your-ship-section">
+                        <textarea id="your-eft-input" placeholder="Paste your EFT fit or zKillboard URL here...
+
+EFT Example:
+[Ishtar, Your Ishtar Fit]
+Medium Remote Capacitor Transmitter II
+...
+
+zKillboard Example:
+https://zkillboard.com/kill/123456789/
+
+Right-click your ship in-game → Copy → Copy Fitting" rows="15" class="eft-textarea"></textarea>
+                        <button id="parse-your-eft" class="btn btn-primary">
+                            <i class="fas fa-upload"></i> Load Your Fit
                         </button>
-                        <div id="current-ship-info" class="ship-info" style="display: none;">
-                            <h4 id="current-ship-name"></h4>
-                            <div id="current-ship-stats" class="stats-grid"></div>
+                        <div id="your-ship-info" class="ship-info" style="display: none;">
+                            <h4 id="your-ship-name"></h4>
+                            <div id="your-ship-stats" class="stats-grid"></div>
                         </div>
                     </div>
                 </div>
@@ -49,24 +60,17 @@
                 <div class="card">
                     <h3><i class="fas fa-crosshairs"></i> Target Ship</h3>
                     <div id="target-ship-section">
-                        <textarea id="eft-input" placeholder="Paste EFT fit here...
-Example:
+                        <textarea id="eft-input" placeholder="Paste EFT fit or zKillboard URL here...
+
+EFT Example:
 [Rifter, PvP Fit]
 200mm AutoCannon II, Republic Fleet EMP S
 200mm AutoCannon II, Republic Fleet EMP S
 [Empty High slot]
+...
 
-1MN Y-S8 Compact Afterburner
-Warp Scrambler II
-X5 Prototype Engine Enervator
-
-Damage Control II
-Small Ancillary Armor Repairer
-Adaptive Nano Plating II
-
-Small Anti-EM Pump I
-Small Auxiliary Thrusters I
-Small Trimark Armor Pump I
+zKillboard Example:
+https://zkillboard.com/kill/123456789/
 
 Hobgoblin II x5" rows="15" class="eft-textarea"></textarea>
                         <button id="parse-eft" class="btn btn-primary">
@@ -106,6 +110,17 @@ Hobgoblin II x5" rows="15" class="eft-textarea"></textarea>
                             <div class="disadvantages">
                                 <h4><i class="fas fa-minus-circle"></i> Your Disadvantages</h4>
                                 <ul id="disadvantages-list"></ul>
+                            </div>
+                        </div>
+
+                        <div class="recommendations-section">
+                            <div class="ammo-recommendations">
+                                <h4><i class="fas fa-bullseye"></i> Ammo Recommendations</h4>
+                                <ul id="ammo-recommendations-list"></ul>
+                            </div>
+                            <div class="module-recommendations">
+                                <h4><i class="fas fa-cogs"></i> Module Usage</h4>
+                                <ul id="module-recommendations-list"></ul>
                             </div>
                         </div>
 
