@@ -192,6 +192,11 @@ The frontend (`public/script.js`) maintains enhanced state management:
 8. **AI Analysis Integration**: Weapon-specific recommendations with Gemini 2.5 Flash
 9. **Damage Type Accuracy Fix**: Corrected attribute mapping for precise damage type identification in AI analysis
 10. **ESI to EFT Format Fix**: Fixed conversion to handle string-based slot flags from ESI API, ensuring proper module placement in EFT sections
+11. **Comprehensive Ammo Analysis**: Extended cargo ammo consideration to all weapon systems (railguns, blasters, autocannons, artillery, missiles, lasers)
+12. **Fixed Ammo Compatibility**: Corrected weapon/ammo size classification (425mm = medium, Light Missiles = small) and added comprehensive compatibility matrices
+13. **Enhanced Module Classification**: Fixed passive/active module detection, properly classifying capacitor boosters as active modules requiring manual activation
+14. **Neutralized AI Prompting**: Removed all evaluative language and prompt references from AI analysis to eliminate "hard-coded" recommendation impressions
+15. **Statistical Ammo Descriptions**: Replaced subjective terms like "excellent tracking" with neutral statistical data (e.g., "tracking modifier +25%")
 
 ### Development Notes
 
@@ -205,6 +210,9 @@ The frontend (`public/script.js`) maintains enhanced state management:
 - **Debug Capabilities**: Comprehensive logging for troubleshooting DPS calculation issues
 - **Damage Type Accuracy**: Corrected attribute mapping ensures AI receives accurate damage type data for tactical analysis
 - **ESI Format Compatibility**: ESI to EFT conversion handles both string-based and numeric slot flags for maximum compatibility
+- **Universal Ammo Support**: Comprehensive ammo compatibility across all weapon systems with proper size classification
+- **Module Activation Accuracy**: Precise active/passive classification ensures correct tactical recommendations
+- **Neutral AI Prompting**: Statistical data presentation prevents AI from referencing "prompts" or "instructions"
 
 ### Performance Metrics
 

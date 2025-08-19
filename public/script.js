@@ -446,7 +446,7 @@ class EVEFightTaker {
                 throw new Error('Failed to fetch stored fittings');
             }
             const fittings = await response.json();
-            this.displayFittings(fittings);
+            await this.displayFittings(fittings);
         } catch (error) {
             console.error('Error loading stored fittings:', error);
             alert('Failed to load stored fittings. Please ensure you are logged in and have granted the necessary ESI scope.');
@@ -455,7 +455,7 @@ class EVEFightTaker {
         }
     }
 
-    displayFittings(fittings) {
+    async displayFittings(fittings) {
         this.storedFittings = fittings;
         this.selectedFittingIndex = null;
         const fittingsListContainer = document.getElementById('fittings-list-container');
@@ -464,7 +464,7 @@ class EVEFightTaker {
             this.renderEmptyDropdown();
             document.getElementById('load-selected-fitting-btn').disabled = true;
         } else {
-            this.renderAdvancedDropdown(fittings);
+            await this.renderAdvancedDropdown(fittings);
             document.getElementById('load-selected-fitting-btn').disabled = true; // Will be enabled when item selected
         }
         
@@ -503,9 +503,9 @@ class EVEFightTaker {
         });
     }
 
-    renderAdvancedDropdown(fittings) {
-        // Group fittings by hull type (ship name before first space or comma)
-        const groupedFittings = this.groupFittingsByHull(fittings);
+    async renderAdvancedDropdown(fittings) {
+        // Group fittings by hull type (ship name resolved from ship_type_id)
+        const groupedFittings = await this.groupFittingsByHull(fittings);
         const dropdownContent = document.getElementById('fittings-dropdown-content');
         
         dropdownContent.innerHTML = '';
@@ -555,23 +555,29 @@ class EVEFightTaker {
         });
     }
 
-    groupFittingsByHull(fittings) {
+    async groupFittingsByHull(fittings) {
         const grouped = {};
         
-        fittings.forEach((fitting, index) => {
-            // Extract hull name from fitting name
-            // Look for ship type ID in the fitting to get proper ship name
+        for (let i = 0; i < fittings.length; i++) {
+            const fitting = fittings[i];
             let hullName = 'Unknown Ship';
             
             try {
                 if (fitting.ship_type_id) {
-                    // We'll need to look up ship name from ship_type_id
-                    // For now, we'll extract from the fitting name as fallback
-                    hullName = this.extractHullNameFromFitting(fitting.name);
+                    // Look up ship name from ship_type_id using our static data lookup
+                    const response = await fetch(`/api/get-ship-name/${fitting.ship_type_id}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        hullName = data.name;
+                    } else {
+                        // Fallback to extracting from fitting name
+                        hullName = this.extractHullNameFromFitting(fitting.name);
+                    }
                 } else {
                     hullName = this.extractHullNameFromFitting(fitting.name);
                 }
             } catch (e) {
+                console.warn('Error resolving ship name for fitting:', fitting.name, e);
                 hullName = this.extractHullNameFromFitting(fitting.name);
             }
             
@@ -579,28 +585,35 @@ class EVEFightTaker {
                 grouped[hullName] = [];
             }
             
-            grouped[hullName].push({ fitting, index });
-        });
+            grouped[hullName].push({ fitting, index: i });
+        }
         
         return grouped;
     }
 
     extractHullNameFromFitting(fittingName) {
-        // Extract ship name from fitting name (usually before first comma or space)
+        // Extract ship name from fitting name - handles EFT format [ShipType, FitName]
         if (!fittingName) return 'Unknown Ship';
         
-        // Common patterns: "ShipName, FitName" or "ShipName FitName"
-        const commaIndex = fittingName.indexOf(',');
-        const spaceIndex = fittingName.indexOf(' ');
+        // Handle EFT format [ShipType, FitName] - extract ship type
+        const eftMatch = fittingName.match(/^\[([^,\]]+)/);
+        if (eftMatch) {
+            return eftMatch[1].trim();
+        }
         
+        // Fallback: look for comma separator "ShipName, FitName"
+        const commaIndex = fittingName.indexOf(',');
         if (commaIndex > 0) {
             return fittingName.substring(0, commaIndex).trim();
-        } else if (spaceIndex > 0) {
-            // Take first word as ship name
-            return fittingName.substring(0, spaceIndex).trim();
-        } else {
-            return fittingName.trim();
         }
+        
+        // Final fallback: take first word
+        const spaceIndex = fittingName.indexOf(' ');
+        if (spaceIndex > 0) {
+            return fittingName.substring(0, spaceIndex).trim();
+        }
+        
+        return fittingName.trim();
     }
 
     renderEmptyDropdown() {

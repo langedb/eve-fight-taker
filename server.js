@@ -42,6 +42,13 @@ const fitCalculator = new FitCalculator();
 const aiAnalyzer = new AIAnalyzer(process.env.GOOGLE_API_KEY);
 const zkillboardParser = new ZKillboardParser();
 
+// Initialize static data
+(async () => {
+  console.log('Initializing static data...');
+  await fitCalculator.staticData.loadStaticData();
+  console.log('Static data loaded successfully');
+})();
+
 // Routes
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
@@ -265,6 +272,24 @@ app.get('/api/zkillboard/:shipTypeId', async (req, res) => {
   } catch (error) {
     console.error('Error fetching zKillboard data:', error);
     res.status(500).json({ error: 'Failed to fetch killboard data' });
+  }
+});
+
+app.get('/api/get-ship-name/:ship_type_id', async (req, res) => {
+  try {
+    const { ship_type_id } = req.params;
+    
+    // Use static data to look up ship name
+    const shipInfo = await fitCalculator.staticData.getItemInfo(parseInt(ship_type_id));
+    
+    if (shipInfo) {
+      res.json({ name: shipInfo.name });
+    } else {
+      res.status(404).json({ error: 'Ship type not found' });
+    }
+  } catch (error) {
+    console.error('Error getting ship name:', error);
+    res.status(500).json({ error: 'Failed to get ship name' });
   }
 });
 
