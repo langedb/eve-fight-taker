@@ -76,8 +76,8 @@ build/
 # dotenv environment variables file
 .env*
 
-# Static data files (large PyFA exports)
-staticdata/
+# Static data files (large PyFA exports) - staticdata/ now included as it's essential for app functionality
+# staticdata/  # Commented out - this directory is needed for the application to work
 pyfa-export/
 
 # Test files (unless part of official test suite)
