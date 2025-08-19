@@ -25,6 +25,19 @@ class EVEFightTaker {
             this.parseYourEFTFit();
         });
 
+        // Load stored fittings
+        document.getElementById('load-fittings-btn').addEventListener('click', () => {
+            this.loadStoredFittings();
+        });
+
+        // Load selected fitting from dropdown
+        document.getElementById('load-selected-fitting-btn').addEventListener('click', () => {
+            this.loadSelectedFitting();
+        });
+
+        // Advanced dropdown event listeners
+        this.initializeAdvancedDropdown();
+
         // EFT parsing
         document.getElementById('parse-eft').addEventListener('click', () => {
             this.parseEFTFit();
@@ -417,6 +430,345 @@ class EVEFightTaker {
 
     hideLoading() {
         document.getElementById('loading').style.display = 'none';
+    }
+
+    async loadStoredFittings() {
+        if (!this.isAuthenticated) {
+            alert('Please log in with EVE SSO to load stored fittings.');
+            return;
+        }
+
+        this.showLoading();
+
+        try {
+            const response = await fetch('/api/fittings');
+            if (!response.ok) {
+                throw new Error('Failed to fetch stored fittings');
+            }
+            const fittings = await response.json();
+            this.displayFittings(fittings);
+        } catch (error) {
+            console.error('Error loading stored fittings:', error);
+            alert('Failed to load stored fittings. Please ensure you are logged in and have granted the necessary ESI scope.');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    displayFittings(fittings) {
+        this.storedFittings = fittings;
+        this.selectedFittingIndex = null;
+        const fittingsListContainer = document.getElementById('fittings-list-container');
+        
+        if (fittings.length === 0) {
+            this.renderEmptyDropdown();
+            document.getElementById('load-selected-fitting-btn').disabled = true;
+        } else {
+            this.renderAdvancedDropdown(fittings);
+            document.getElementById('load-selected-fitting-btn').disabled = true; // Will be enabled when item selected
+        }
+        
+        fittingsListContainer.style.display = 'block';
+    }
+
+    initializeAdvancedDropdown() {
+        const searchInput = document.getElementById('fittings-search');
+        const dropdownArrow = document.getElementById('dropdown-arrow');
+        const dropdownList = document.getElementById('fittings-dropdown-list');
+        
+        // Search input events
+        searchInput.addEventListener('input', (e) => {
+            this.filterDropdownOptions(e.target.value);
+        });
+        
+        searchInput.addEventListener('focus', () => {
+            this.showDropdown();
+        });
+        
+        // Dropdown arrow click
+        dropdownArrow.addEventListener('click', () => {
+            this.toggleDropdown();
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.advanced-dropdown-container')) {
+                this.hideDropdown();
+            }
+        });
+        
+        // Keyboard navigation
+        searchInput.addEventListener('keydown', (e) => {
+            this.handleKeyboardNavigation(e);
+        });
+    }
+
+    renderAdvancedDropdown(fittings) {
+        // Group fittings by hull type (ship name before first space or comma)
+        const groupedFittings = this.groupFittingsByHull(fittings);
+        const dropdownContent = document.getElementById('fittings-dropdown-content');
+        
+        dropdownContent.innerHTML = '';
+        
+        // Sort hull types alphabetically
+        const sortedHullTypes = Object.keys(groupedFittings).sort();
+        
+        sortedHullTypes.forEach(hullType => {
+            // Create group header
+            const groupHeader = document.createElement('div');
+            groupHeader.className = 'dropdown-group-header';
+            groupHeader.textContent = hullType;
+            
+            const group = document.createElement('div');
+            group.className = 'dropdown-group';
+            group.appendChild(groupHeader);
+            
+            // Sort fittings within group by fit name
+            groupedFittings[hullType].sort((a, b) => a.fitting.name.localeCompare(b.fitting.name));
+            
+            // Add each fitting in the group
+            groupedFittings[hullType].forEach(({ fitting, index }) => {
+                const option = document.createElement('div');
+                option.className = 'dropdown-option';
+                option.dataset.index = index;
+                option.dataset.searchText = `${hullType} ${fitting.name}`.toLowerCase();
+                
+                const shipName = document.createElement('span');
+                shipName.className = 'option-ship-name';
+                shipName.textContent = hullType;
+                
+                const fitName = document.createElement('span');
+                fitName.className = 'option-fit-name';
+                fitName.textContent = fitting.name;
+                
+                option.appendChild(shipName);
+                option.appendChild(fitName);
+                
+                option.addEventListener('click', () => {
+                    this.selectFitting(index, option);
+                });
+                
+                group.appendChild(option);
+            });
+            
+            dropdownContent.appendChild(group);
+        });
+    }
+
+    groupFittingsByHull(fittings) {
+        const grouped = {};
+        
+        fittings.forEach((fitting, index) => {
+            // Extract hull name from fitting name
+            // Look for ship type ID in the fitting to get proper ship name
+            let hullName = 'Unknown Ship';
+            
+            try {
+                if (fitting.ship_type_id) {
+                    // We'll need to look up ship name from ship_type_id
+                    // For now, we'll extract from the fitting name as fallback
+                    hullName = this.extractHullNameFromFitting(fitting.name);
+                } else {
+                    hullName = this.extractHullNameFromFitting(fitting.name);
+                }
+            } catch (e) {
+                hullName = this.extractHullNameFromFitting(fitting.name);
+            }
+            
+            if (!grouped[hullName]) {
+                grouped[hullName] = [];
+            }
+            
+            grouped[hullName].push({ fitting, index });
+        });
+        
+        return grouped;
+    }
+
+    extractHullNameFromFitting(fittingName) {
+        // Extract ship name from fitting name (usually before first comma or space)
+        if (!fittingName) return 'Unknown Ship';
+        
+        // Common patterns: "ShipName, FitName" or "ShipName FitName"
+        const commaIndex = fittingName.indexOf(',');
+        const spaceIndex = fittingName.indexOf(' ');
+        
+        if (commaIndex > 0) {
+            return fittingName.substring(0, commaIndex).trim();
+        } else if (spaceIndex > 0) {
+            // Take first word as ship name
+            return fittingName.substring(0, spaceIndex).trim();
+        } else {
+            return fittingName.trim();
+        }
+    }
+
+    renderEmptyDropdown() {
+        const dropdownContent = document.getElementById('fittings-dropdown-content');
+        dropdownContent.innerHTML = '<div class="no-results">No fittings found.</div>';
+    }
+
+    filterDropdownOptions(searchTerm) {
+        const options = document.querySelectorAll('.dropdown-option');
+        const groups = document.querySelectorAll('.dropdown-group');
+        const lowerSearchTerm = searchTerm.toLowerCase();
+        
+        let hasVisibleOptions = false;
+        
+        groups.forEach(group => {
+            const groupOptions = group.querySelectorAll('.dropdown-option');
+            let groupHasVisibleOptions = false;
+            
+            groupOptions.forEach(option => {
+                const searchText = option.dataset.searchText;
+                const isVisible = !searchTerm || searchText.includes(lowerSearchTerm);
+                
+                option.classList.toggle('hidden', !isVisible);
+                
+                if (isVisible) {
+                    groupHasVisibleOptions = true;
+                    hasVisibleOptions = true;
+                }
+            });
+            
+            // Hide group if no options are visible
+            group.style.display = groupHasVisibleOptions ? 'block' : 'none';
+        });
+        
+        // Show "no results" if no options match
+        const dropdownContent = document.getElementById('fittings-dropdown-content');
+        if (!hasVisibleOptions && searchTerm) {
+            const existingNoResults = dropdownContent.querySelector('.no-results');
+            if (!existingNoResults) {
+                const noResults = document.createElement('div');
+                noResults.className = 'no-results';
+                noResults.textContent = `No fittings found matching "${searchTerm}"`;
+                dropdownContent.appendChild(noResults);
+            }
+        } else {
+            const noResults = dropdownContent.querySelector('.no-results');
+            if (noResults) {
+                noResults.remove();
+            }
+        }
+    }
+
+    selectFitting(index, optionElement) {
+        // Remove previous selection
+        document.querySelectorAll('.dropdown-option.selected').forEach(opt => {
+            opt.classList.remove('selected');
+        });
+        
+        // Add selection to clicked option
+        optionElement.classList.add('selected');
+        this.selectedFittingIndex = index;
+        
+        // Update search input with selected value
+        const shipName = optionElement.querySelector('.option-ship-name').textContent;
+        const fitName = optionElement.querySelector('.option-fit-name').textContent;
+        document.getElementById('fittings-search').value = `${shipName} - ${fitName}`;
+        
+        // Enable load button
+        document.getElementById('load-selected-fitting-btn').disabled = false;
+        
+        // Hide dropdown
+        this.hideDropdown();
+    }
+
+    showDropdown() {
+        const dropdownList = document.getElementById('fittings-dropdown-list');
+        const dropdownArrow = document.getElementById('dropdown-arrow');
+        
+        dropdownList.style.display = 'block';
+        dropdownArrow.classList.add('open');
+    }
+
+    hideDropdown() {
+        const dropdownList = document.getElementById('fittings-dropdown-list');
+        const dropdownArrow = document.getElementById('dropdown-arrow');
+        
+        dropdownList.style.display = 'none';
+        dropdownArrow.classList.remove('open');
+    }
+
+    toggleDropdown() {
+        const dropdownList = document.getElementById('fittings-dropdown-list');
+        
+        if (dropdownList.style.display === 'none' || !dropdownList.style.display) {
+            this.showDropdown();
+        } else {
+            this.hideDropdown();
+        }
+    }
+
+    handleKeyboardNavigation(e) {
+        const visibleOptions = document.querySelectorAll('.dropdown-option:not(.hidden)');
+        
+        if (visibleOptions.length === 0) return;
+        
+        const currentSelected = document.querySelector('.dropdown-option.selected');
+        let currentIndex = -1;
+        
+        if (currentSelected) {
+            currentIndex = Array.from(visibleOptions).indexOf(currentSelected);
+        }
+        
+        switch (e.key) {
+            case 'ArrowDown':
+                e.preventDefault();
+                const nextIndex = currentIndex < visibleOptions.length - 1 ? currentIndex + 1 : 0;
+                this.selectFitting(visibleOptions[nextIndex].dataset.index, visibleOptions[nextIndex]);
+                break;
+                
+            case 'ArrowUp':
+                e.preventDefault();
+                const prevIndex = currentIndex > 0 ? currentIndex - 1 : visibleOptions.length - 1;
+                this.selectFitting(visibleOptions[prevIndex].dataset.index, visibleOptions[prevIndex]);
+                break;
+                
+            case 'Enter':
+                e.preventDefault();
+                if (currentSelected) {
+                    this.loadSelectedFitting();
+                }
+                break;
+                
+            case 'Escape':
+                e.preventDefault();
+                this.hideDropdown();
+                break;
+        }
+    }
+
+    async loadSelectedFitting() {
+        if (this.selectedFittingIndex === null || !this.storedFittings || !this.storedFittings[this.selectedFittingIndex]) {
+            alert('Please select a fitting to load.');
+            return;
+        }
+
+        const selectedFitting = this.storedFittings[this.selectedFittingIndex];
+        this.showLoading();
+
+        try {
+            const response = await fetch('/api/convert-esi-to-eft', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ esiFitting: selectedFitting })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to convert ESI fitting to EFT');
+            }
+
+            const data = await response.json();
+            document.getElementById('your-eft-input').value = data.eftText;
+            this.parseYourEFTFit(); // Parse the converted EFT
+        } catch (error) {
+            console.error('Error loading selected fitting:', error);
+            alert('Failed to load selected fitting. ' + error.message);
+        } finally {
+            this.hideLoading();
+        }
     }
 }
 

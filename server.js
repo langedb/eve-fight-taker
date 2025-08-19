@@ -55,7 +55,7 @@ app.get('/auth', (req, res) => {
 
 app.get('/callback', async (req, res) => {
   try {
-    const { code, state } = req.query;
+    const { code } = req.query;
     console.log('OAuth callback - code received:', code ? 'Yes' : 'No');
     
     const tokenData = await esiAuth.exchangeCodeForTokens(code);
@@ -122,6 +122,33 @@ app.get('/api/character/ship', async (req, res) => {
   } catch (error) {
     console.error('Error getting character ship:', error);
     res.status(500).json({ error: 'Failed to get ship data' });
+  }
+});
+
+app.get('/api/fittings', async (req, res) => {
+  try {
+    if (!req.session.accessToken) {
+      return res.status(401).json({ error: 'Not authenticated' });
+    }
+    const fittings = await esiAuth.getAllFittings(req.session.accessToken);
+    res.json(fittings);
+  } catch (error) {
+    console.error('Error getting fittings:', error);
+    res.status(500).json({ error: 'Failed to retrieve fittings' });
+  }
+});
+
+app.post('/api/convert-esi-to-eft', async (req, res) => {
+  try {
+    const { esiFitting } = req.body;
+    if (!esiFitting) {
+      return res.status(400).json({ error: 'ESI fitting data required' });
+    }
+    const eftText = await fitCalculator.esiToEFT(esiFitting);
+    res.json({ eftText });
+  } catch (error) {
+    console.error('Error converting ESI to EFT:', error);
+    res.status(500).json({ error: 'Failed to convert ESI fitting to EFT' });
   }
 });
 

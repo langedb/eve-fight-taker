@@ -50,9 +50,28 @@ Right-click your ship in-game → Copy → Copy Fitting" rows="15" class="eft-te
                         <button id="parse-your-eft" class="btn btn-primary">
                             <i class="fas fa-upload"></i> Load Your Fit
                         </button>
+                        <button id="load-fittings-btn" class="btn btn-secondary">
+                            <i class="fas fa-download"></i> Load Stored Fittings
+                        </button>
                         <div id="your-ship-info" class="ship-info" style="display: none;">
                             <h4 id="your-ship-name"></h4>
                             <div id="your-ship-stats" class="stats-grid"></div>
+                        </div>
+                        <div id="fittings-list-container" style="display: none;">
+                            <h4>Stored Fittings:</h4>
+                            <div class="advanced-dropdown-container">
+                                <div class="search-input-container">
+                                    <input type="text" id="fittings-search" class="search-input" placeholder="Type to search fittings..." autocomplete="off">
+                                    <i class="fas fa-search search-icon"></i>
+                                    <i class="fas fa-chevron-down dropdown-arrow" id="dropdown-arrow"></i>
+                                </div>
+                                <div class="dropdown-list" id="fittings-dropdown-list" style="display: none;">
+                                    <div class="dropdown-content" id="fittings-dropdown-content">
+                                        <!-- Grouped options will be populated here -->
+                                    </div>
+                                </div>
+                            </div>
+                            <button id="load-selected-fitting-btn" class="btn btn-primary mt-2" disabled>Load Selected Fitting</button>
                         </div>
                     </div>
                 </div>
