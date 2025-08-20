@@ -40,7 +40,7 @@ Medium Thermal Shield Reinforcer I
 Warrior II x2
 Warrior II x2`;
 
-    const fit = fitCalculator.parseEFT(eft);
+    const fit = await fitCalculator.parseEFT(eft);
     const stats = await fitCalculator.calculateFitStats(fit);
 
     expect(stats.dps.total).to.be.above(200);
@@ -50,21 +50,60 @@ Warrior II x2`;
     const eft = `[Osprey Navy Issue, Test Fit]
 Warrior II x2`; // A simple fit with just drones
 
-    const fit = fitCalculator.parseEFT(eft);
+    const fit = await fitCalculator.parseEFT(eft);
     const fitSimulator = new FitSimulator(fit, fitCalculator.staticData);
 
     await fitSimulator._initializeAttributes(); // Manually call initializeAttributes
 
-    console.log("DEBUG: After _initializeAttributes in test, modifiedAttributes map:", fitSimulator.modifiedAttributes); // NEW LOG
+    
 
-    const warriorIIAttributes = fitSimulator.modifiedAttributes.get('Warrior II');
+    const warriorIIAttributes = fitSimulator.droneAttributes.get('Warrior II');
     expect(warriorIIAttributes).to.exist;
-    expect(warriorIIAttributes).to.be.an('array').that.is.not.empty;
+    expect(warriorIIAttributes.get(51)).to.equal(4000); // Expected value for attributeID 51 (Rate of fire)
+    expect(warriorIIAttributes.get(64)).to.equal(1.56); // Expected value for attributeID 64 (Damage multiplier)
+  });
 
-    const rateOfFire = await fitSimulator.getModifiedAttribute('Warrior II', 51);
-    expect(rateOfFire).to.equal(4000); // Expected value from typedogma.0.json
+  it('should calculate EHP for a Cenotaph fit to be around 83.2K', async function() {
+    this.timeout(10000); // Increase timeout to 10 seconds
+    const eft = `[Cenotaph,  ]
+Reactor Control Unit II
+Damage Control II
+Reactor Control Unit II
 
-    const damageMultiplier = await fitSimulator.getModifiedAttribute('Warrior II', 64);
-    expect(damageMultiplier).to.equal(1.56); // Expected value from typedogma.0.json
+Medium Micro Jump Drive
+50MN Y-T8 Compact Microwarpdrive
+Large Ancillary Shield Booster
+Multispectrum Shield Hardener II
+Large Shield Extender II
+Stasis Webifier II
+Dread Guristas Warp Scrambler
+
+720mm Howitzer Artillery II, Quake M x9
+720mm Howitzer Artillery II, Quake M x9
+720mm Howitzer Artillery II, Quake M x9
+Medium Breacher Pod Launcher, SCARAB Breacher Pod M x44
+Heavy Assault Missile Launcher II, Nova Rage Heavy Assault Missile x32
+Heavy Assault Missile Launcher II, Nova Rage Heavy Assault Missile x32
+Heavy Assault Missile Launcher II, Nova Rage Heavy Assault Missile x32
+Covert Ops Cloaking Device II
+
+Medium Core Defense Field Extender II
+Medium Core Defense Field Extender II
+Medium Core Defense Field Extender II
+
+
+'Augmented' Hobgoblin x8
+'Augmented' Hammerhead x1
+
+
+SCARAB Breacher Pod M x163
+Quake M x1230
+Nova Rage Heavy Assault Missile x4110
+Corpse Female x1`;
+
+    const fit = await fitCalculator.parseEFT(eft);
+    const stats = await fitCalculator.calculateFitStats(fit);
+
+    expect(stats.ehp.total).to.be.within(81000, 85000);
   });
 });
