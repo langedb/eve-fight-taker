@@ -47,6 +47,11 @@ class EVEFightTaker {
         document.getElementById('analyze-combat').addEventListener('click', () => {
             this.analyzeCombat();
         });
+
+        // Swap fits
+        document.getElementById('swap-fits-btn').addEventListener('click', () => {
+            this.swapFits();
+        });
     }
 
     checkAuthStatus() {
@@ -230,6 +235,33 @@ class EVEFightTaker {
         } else {
             analysisSection.style.display = 'none';
         }
+    }
+
+    swapFits() {
+        // Get current textarea values
+        const yourEftInput = document.getElementById('your-eft-input');
+        const targetEftInput = document.getElementById('eft-input');
+        
+        // Swap the text content
+        const tempText = yourEftInput.value;
+        yourEftInput.value = targetEftInput.value;
+        targetEftInput.value = tempText;
+        
+        // Swap the stats and fit data
+        const tempStats = this.currentShipStats;
+        const tempFit = this.currentShipFit;
+        
+        this.currentShipStats = this.targetShipStats;
+        this.currentShipFit = this.targetShipFit;
+        this.targetShipStats = tempStats;
+        this.targetShipFit = tempFit;
+        
+        // Update the displays
+        this.updateShipDisplay('your', this.currentShipStats, this.currentShipFit);
+        this.updateShipDisplay('target', this.targetShipStats, this.targetShipFit);
+        
+        // Update analysis section visibility
+        this.checkAnalysisAvailability();
     }
 
     async analyzeCombat() {

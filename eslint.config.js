@@ -9,7 +9,8 @@ module.exports = [
       sourceType: "commonjs",
       globals: {
         ...globals.browser,
-        ...globals.node
+        ...globals.node,
+        ...globals.mocha
       }
     },
     rules: {
