@@ -271,6 +271,7 @@ The frontend (`public/script.js`) maintains enhanced state management:
 22. **Enhanced Signature Radius Calculations**: Fixed subsystem processing, rig drawback penalties, and shield extender bonuses for accurate signature radius
 23. **Subsystem Attribute Processing**: Proper handling of T3 Strategic Cruiser subsystem attributes as flat additions rather than percentage bonuses
 24. **Comprehensive Ship Bonus Framework**: Added support for Electronic Attack Ships, Interceptors, and other specialized ship signature radius bonuses
+25. **Bonus Architecture Overhaul**: Fixed fundamental flaw where bonuses were applied per-weapon instead of per-character, implementing PyFA-style unique module instances and single-application bonus system
 
 ### Development Notes
 
@@ -295,6 +296,8 @@ The frontend (`public/script.js`) maintains enhanced state management:
 - **PyFA Attribute Order**: Follows PyFA's strict order: preIncrease → multiplier → stacking penalized multipliers → postIncrease
 - **Enhanced API**: New attribute modification methods including `boost()`, `multiply()`, `increase()`, `force()`, and `preAssign()`
 - **Signature Radius Accuracy**: Comprehensive signature radius calculation with subsystem, rig, and module effects properly applied
+- **Unique Module Instances**: Each module gets a unique key (`Heavy Assault Missile Launcher II_0`, `Heavy Assault Missile Launcher II_1`) to prevent bonus cross-contamination
+- **Single-Application Bonuses**: Bonuses calculated once per fit and applied once per weapon instance, eliminating the per-weapon bonus multiplication issue
 
 ### Performance Metrics
 
@@ -311,6 +314,7 @@ The frontend (`public/script.js`) maintains enhanced state management:
 - **Attribute System Overhaul**: Complete PyFA-compatible attribute calculation engine with 19% signature radius improvement (189m → 225m)
 - **Subsystem Integration**: Proper T3 Strategic Cruiser subsystem attribute processing (+5m signature radius from Covert Reconfiguration)
 - **Enhanced Precision**: Removed erroneous attribute processing that caused calculation errors
+- **Bonus Architecture Fix**: Resolved fundamental flaw where bonuses were applied per-weapon instead of per-character (87% DPS reduction from 6,246 to 633, now within 21% of expected 801.5)
 
 ### T3 Strategic Cruiser Architecture
 
