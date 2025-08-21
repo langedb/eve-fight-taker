@@ -203,4 +203,49 @@ Caldari Navy Mjolnir Heavy Assault Missile x940`;
     // Expected signature radius from user is 506. Using a tolerance for floating point.
     expect(stats.signatureRadius).to.be.closeTo(506, 5);
   });
+
+  it('should calculate DPS for the Caracal fit correctly', async function() {
+    this.timeout(10000); // Increase timeout for potentially longer calculation
+
+    const eft = `[Caracal, Boss]
+Ballistic Control System II
+Ballistic Control System II
+Ballistic Control System II
+Power Diagnostic System II
+
+50MN Quad LiF Restrained Microwarpdrive
+Sensor Booster II, Targeting Range Script
+Remote Sensor Dampener II, Targeting Range Dampening Script
+10MN Afterburner II
+Medium Cap Battery II
+
+Heavy Missile Launcher II, Caldari Navy Scourge Heavy Missile x21
+Heavy Missile Launcher II, Caldari Navy Scourge Heavy Missile x21
+Heavy Missile Launcher II, Caldari Navy Scourge Heavy Missile x21
+Heavy Missile Launcher II, Caldari Navy Scourge Heavy Missile x21
+Heavy Missile Launcher II, Caldari Navy Scourge Heavy Missile x21
+
+Medium Capacitor Control Circuit I
+Medium Hydraulic Bay Thrusters I
+Medium Hydraulic Bay Thrusters I
+
+
+Warrior II x2
+
+
+Caldari Navy Nova Heavy Missile x1000
+Caldari Navy Scourge Heavy Missile x800
+Caldari Navy Inferno Heavy Missile x1000
+Caldari Navy Mjolnir Heavy Missile x1225`;
+
+    const fit = await fitCalculator.parseEFT(eft);
+    const stats = await fitCalculator.calculateFitStats(fit);
+
+    console.log(`Caracal DPS: ${stats.dps.total.toFixed(2)} (expected 318-345)`);
+    console.log(`DPS breakdown: EM: ${stats.dps.em.toFixed(1)}, Thermal: ${stats.dps.thermal.toFixed(1)}, Kinetic: ${stats.dps.kinetic.toFixed(1)}, Explosive: ${stats.dps.explosive.toFixed(1)}`);
+
+    // Expected DPS from dogma-engine is 345, PyFA should be similar (318-345 range)
+    // Using a tolerance for floating point and different calculation approaches
+    expect(stats.dps.total).to.be.closeTo(345, 15); // Allow 15 DPS variance
+  });
 });
