@@ -5,28 +5,27 @@ describe('StaticData', () => {
   let staticData;
 
   before(async () => {
-    staticData = new StaticData();
-    await staticData.loadStaticData();
+    staticData = await StaticData.getInstance();
   });
 
   describe('loadStaticData()', () => {
     it('should load static data successfully', () => {
-      expect(staticData.types).to.be.a('map');
-      expect(staticData.groups).to.be.a('map');
-      expect(staticData.dogmaAttributes).to.be.a('map');
-      expect(staticData.typeDogma).to.be.a('map');
+      expect(staticData.typesData).to.be.a('map');
+      expect(staticData.groupsData).to.be.a('map');
+      expect(staticData.dogmaAttributesData).to.be.a('map');
+      expect(staticData.typeDogmaData).to.be.a('map');
     });
 
     it('should load a reasonable number of types', () => {
-      expect(staticData.types.size).to.be.greaterThan(10000);
+      expect(staticData.typesData.size).to.be.greaterThan(10000);
     });
 
     it('should load groups data', () => {
-      expect(staticData.groups.size).to.be.greaterThan(100);
+      expect(staticData.groupsData.size).to.be.greaterThan(100);
     });
 
     it('should load dogma attributes', () => {
-      expect(staticData.dogmaAttributes.size).to.be.greaterThan(1000);
+      expect(staticData.dogmaAttributesData.size).to.be.greaterThan(1000);
     });
   });
 
@@ -62,12 +61,12 @@ describe('StaticData', () => {
     });
   });
 
-  describe('getTypeAttributes()', () => {
-    it('should return attributes for valid type ID', () => {
+  describe('getItemInfo()', () => {
+    it('should return attributes for valid type ID', async () => {
       // Rifter type ID
-      const rifterResult = staticData.searchItemByName('Rifter');
+      const rifterResult = await staticData.searchItemByName('Rifter');
       if (rifterResult) {
-        const attributes = staticData.getTypeAttributes(rifterResult.type_id);
+        const attributes = rifterResult.attributes;
         expect(attributes).to.be.an('array');
         expect(attributes.length).to.be.greaterThan(0);
         
@@ -77,25 +76,24 @@ describe('StaticData', () => {
       }
     });
 
-    it('should return empty array for invalid type ID', () => {
-      const attributes = staticData.getTypeAttributes(999999999);
-      expect(attributes).to.be.an('array');
-      expect(attributes.length).to.equal(0);
+    it('should return null for invalid type ID', async () => {
+      const attributes = await staticData.getItemInfo(999999999);
+      expect(attributes).to.be.null;
     });
   });
 
-  describe('getGroupInfo()', () => {
+  describe('groupsData', () => {
     it('should return group info for valid group ID', () => {
       // Frigate group ID is typically 25
-      const groupInfo = staticData.getGroupInfo(25);
+      const groupInfo = staticData.groupsData.get(25);
       expect(groupInfo).to.not.be.null;
-      expect(groupInfo.name).to.be.a('string');
+      expect(groupInfo['groupName_en-us']).to.be.a('string');
       expect(groupInfo.categoryID).to.be.a('number');
     });
 
-    it('should return null for invalid group ID', () => {
-      const groupInfo = staticData.getGroupInfo(999999999);
-      expect(groupInfo).to.be.null;
+    it('should return undefined for invalid group ID', () => {
+      const groupInfo = staticData.groupsData.get(999999999);
+      expect(groupInfo).to.be.undefined;
     });
   });
 
@@ -106,9 +104,9 @@ describe('StaticData', () => {
       expect(launcher.group_id).to.be.a('number');
       
       // Should be in a missile launcher group
-      const groupInfo = staticData.getGroupInfo(launcher.group_id);
+      const groupInfo = staticData.groupsData.get(launcher.group_id);
       expect(groupInfo).to.not.be.null;
-      expect(groupInfo.name).to.include('Missile');
+      expect(groupInfo['groupName_en-us']).to.include('Missile');
     });
 
     it('should find charge items with damage attributes', async () => {

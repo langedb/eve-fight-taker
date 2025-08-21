@@ -242,6 +242,49 @@ body {
     font-weight: 600;
 }
 
+/* Auto-Selected Ammo Styling */
+.auto-ammo-section {
+    grid-column: span 2; /* Span across multiple columns if in grid */
+}
+
+.auto-ammo-list {
+    font-size: 0.95rem !important;
+    text-align: left;
+}
+
+.auto-ammo-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.4rem;
+    padding: 0.3rem 0.5rem;
+    background: rgba(0, 212, 255, 0.1);
+    border-radius: 4px;
+    border-left: 3px solid #00d4ff;
+}
+
+.auto-ammo-item:last-child {
+    margin-bottom: 0;
+}
+
+.weapon-name {
+    color: #ffffff;
+    font-weight: 500;
+    flex: 1;
+    font-size: 0.85rem;
+}
+
+.ammo-arrow {
+    color: #00d4ff;
+    margin: 0 0.5rem;
+    font-weight: bold;
+}
+
+.ammo-name {
+    color: #ffd700;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
 /* Analysis Results */
 .analysis-header {
     display: grid;

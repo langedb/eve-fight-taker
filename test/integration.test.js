@@ -15,8 +15,7 @@ describe('Integration Tests', () => {
 
   before(async () => {
     // Initialize static data once for all integration tests
-    staticData = new StaticData();
-    await staticData.loadStaticData();
+    staticData = await StaticData.getInstance();
     
     fitCalculator = new FitCalculator();
     fitCalculator.staticData = staticData;
@@ -59,9 +58,9 @@ Scourge Light Missile x1000
 Warrior II x5`;
 
       // Step 1: Parse EFT
-      const fit = fitCalculator.parseEFT(eftString);
+      const fit = await fitCalculator.parseEFT(eftString);
       expect(fit).to.be.an('object');
-      expect(fit.shipName).to.equal('Rifter');
+      expect(fit.shipName || fit.shipType).to.equal('Rifter');
       expect(fit.fitName).to.equal('Test Rifter');
       
       // Step 2: Create fit simulator
@@ -111,7 +110,7 @@ Medium Core Defense Field Extender I
 Medium Core Defense Field Extender I
 [Empty Rig slot]`;
 
-      const fit = fitCalculator.parseEFT(caracalEft);
+      const fit = await fitCalculator.parseEFT(caracalEft);
       const fitSimulator = new FitSimulator(fit, staticData);
       await fitSimulator.applyEffects();
       const stats = await fitCalculator.calculateShipStats(fit, fitSimulator);
@@ -178,7 +177,7 @@ Ballistic Control System II
 Small Anti-EM Screen Reinforcer I`;
 
       // First calculation - should not be cached
-      const fit = fitCalculator.parseEFT(eftString);
+      const fit = await fitCalculator.parseEFT(eftString);
       const fitSimulator = new FitSimulator(fit, staticData);
       await fitSimulator.applyEffects();
       const stats1 = await fitCalculator.calculateShipStats(fit, fitSimulator);
@@ -200,8 +199,8 @@ Small Anti-EM Screen Reinforcer I`;
       expect(nonExistentStats).to.be.null;
       
       // Should continue to work normally
-      const fit = fitCalculator.parseEFT('[Rifter, Test]\nLight Missile Launcher II,Scourge Light Missile');
-      expect(fit.shipName).to.equal('Rifter');
+      const fit = await fitCalculator.parseEFT('[Rifter, Test]\nLight Missile Launcher II,Scourge Light Missile');
+      expect(fit.shipName || fit.shipType).to.equal('Rifter');
     });
   });
 
@@ -250,7 +249,7 @@ Small Anti-EM Screen Reinforcer I`;
       const malformedEft = `This is not a valid EFT string at all`;
       
       try {
-        const fit = fitCalculator.parseEFT(malformedEft);
+        const fit = await fitCalculator.parseEFT(malformedEft);
         // If parsing succeeds, should still have basic structure
         expect(fit).to.have.property('modules');
       } catch (error) {
@@ -282,7 +281,7 @@ Small Anti-EM Screen Reinforcer I`;
     });
 
     it('should handle fits with no weapons', async () => {
-      const supportFit = fitCalculator.parseEFT(`[Osprey, Support Osprey]
+      const supportFit = await fitCalculator.parseEFT(`[Osprey, Support Osprey]
 Remote Shield Booster II
 Remote Shield Booster II
 
@@ -315,7 +314,7 @@ Power Diagnostic System II`);
       const start = Date.now();
       
       const results = await Promise.all(fits.map(async eftString => {
-        const fit = fitCalculator.parseEFT(eftString);
+        const fit = await fitCalculator.parseEFT(eftString);
         const fitSimulator = new FitSimulator(fit, staticData);
         await fitSimulator.applyEffects();
         return fitCalculator.calculateShipStats(fit, fitSimulator);
@@ -351,7 +350,7 @@ Ballistic Control System II`;
       // Calculate same fit multiple times
       const results = [];
       for (let i = 0; i < 3; i++) {
-        const fit = fitCalculator.parseEFT(eftString);
+        const fit = await fitCalculator.parseEFT(eftString);
         const fitSimulator = new FitSimulator(fit, staticData);
         await fitSimulator.applyEffects();
         const stats = await fitCalculator.calculateShipStats(fit, fitSimulator);

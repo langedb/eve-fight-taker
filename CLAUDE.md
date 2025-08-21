@@ -212,6 +212,60 @@ The `AIAnalyzer` now uses **Gemini 2.5 Flash** and constructs highly detailed pr
 - **Styled Display**: Bold text, code blocks, and emphasis properly styled in the UI
 - **Fallback Analysis**: Mathematical backup when AI is unavailable
 
+### Advanced Range Analysis System
+
+The application now features comprehensive range analysis capabilities for accurate tactical recommendations:
+
+#### Enhanced Weapon Attributes (`lib/ai-analyzer.js`):
+- **Turret Range Data**: Optimal range, falloff, and tracking speed extraction
+- **Missile Range Calculation**: Flight time × velocity = maximum engagement range
+- **EWAR Module Ranges**: Optimal range and falloff for neutralizers, scramblers, webs, jammers
+- **Automatic Range Detection**: Identifies weapon types and extracts appropriate range attributes
+
+#### Range-Boosting Module Support:
+- **Missile Guidance Computer**: Detects range boost capability with range scripts
+- **Tracking Computer**: Identifies turret range enhancement potential
+- **Range Rigs**: Recognizes passive range bonuses (Bay Loading Accelerator, Ionic Field Projector)
+- **Signal Amplifiers**: Targeting range improvements
+- **Script Analysis**: Analyzes available scripts in cargo for range vs precision optimization
+
+#### Comprehensive Range Strategy Guidance:
+The AI prompt now includes detailed range tactical analysis:
+
+**Kiting Strategy** (when player has range advantage):
+- Fight at optimal range but outside enemy weapon range
+- Use speed/afterburner to maintain distance
+- Optimal range calculation: Target's weapon range + 5-10km safety margin
+
+**Brawling Strategy** (only when close-range advantage exists):
+- Close distance quickly when short-range weapons outclass enemy
+- Use tackle to prevent enemy escape
+- Only recommended when player has superior close-range DPS/tank
+
+**EWAR Range Limitations**:
+- Energy Neutralizers: 6-10km range (small/medium/large)
+- Warp Scramblers: 9-15km range
+- Stasis Webs: 10-20km range
+- ECM Jammers: 15-24km range
+- **Critical Rule**: Never recommend EWAR at ranges exceeding module capability
+
+**Mixed Range Strategy** (for ships with long-range weapons + short-range EWAR):
+- Primary engagement at long range using weapons only
+- Secondary close-range option if enemy approaches within EWAR range
+- Example: "Fight at 40km with missiles; if they close to under 10km, activate neutralizers"
+
+#### Range Calculation Examples:
+- **Turrets**: Optimal + Falloff = effective range (50% damage at falloff edge)
+- **Missiles**: Max Range = maximum engagement distance
+- **Boosted Ranges**: Base range × (1 + module bonus) = effective range
+- **Script Optimization**: Range scripts for kiting, precision scripts for application
+
+#### AI Prompt Enhancements:
+- **Range-Boosting Module Analysis**: Accounts for Missile Guidance Computers, Tracking Computers, and range rigs
+- **Script Management**: Recommends range vs precision scripts based on engagement strategy
+- **Specific Range Examples**: "25-30km to stay outside their 20km blaster range while using your 35km railgun optimal"
+- **Module vs Drone Distinction**: Clear separation between ship modules and deployable drones
+
 ### Frontend Architecture
 
 The frontend (`public/script.js`) maintains enhanced state management:
@@ -272,6 +326,14 @@ The frontend (`public/script.js`) maintains enhanced state management:
 23. **Subsystem Attribute Processing**: Proper handling of T3 Strategic Cruiser subsystem attributes as flat additions rather than percentage bonuses
 24. **Comprehensive Ship Bonus Framework**: Added support for Electronic Attack Ships, Interceptors, and other specialized ship signature radius bonuses
 25. **Bonus Architecture Overhaul**: Fixed fundamental flaw where bonuses were applied per-weapon instead of per-character, implementing PyFA-style unique module instances and single-application bonus system
+26. **Advanced Range Analysis System**: Comprehensive weapon range extraction, missile range calculation (flight time × velocity), and EWAR module range detection
+27. **Range-Boosting Module Support**: Automatic detection of Missile Guidance Computers, Tracking Computers, range rigs, and script analysis for tactical optimization
+28. **Intelligent Range Strategy Guidance**: AI prompt enhancements for kiting vs brawling strategy selection based on weapon range comparison and EWAR limitations
+29. **EWAR Range Limitation Enforcement**: Prevents AI from recommending energy neutralizers, scramblers, or webs at impossible ranges (e.g., neutralizers at 55km)
+30. **Mixed Range Tactical Framework**: Support for ships with both long-range weapons and short-range EWAR with appropriate engagement strategies
+31. **Automatic Ammo Selection Enhancement**: UI indication of auto-selected ammo when weapons are unloaded, with cargo compatibility analysis
+32. **ModifiedAttributeStore Precision Fixes**: Resolved stacking penalty calculation issues and floating-point precision problems in attribute modification
+33. **Comprehensive Range Testing**: Added 15+ unit tests covering EWAR detection, range calculation, script analysis, and tactical prompt integration
 
 ### Development Notes
 
@@ -298,6 +360,12 @@ The frontend (`public/script.js`) maintains enhanced state management:
 - **Signature Radius Accuracy**: Comprehensive signature radius calculation with subsystem, rig, and module effects properly applied
 - **Unique Module Instances**: Each module gets a unique key (`Heavy Assault Missile Launcher II_0`, `Heavy Assault Missile Launcher II_1`) to prevent bonus cross-contamination
 - **Single-Application Bonuses**: Bonuses calculated once per fit and applied once per weapon instance, eliminating the per-weapon bonus multiplication issue
+- **Comprehensive Range Analysis**: Weapon range extraction covers turrets (optimal + falloff), missiles (flight time × velocity), and EWAR modules (optimal + falloff)
+- **Range-Boosting Detection**: Automatic identification of Missile Guidance Computers, Tracking Computers, range rigs, and signal amplifiers
+- **Script Optimization**: Analysis of available scripts in cargo for range vs precision tactical decisions
+- **EWAR Range Enforcement**: AI prevented from recommending impossible EWAR usage (e.g., neutralizers beyond 6-10km range)
+- **Tactical Range Strategy**: AI guidance distinguishes between kiting (range advantage) and brawling (close-range advantage) scenarios
+- **Mixed Range Support**: Tactical framework for ships with long-range weapons + short-range EWAR combinations
 
 ### Performance Metrics
 
@@ -315,6 +383,11 @@ The frontend (`public/script.js`) maintains enhanced state management:
 - **Subsystem Integration**: Proper T3 Strategic Cruiser subsystem attribute processing (+5m signature radius from Covert Reconfiguration)
 - **Enhanced Precision**: Removed erroneous attribute processing that caused calculation errors
 - **Bonus Architecture Fix**: Resolved fundamental flaw where bonuses were applied per-weapon instead of per-character (87% DPS reduction from 6,246 to 633, now within 21% of expected 801.5)
+- **Range Analysis Accuracy**: Complete weapon range extraction with missile range calculation (flight time × velocity), EWAR range detection, and range-boosting module support
+- **Tactical AI Improvement**: Enhanced AI prompts prevent impossible EWAR recommendations (e.g., neutralizers at 55km), ensure kiting vs brawling strategy selection based on weapon ranges
+- **Auto-Ammo Selection**: Functional automatic ammo selection from cargo for unloaded weapons with UI indication (ONI: 165.9 DPS with auto-selected Nova Fury Heavy Missile)
+- **ModifiedAttributeStore Precision**: Fixed stacking penalty calculation and floating-point precision issues, ensuring accurate attribute modifications
+- **Enhanced Test Coverage**: Added 15+ comprehensive range analysis tests, bringing total test suite to 153+ test cases with full range tactical coverage
 
 ### T3 Strategic Cruiser Architecture
 

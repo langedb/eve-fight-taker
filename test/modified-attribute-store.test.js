@@ -66,7 +66,7 @@ describe('ModifiedAttributeStore', () => {
     it('should handle multiple multiplicative modifiers', () => {
       store.applyModifier(37, 1.2, 'multiply');
       store.applyModifier(37, 1.1, 'multiply');
-      expect(store.get(37)).to.equal(343.2); // 260 * 1.2 * 1.1
+      expect(store.get(37)).to.be.approximately(343.2, 0.01); // 260 * 1.2 * 1.1
     });
   });
 
@@ -97,7 +97,7 @@ describe('ModifiedAttributeStore', () => {
     it('should not apply stacking penalties to non-grouped modifiers', () => {
       store.applyModifier(37, 1.2, 'multiply');
       store.applyModifier(37, 1.1, 'multiply');
-      expect(store.get(37)).to.equal(343.2); // 260 * 1.2 * 1.1 (no stacking penalty)
+      expect(store.get(37)).to.be.approximately(343.2, 0.01); // 260 * 1.2 * 1.1 (no stacking penalty)
     });
   });
 
@@ -131,13 +131,13 @@ describe('ModifiedAttributeStore', () => {
 
   describe('complex scenarios', () => {
     it('should handle mixed modifier types in correct order', () => {
-      // Apply in order: set, add, multiply (with stacking)
-      store.applyModifier(37, 300, 'set');
+      // Apply in order: preAssign, add, multiply (with stacking)
+      store.applyModifier(37, 300, 'preAssign'); // Use preAssign instead of set
       store.applyModifier(37, 50, 'add');
       store.applyModifier(37, 1.2, 'multiply');
       store.applyModifier(37, 1.1, 'multiply', 'velocityBonus');
       
-      // Should be: set to 300, add 50 = 350, multiply by 1.2 = 420, then apply stacked 1.1
+      // Should be: preAssign to 300, add 50 = 350, multiply by 1.2 = 420, then apply stacked 1.1
       const result = store.get(37);
       expect(result).to.be.greaterThan(420); // At least base calculation
       expect(result).to.be.lessThan(508); // Less than 420 * 1.1 due to potential stacking

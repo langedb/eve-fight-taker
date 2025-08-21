@@ -42,8 +42,10 @@ describe('CacheManager', () => {
     it('should sanitize unsafe characters', () => {
       const safePath = cacheManager.getCacheFilePath('unsafe/key:with*chars');
       expect(safePath).to.include('unsafe_key_with_chars.json');
-      expect(safePath).to.not.include('/');
-      expect(safePath).to.not.include(':');
+      // Check that the filename portion doesn't contain unsafe characters (but paths can contain /)
+      const filename = path.basename(safePath);
+      expect(filename).to.equal('unsafe_key_with_chars.json');
+      expect(filename).to.not.include(':');
       expect(safePath).to.not.include('*');
     });
   });

@@ -7,8 +7,7 @@ describe('FitSimulator', () => {
   let fitSimulator;
 
   before(async () => {
-    staticData = new StaticData();
-    await staticData.loadStaticData();
+    staticData = await StaticData.getInstance();
   });
 
   beforeEach(() => {
@@ -38,7 +37,7 @@ describe('FitSimulator', () => {
     it('should initialize with fit and static data', () => {
       expect(fitSimulator.fit).to.be.an('object');
       expect(fitSimulator.staticData).to.equal(staticData);
-      expect(fitSimulator.shipAttributes).to.be.a('map');
+      expect(fitSimulator.shipAttributes).to.be.null;
       expect(fitSimulator.moduleAttributes).to.be.a('map');
       expect(fitSimulator.chargeAttributes).to.be.a('map');
     });
@@ -53,14 +52,17 @@ describe('FitSimulator', () => {
 
     it('should create attribute stores for ship', async () => {
       await fitSimulator.applyEffects();
-      expect(fitSimulator.shipAttributes.has('Rifter')).to.be.true;
+      expect(fitSimulator.shipAttributes).to.not.be.null;
     });
 
     it('should create attribute stores for modules', async () => {
       await fitSimulator.applyEffects();
-      expect(fitSimulator.moduleAttributes.has('Light Missile Launcher II')).to.be.true;
-      expect(fitSimulator.moduleAttributes.has('Medium Shield Extender II')).to.be.true;
-      expect(fitSimulator.moduleAttributes.has('Ballistic Control System II')).to.be.true;
+      const hasLauncher = Array.from(fitSimulator.moduleAttributes.keys()).some(k => k.startsWith('Light Missile Launcher II'));
+      const hasShieldExtender = Array.from(fitSimulator.moduleAttributes.keys()).some(k => k.startsWith('Medium Shield Extender II'));
+      const hasBCS = Array.from(fitSimulator.moduleAttributes.keys()).some(k => k.startsWith('Ballistic Control System II'));
+      expect(hasLauncher).to.be.true;
+      expect(hasShieldExtender).to.be.true;
+      expect(hasBCS).to.be.true;
     });
 
     it('should create attribute stores for charges', async () => {

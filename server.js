@@ -45,7 +45,7 @@ const zkillboardParser = new ZKillboardParser();
 // Initialize static data
 (async () => {
   console.log('Initializing static data...');
-  await fitCalculator.staticData.loadStaticData();
+  await fitCalculator.ensureStaticData(); // Ensure staticData is initialized
   console.log('Static data loaded successfully');
 })();
 

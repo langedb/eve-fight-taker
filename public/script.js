@@ -200,7 +200,7 @@ class EVEFightTaker {
     }
 
     generateStatsHTML(stats) {
-        return `
+        let html = `
             <div class="stat-item">
                 <div class="label">DPS</div>
                 <div class="value">${this.formatNumber(stats.dps.total)}</div>
@@ -226,6 +226,26 @@ class EVEFightTaker {
                 <div class="value">${this.formatKm(stats.lockRange)}</div>
             </div>
         `;
+        
+        // Add auto-selected ammo information if available
+        if (stats._cargoAmmoUsed && stats._cargoAmmoUsed.length > 0) {
+            html += `
+                <div class="stat-item auto-ammo-section">
+                    <div class="label">Auto-Selected Ammo</div>
+                    <div class="value auto-ammo-list">
+                        ${stats._cargoAmmoUsed.map(usage => 
+                            `<div class="auto-ammo-item">
+                                <span class="weapon-name">${usage.weapon}</span>
+                                <span class="ammo-arrow">→</span>
+                                <span class="ammo-name">${usage.ammo}</span>
+                            </div>`
+                        ).join('')}
+                    </div>
+                </div>
+            `;
+        }
+        
+        return html;
     }
 
     updateAnalysisVisibility() {

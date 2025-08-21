@@ -272,4 +272,224 @@ describe('AIAnalyzer', () => {
       expect(fallback.summary).to.be.a('string');
     });
   });
+
+  describe('range analysis functionality', () => {
+    describe('isEWARModule()', () => {
+      it('should identify energy neutralizers', () => {
+        const neutModule = { name: 'Small Infectious Scoped Energy Neutralizer' };
+        expect(aiAnalyzer.isEWARModule(neutModule)).to.be.true;
+      });
+
+      it('should identify scramblers', () => {
+        const scramModule = { name: 'Warp Scrambler II' };
+        expect(aiAnalyzer.isEWARModule(scramModule)).to.be.true;
+      });
+
+      it('should identify webs', () => {
+        const webModule = { name: 'Stasis Webifier II' };
+        expect(aiAnalyzer.isEWARModule(webModule)).to.be.true;
+      });
+
+      it('should not identify weapons as EWAR', () => {
+        const weaponModule = { name: 'Light Missile Launcher II' };
+        expect(aiAnalyzer.isEWARModule(weaponModule)).to.be.false;
+      });
+    });
+
+    describe('getRangeBonus()', () => {
+      it('should identify missile guidance computer', async () => {
+        const mgcModule = { name: 'Missile Guidance Computer II' };
+        const bonus = await aiAnalyzer.getRangeBonus(mgcModule);
+        expect(bonus).to.include('RANGE BOOST');
+        expect(bonus).to.include('missile range');
+      });
+
+      it('should identify tracking computer', async () => {
+        const tcModule = { name: 'Tracking Computer II' };
+        const bonus = await aiAnalyzer.getRangeBonus(tcModule);
+        expect(bonus).to.include('RANGE BOOST');
+        expect(bonus).to.include('turret range');
+      });
+
+      it('should identify range rigs', async () => {
+        const rigModule = { name: 'Medium Ionic Field Projector II' };
+        const bonus = await aiAnalyzer.getRangeBonus(rigModule);
+        expect(bonus).to.include('PASSIVE RANGE BOOST');
+        expect(bonus).to.include('missile range');
+      });
+
+      it('should return null for non-range modules', async () => {
+        const tankModule = { name: 'Large Shield Extender II' };
+        const bonus = await aiAnalyzer.getRangeBonus(tankModule);
+        expect(bonus).to.be.null;
+      });
+    });
+
+    describe('getScriptAnalysis()', () => {
+      it('should analyze missile range scripts', async () => {
+        const cargo = [
+          { name: 'Missile Range Script', quantity: 1 },
+          { name: 'Missile Precision Script', quantity: 1 }
+        ];
+        const analysis = await aiAnalyzer.getScriptAnalysis(cargo, null);
+        expect(analysis).to.include('AVAILABLE SCRIPTS');
+        expect(analysis).to.include('MISSILE RANGE SCRIPT');
+        expect(analysis).to.include('MISSILE PRECISION SCRIPT');
+        expect(analysis).to.include('missile range when loaded');
+      });
+
+      it('should analyze tracking scripts', async () => {
+        const cargo = [
+          { name: 'Optimal Range Script', quantity: 1 },
+          { name: 'Tracking Speed Script', quantity: 1 }
+        ];
+        const analysis = await aiAnalyzer.getScriptAnalysis(cargo, null);
+        expect(analysis).to.include('Optimal Range Script');
+        expect(analysis).to.include('Tracking Speed Script');
+      });
+
+      it('should return empty string for no scripts', async () => {
+        const cargo = [
+          { name: 'Nova Fury Heavy Missile', quantity: 500 },
+          { name: 'Nanite Repair Paste', quantity: 25 }
+        ];
+        const analysis = await aiAnalyzer.getScriptAnalysis(cargo, null);
+        expect(analysis).to.equal('');
+      });
+    });
+
+    describe('getWeaponAttributes() with EWAR', () => {
+      it('should extract range from EWAR modules', async () => {
+        const neutModule = {
+          name: 'Small Infectious Scoped Energy Neutralizer',
+          group_id: 71, // Energy Neutralizer group
+          attributes: [
+            { attributeID: 769, value: 6000 }, // 6km optimal range
+            { attributeID: 517, value: 2000 }  // 2km falloff
+          ]
+        };
+
+        const mockStaticData = {
+          isTurretWeapon: () => false,
+          isMissileWeapon: () => false
+        };
+
+        const attributes = await aiAnalyzer.getWeaponAttributes(neutModule, mockStaticData);
+        expect(attributes).to.not.be.null;
+        expect(attributes.optimalRange).to.equal(6000);
+        expect(attributes.falloff).to.equal(2000);
+      });
+    });
+
+    describe('missile range calculation', () => {
+      it('should calculate range from flight time and velocity', async () => {
+        const missileModule = {
+          name: 'Heavy Missile Launcher II',
+          group_id: 507, // Heavy Missile Launcher group
+          attributes: [
+            { attributeID: 858, value: 3750 }, // maxVelocity (m/s)
+            { attributeID: 859, value: 15000 } // flightTime (ms)
+          ]
+        };
+
+        const mockStaticData = {
+          isTurretWeapon: () => false,
+          isMissileWeapon: () => true
+        };
+
+        const attributes = await aiAnalyzer.getWeaponAttributes(missileModule, mockStaticData);
+        expect(attributes).to.not.be.null;
+        expect(attributes.maxRange).to.be.approximately(56250, 1); // 15s * 3750 m/s = 56,250m
+      });
+
+      it('should use direct max range if available', async () => {
+        const missileModule = {
+          name: 'Heavy Missile Launcher II',
+          group_id: 507,
+          attributes: [
+            { attributeID: 89, value: 50000 }, // direct maxRange (50km)
+            { attributeID: 858, value: 3750 },
+            { attributeID: 859, value: 15000 }
+          ]
+        };
+
+        const mockStaticData = {
+          isTurretWeapon: () => false,
+          isMissileWeapon: () => true
+        };
+
+        const attributes = await aiAnalyzer.getWeaponAttributes(missileModule, mockStaticData);
+        expect(attributes).to.not.be.null;
+        expect(attributes.maxRange).to.equal(50000); // Should use direct value
+      });
+    });
+  });
+
+  describe('range tactical analysis', () => {
+    it('should include range strategy in prompt building', async () => {
+      // Mock the static data and ensureStaticData
+      aiAnalyzer.staticData = {
+        searchItemByName: async (name) => ({ 
+          name: name, 
+          group_name: 'Test Group',
+          attributes: []
+        }),
+        isTurretWeapon: () => false,
+        isMissileWeapon: () => false
+      };
+
+      const mockCurrentShipData = {
+        fit: {
+          shipName: 'Osprey Navy Issue',
+          fitName: 'Test Fit',
+          modules: {
+            high: [{ name: 'Heavy Missile Launcher II' }],
+            med: [{ name: 'Missile Guidance Computer II' }],
+            low: [{ name: 'Ballistic Control System II' }],
+            rig: [{ name: 'Medium Ionic Field Projector II' }]
+          },
+          drones: [],
+          cargo: [{ name: 'Missile Range Script', quantity: 1 }]
+        },
+        stats: { 
+          dps: { total: 200, em: 0, thermal: 200, kinetic: 0, explosive: 0 },
+          ehp: { total: 25000, hull: 5000, armor: 8000, shield: 12000 },
+          speed: 1200,
+          signatureRadius: 150,
+          scanResolution: 250,
+          lockRange: 60000
+        }
+      };
+
+      const mockTargetShipData = {
+        fit: {
+          shipName: 'Manticore',
+          fitName: 'Target Fit',
+          modules: { high: [], med: [], low: [], rig: [] },
+          drones: [],
+          cargo: []
+        },
+        stats: { 
+          dps: { total: 100, em: 0, thermal: 0, kinetic: 0, explosive: 100 },
+          ehp: { total: 8000, hull: 2000, armor: 2000, shield: 4000 },
+          speed: 2000,
+          signatureRadius: 35,
+          scanResolution: 800,
+          lockRange: 80000
+        }
+      };
+
+      const prompt = await aiAnalyzer.buildCombatAnalysisPrompt(mockCurrentShipData, mockTargetShipData);
+      
+      // Check that range analysis guidance is included
+      expect(prompt).to.include('RANGE ANALYSIS AND ENGAGEMENT STRATEGY');
+      expect(prompt).to.include('KITING STRATEGY');
+      expect(prompt).to.include('BRAWLING STRATEGY');
+      expect(prompt).to.include('EWAR MODULE RANGE LIMITATIONS');
+      expect(prompt).to.include('RANGE-BOOSTING MODULES ANALYSIS');
+      expect(prompt).to.include('AVAILABLE SCRIPTS');
+      expect(prompt).to.include('Missile Range Script');
+      expect(prompt).to.include('RANGE BOOST');
+    });
+  });
 });
