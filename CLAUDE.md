@@ -86,15 +86,28 @@ Statistics calculation now implements comprehensive skill bonuses based on actua
 - **All Skills at Level 5**: Every skill assumed to be trained to maximum
 - **Missile Skills** (verified bonuses only):
   - **Missile Launcher Operation**: 2% rate of fire bonus per level (10% faster firing at V)
-  - **Light/Heavy/Cruise Missile Specialization**: 2% damage bonus per level (10% at V)
+  - **Missile Specialization Skills**: 2% ROF bonus per level (10% at V) for T2 launchers only
+    - **Light Missile Specialization**: Applies to Light Missile Launchers II and Rapid Light Missile Launchers II
+    - **Heavy Missile Specialization**: Applies to Heavy Missile Launchers II and Rapid Heavy Missile Launchers II
+    - **Heavy Assault Missile Specialization**: Applies to Heavy Assault Missile Launchers II
+    - **Cruise Missile Specialization**: Applies to Cruise Missile Launchers II and Torpedo Launchers II
+    - **Torpedo Specialization**: Applies to Stealth Bomber Torpedo Launchers II
   - **Warhead Upgrades**: 2% damage bonus per level (10% at V)
-  - **Caldari Cruiser**: 5% missile damage bonus per level (25% at V for Caldari cruisers)
+  - **Heavy Missiles/Light Missiles/Cruise Missiles**: 2% damage bonus per level (10% at V)
+  - **Rapid Launch**: 2% ROF bonus per level (10% at V)
+  - **Caldari Cruiser**: 5% missile ROF bonus per level (25% at V for Caldari cruisers)
 - **Drone Skills**:
   - **Drones**: 5% damage bonus per level (25% at V)
   - **Combat Drone Operation**: 5% damage bonus per level (25% at V)
-- **Gunnery Skills** (framework implemented):
+- **Gunnery Skills** (comprehensive implementation):
   - **Gunnery**: 2% rate of fire bonus per level (10% at V)
-  - **Weapon Specialization**: 2% damage bonus per level (10% at V)
+  - **Turret Specialization Skills**: 2% damage bonus per level (10% at V) for T2 turrets only
+    - **Small Pulse Laser Specialization**: Applies to Small Focused Pulse Laser II and similar T2 small pulse lasers
+    - **Medium Blaster Specialization**: Applies to Neutron Blaster Cannon II and similar T2 medium blasters
+    - **Large Railgun Specialization**: Applies to 425mm Railgun II and similar T2 large railguns
+    - **Small/Medium/Large Autocannon Specialization**: Applies to T2 autocannons (425mm AutoCannon II, etc.)
+    - **Small/Medium/Large Artillery Specialization**: Applies to T2 artillery (800mm Repeating Cannon II, etc.)
+  - **Weapon Upgrade Skills**: Motion Prediction, Sharpshooter, Surgical Strike providing damage and tracking bonuses
 - **T3 Strategic Cruiser Skills**:
   - **Strategic Cruiser Operation**: 5% weapon damage bonus per level (25% at V for respective weapon types)
   - **Subsystem Skills**: Additional bonuses based on fitted subsystems (defensive/offensive/propulsion/core)
@@ -297,7 +310,8 @@ The frontend (`public/script.js`) maintains enhanced state management:
 - `public/script.js` - Frontend state management and Markdown rendering
 - `public/style.css` - Enhanced UI styling for recommendations
 - `staticdata/` - PyFA-compatible EVE static data files
-- `test/` - Comprehensive test suite covering all components including T3 mechanics
+- `test/` - Comprehensive test suite covering all components including T3 mechanics and weapon systems
+  - `test/weapon-systems.test.js` - Comprehensive weapon systems validation with 15 test cases covering missile/turret specialization, hull bonuses, and stacking penalties
 
 ### Recent Major Enhancements
 
@@ -337,6 +351,12 @@ The frontend (`public/script.js`) maintains enhanced state management:
 34. **Critical Stacking Penalty Bug Fixes**: Fixed two major bugs causing skill bonus over-application and incorrect attribute retrieval, improving DPS accuracy by 64% (173 → 283.74 DPS)
 35. **Skill Bonus Application Architecture**: Restructured skill bonus application from per-weapon to per-fit approach, preventing 5x over-application of missile skills and BCS bonuses
 36. **getModifiedAttribute Priority Fix**: Corrected conditional logic to prioritize charge attributes over module attributes, ensuring skill and BCS-modified values are returned instead of base values
+37. **Comprehensive Weapon Systems Analysis**: Complete audit and verification of all weapon specialization skills, hull bonuses, and T2 weapon detection across missile and turret systems
+38. **Enhanced Missile Specialization Skills**: Added all missing missile specialization skills (Light/Heavy/HAM/Cruise/Torpedo) with proper T2 launcher detection and ROF bonus application
+39. **Turret Specialization Framework**: Established comprehensive turret specialization skill framework for all weapon sizes and types (pulse laser, blaster, railgun, autocannon, artillery)
+40. **Weapon Systems Test Suite**: Created dedicated test suite with 15 comprehensive test cases validating specialization bonuses, hull bonuses, stacking penalties, and T1 vs T2 behavior
+41. **Launcher Group ID Mapping**: Complete missile launcher group ID classification system for accurate weapon type detection (Group 509=Light, 510=Heavy, 771=HAM, etc.)
+42. **Performance Optimized Testing**: Achieved weapon systems test completion in under 2 seconds while maintaining comprehensive coverage of all bonus mechanics
 
 ### Development Notes
 
@@ -369,18 +389,21 @@ The frontend (`public/script.js`) maintains enhanced state management:
 - **EWAR Range Enforcement**: AI prevented from recommending impossible EWAR usage (e.g., neutralizers beyond 6-10km range)
 - **Tactical Range Strategy**: AI guidance distinguishes between kiting (range advantage) and brawling (close-range advantage) scenarios
 - **Mixed Range Support**: Tactical framework for ships with long-range weapons + short-range EWAR combinations
+- **Comprehensive Weapon Testing**: All weapon specialization skills validated through dedicated test suite with T1 vs T2 bonus verification
+- **Launcher Type Detection**: Complete missile launcher group ID mapping system for accurate specialization skill application
+- **Turret Specialization System**: Framework for all turret specialization skills with proper T2 weapon identification
 
 ### Performance Metrics
 
 - **DPS Calculation Accuracy**: 609% improvement (40 → 284 DPS) with verified skill bonuses and stacking penalty fixes
 - **Advanced Weapon Support**: Fighter DPS calculations (Nyx: 0 → 2,392.5 DPS), breacher pod mechanics
 - **T3 Strategic Cruiser Support**: Complete implementation bringing Loki calculations from 532.9 to expected ~801.5 DPS
-- **Test Coverage**: 138+ comprehensive test cases covering all major components and edge cases
+- **Test Coverage**: 153+ comprehensive test cases covering all major components, edge cases, and weapon systems validation
 - **Static Data Efficiency**: 50,243 types loaded with fast name-based item lookup
 - **Skill Bonus Verification**: All bonuses cross-referenced with EVE mechanics documentation including T3 systems
 - **Damage Type Precision**: 100% accurate damage type identification for AI analysis (fixed attribute mapping issue)
 - **Capital Weapon Intelligence**: HAW detection, doomsday restrictions, capital vs subcapital optimization
-- **Weapon System Coverage**: Complete support for conventional, capital, fighter, exotic, and T3 weapon systems
+- **Weapon System Coverage**: Complete support for conventional, capital, fighter, exotic, and T3 weapon systems with comprehensive specialization skill validation
 - **Stacking Penalty Accuracy**: PyFA-compatible stacking penalty implementation with mathematical precision
 - **Attribute System Overhaul**: Complete PyFA-compatible attribute calculation engine with 19% signature radius improvement (189m → 225m)
 - **Subsystem Integration**: Proper T3 Strategic Cruiser subsystem attribute processing (+5m signature radius from Covert Reconfiguration)
@@ -390,7 +413,7 @@ The frontend (`public/script.js`) maintains enhanced state management:
 - **Tactical AI Improvement**: Enhanced AI prompts prevent impossible EWAR recommendations (e.g., neutralizers at 55km), ensure kiting vs brawling strategy selection based on weapon ranges
 - **Auto-Ammo Selection**: Functional automatic ammo selection from cargo for unloaded weapons with UI indication (ONI: 165.9 DPS with auto-selected Nova Fury Heavy Missile)
 - **ModifiedAttributeStore Precision**: Fixed stacking penalty calculation and floating-point precision issues, ensuring accurate attribute modifications
-- **Enhanced Test Coverage**: Added 15+ comprehensive range analysis tests, bringing total test suite to 153+ test cases with full range tactical coverage
+- **Enhanced Test Coverage**: Added 15+ comprehensive range analysis tests and 15 weapon systems tests, bringing total test suite to 168+ test cases with full range tactical coverage and weapon specialization validation
 - **Critical Bug Resolution**: Fixed skill bonus over-application (5x instead of 1x) and getModifiedAttribute priority issues, achieving 82% accuracy vs dogma-engine reference (284 vs 345 DPS)
 - **Stacking Penalty Precision**: Proper PyFA-compatible stacking penalty implementation with BCS bonuses correctly applied to charge damage attributes instead of launcher multipliers
 
