@@ -84,6 +84,10 @@ pyfa-export/
 test-*.js
 debug-*.js
 
+# Debug and temporary test files
+debug_*.js
+test_*.js
+
 # Sensitive configuration files
 config/production.json
 config/local.json
