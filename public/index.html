@@ -85,7 +85,51 @@ Right-click your ship in-game → Copy → Copy Fitting" rows="15" class="eft-te
                 <div class="card">
                     <h3><i class="fas fa-crosshairs"></i> Target Ship</h3>
                     <div id="target-ship-section">
-                        <textarea id="eft-input" placeholder="Paste EFT fit or zKillboard URL here...
+                        <!-- Death Analysis Section -->
+                        <div class="death-analysis-section">
+                            <h4><i class="fas fa-skull"></i> Death Analysis</h4>
+                            <p>Load a character's most recent death in a specific ship type from zKillboard:</p>
+                            <div class="feature-notice">
+                                <i class="fas fa-info-circle"></i>
+                                <span>This feature requires the character to have recent PvP activity. For best results, use characters with recent killmails.</span>
+                            </div>
+                            
+                            <div class="death-analysis-inputs">
+                                <div class="input-group">
+                                    <label for="character-name-input">Character Name:</label>
+                                    <input type="text" id="character-name-input" placeholder="Enter character name..." class="character-input">
+                                </div>
+                                
+                                <div class="input-group">
+                                    <label for="ship-type-search">Ship Type:</label>
+                                    <div class="ship-type-dropdown-container">
+                                        <div class="search-input-container">
+                                            <input type="text" id="ship-type-search" class="search-input" placeholder="Type to search ship types..." autocomplete="off">
+                                            <i class="fas fa-search search-icon"></i>
+                                            <i class="fas fa-chevron-down dropdown-arrow" id="ship-dropdown-arrow"></i>
+                                        </div>
+                                        <div class="dropdown-list" id="ship-type-dropdown-list" style="display: none;">
+                                            <div class="dropdown-content" id="ship-type-dropdown-content">
+                                                <!-- Ship type options will be populated here -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <button id="load-death-fit-btn" class="btn btn-warning" disabled>
+                                    <i class="fas fa-download"></i> Load Death Fit
+                                </button>
+                            </div>
+                            
+                            <div class="or-divider">
+                                <span>OR</span>
+                            </div>
+                        </div>
+
+                        <!-- Manual Fit Input Section -->
+                        <div class="manual-fit-section">
+                            <h4><i class="fas fa-edit"></i> Manual Fit Input</h4>
+                            <textarea id="eft-input" placeholder="Paste EFT fit or zKillboard URL here...
 
 EFT Example:
 [Rifter, PvP Fit]
@@ -97,10 +141,12 @@ EFT Example:
 zKillboard Example:
 https://zkillboard.com/kill/123456789/
 
-Hobgoblin II x5" rows="15" class="eft-textarea"></textarea>
-                        <button id="parse-eft" class="btn btn-primary">
-                            <i class="fas fa-cog"></i> Parse Fit
-                        </button>
+Hobgoblin II x5" rows="12" class="eft-textarea"></textarea>
+                            <button id="parse-eft" class="btn btn-primary">
+                                <i class="fas fa-cog"></i> Parse Fit
+                            </button>
+                        </div>
+
                         <div id="target-ship-info" class="ship-info" style="display: none;">
                             <h4 id="target-ship-name"></h4>
                             <div id="target-ship-stats" class="stats-grid"></div>

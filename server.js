@@ -293,6 +293,193 @@ app.get('/api/get-ship-name/:ship_type_id', async (req, res) => {
   }
 });
 
+// Character search endpoint using authenticated ESI
+app.get('/api/search/character/:characterName', async (req, res) => {
+  try {
+    const { characterName } = req.params;
+    
+    if (!characterName || characterName.length < 3) {
+      return res.status(400).json({ error: 'Character name must be at least 3 characters' });
+    }
+
+    console.log(`Searching for character: "${characterName}"`);
+    
+    // Use the current ESI POST /universe/ids/ endpoint (no authentication required)
+    const searchUrl = `https://esi.evetech.net/latest/universe/ids/`;
+    console.log(`Using ESI POST /universe/ids/ for character search`);
+    
+    try {
+      const searchResponse = await axios.post(searchUrl, 
+        [characterName], // Array of names to search for
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'User-Agent': 'EVE Fight Taker - Combat Analysis Tool'
+          }
+        }
+      );
+      
+      console.log('ESI search response:', searchResponse.data);
+      
+      if (!searchResponse.data.characters || searchResponse.data.characters.length === 0) {
+        return res.status(404).json({ 
+          error: `No character found named "${characterName}".`,
+          suggestion: 'Make sure the character name is spelled exactly as it appears in game.'
+        });
+      }
+
+      const character = searchResponse.data.characters[0];
+      const characterId = character.id;
+      console.log(`Found character: ${character.name} (ID: ${characterId})`);
+
+      // Get additional character info (this endpoint is public, no auth needed)
+      const characterInfoUrl = `https://esi.evetech.net/latest/characters/${characterId}/`;
+      const characterInfoResponse = await axios.get(characterInfoUrl, {
+        headers: {
+          'User-Agent': 'EVE Fight Taker - Combat Analysis Tool'
+        }
+      });
+
+      res.json({
+        character_id: characterId,
+        name: character.name,
+        corporation_id: characterInfoResponse.data.corporation_id,
+        alliance_id: characterInfoResponse.data.alliance_id,
+        source: 'ESI'
+      });
+
+    } catch (esiError) {
+      console.log(`ESI search failed for "${characterName}":`, esiError.response?.status, esiError.response?.statusText);
+      console.log('Error details:', esiError.response?.data);
+      
+      if (esiError.response?.status === 404) {
+        return res.status(404).json({ 
+          error: `Character "${characterName}" not found.`,
+          suggestion: 'Make sure the character name is spelled exactly as it appears in game.'
+        });
+      } else if (esiError.response?.status === 400) {
+        return res.status(400).json({
+          error: 'Invalid character name format.',
+          suggestion: 'Please enter a valid EVE character name.'
+        });
+      }
+      
+      throw esiError;
+    }
+
+  } catch (error) {
+    console.error('Error searching for character:', error);
+    res.status(500).json({ 
+      error: 'Character search failed.',
+      suggestion: 'Please try again or use the manual EFT input method instead.'
+    });
+  }
+});
+
+// Get ship types endpoint (for dropdown)
+app.get('/api/ship-types', async (req, res) => {
+  try {
+    const shipTypes = await fitCalculator.staticData.getShipTypes();
+    res.json(shipTypes);
+  } catch (error) {
+    console.error('Error getting ship types:', error);
+    res.status(500).json({ error: 'Failed to get ship types' });
+  }
+});
+
+// Get character's most recent death in specific ship type
+app.get('/api/character/:characterId/death/:shipTypeId', async (req, res) => {
+  try {
+    const { characterId, shipTypeId } = req.params;
+
+    console.log(`Looking for death data: characterId=${characterId}, shipTypeId=${shipTypeId}`);
+
+    // Get recent losses from zKillboard
+    const zkillUrl = `https://zkillboard.com/api/losses/characterID/${characterId}/`;
+    console.log(`Fetching zKillboard losses from: ${zkillUrl}`);
+    
+    const zkillResponse = await axios.get(zkillUrl, {
+      headers: {
+        'User-Agent': 'EVE Fight Taker - Combat Analysis Tool - Contact: your-email@example.com'
+      }
+    });
+
+    const killmails = zkillResponse.data;
+    console.log(`Found ${killmails.length} total killmails for character`);
+    
+    // Filter for specific ship type by checking each killmail
+    console.log(`Looking for ship type ID: ${shipTypeId} (as integer: ${parseInt(shipTypeId)})`);
+    
+    let shipTypeKill = null;
+    let killmailData = null;
+    
+    // Check each killmail until we find one with the right ship type
+    for (let i = 0; i < Math.min(killmails.length, 20); i++) { // Limit to first 20 to avoid rate limits
+      const km = killmails[i];
+      console.log(`Checking killmail ${i}: ${km.killmail_id}`);
+      
+      try {
+        // Get full killmail data from ESI
+        const killmailUrl = `https://esi.evetech.net/latest/killmails/${km.killmail_id}/${km.zkb.hash}/`;
+        const killmailResponse = await axios.get(killmailUrl);
+        const fullKillmailData = killmailResponse.data;
+        
+        console.log(`  Ship type: ${fullKillmailData.victim.ship_type_id}`);
+        
+        if (fullKillmailData.victim.ship_type_id === parseInt(shipTypeId)) {
+          console.log(`  ✅ Match found! Using killmail ${km.killmail_id}`);
+          shipTypeKill = km;
+          killmailData = fullKillmailData;
+          break;
+        }
+      } catch (error) {
+        console.log(`  ❌ Error fetching killmail ${km.killmail_id}:`, error.message);
+        continue;
+      }
+    }
+    
+    if (!shipTypeKill || !killmailData) {
+      return res.status(404).json({ 
+        error: 'No recent deaths found in that ship type',
+        suggestion: 'The character may not have died in this ship type recently, or the killmail may not be available.'
+      });
+    }
+
+    // Convert killmail to EFT format
+    const eftText = await fitCalculator.killmailToEFT(killmailData);
+    
+    // Parse the EFT and calculate stats
+    const parsedFit = await fitCalculator.parseEFT(eftText);
+    const stats = await fitCalculator.calculateFitStats(parsedFit);
+
+    // Add zkillboard metadata
+    parsedFit.zkillboard = {
+      killID: shipTypeKill.killmail_id,
+      originalUrl: `https://zkillboard.com/kill/${shipTypeKill.killmail_id}/`,
+      killTime: killmailData.killmail_time
+    };
+
+    res.json({
+      fit: parsedFit,
+      stats: stats,
+      eftText: eftText,
+      killmail: {
+        id: shipTypeKill.killmail_id,
+        time: killmailData.killmail_time,
+        zkb_url: `https://zkillboard.com/kill/${shipTypeKill.killmail_id}/`
+      }
+    });
+  } catch (error) {
+    console.error('Error getting character death:', error);
+    
+    if (error.response?.status === 404) {
+      return res.status(404).json({ error: 'Character or killmail not found' });
+    }
+    
+    res.status(500).json({ error: 'Failed to get character death data' });
+  }
+});
+
 app.post('/api/logout', (req, res) => {
   req.session.destroy((err) => {
     if (err) {

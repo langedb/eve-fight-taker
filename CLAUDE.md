@@ -200,6 +200,8 @@ The `AIAnalyzer` now uses **Gemini 2.5 Flash** and constructs highly detailed pr
 - **Accurate Damage Types**: Precise damage type identification (Inferno missiles = thermal, Warrior drones = explosive)
 - **Ship Statistics**: Calculated stats with all-V skill bonuses applied
 - **Combat Context**: EVE Online mechanics, range considerations, and damage application
+- **Precise Drone Control Analysis**: Calculated drone control ranges based on fitted modules and skills
+- **EVE University Drone Mechanics**: Comprehensive drone behavior documentation for accurate tactical recommendations
 
 #### AI Response Format:
 ```json
@@ -362,6 +364,9 @@ The frontend (`public/script.js`) maintains enhanced state management:
 45. **Rapid Heavy Missile Launcher Support**: Added complete support for group 1245 (Rapid Heavy Missile Launchers) and group 655 (Advanced Heavy Missiles) for proper cargo ammo selection
 46. **Comprehensive Cargo Ammo Test Suite**: Created 19-test suite covering all weapon types (cruise/heavy/light/rapid missiles, railguns/blasters, autocannons, pulse lasers) with size compatibility validation
 47. **ESI Fit Integration Fix**: Resolved cargo ammo selection issues for ESI-loaded fits, ensuring proper DPS calculation for all launcher types including specialized variants
+48. **Precise Drone Control Range Calculation**: Comprehensive drone control range calculation system for accurate AI tactical recommendations
+49. **Drone Mechanics Integration**: Complete EVE University drone mechanics implementation including mobile vs sentry drone distinction
+50. **AI Drone Tactical Enhancement**: Replaced guesswork with calculated drone control ranges based on fitted modules and all-V skills
 
 ### Development Notes
 
@@ -397,6 +402,8 @@ The frontend (`public/script.js`) maintains enhanced state management:
 - **Comprehensive Weapon Testing**: All weapon specialization skills validated through dedicated test suite with T1 vs T2 bonus verification
 - **Launcher Type Detection**: Complete missile launcher group ID mapping system for accurate specialization skill application
 - **Turret Specialization System**: Framework for all turret specialization skills with proper T2 weapon identification
+- **Drone Control Range System**: Accurate calculation of drone control ranges using base range (20km), skill bonuses (Drone Avionics V +25km, Advanced Drone Avionics V +15km), Drone Link Augmentor modules (+20/24km), and range rigs (+15/20km)
+- **EVE University Drone Mechanics**: Complete implementation of official EVE University drone documentation including mobile drone engagement rules and sentry drone limitations
 
 ### Performance Metrics
 
@@ -425,6 +432,7 @@ The frontend (`public/script.js`) maintains enhanced state management:
 - **AI Slot Classification Accuracy**: Corrected AI prompt slot categorization that was incorrectly showing weapons as "LOW SLOTS" and tank modules as "HIGH SLOTS"
 - **Rapid Heavy Launcher Integration**: Added full support for Rapid Heavy Missile Launchers (group 1245) and Advanced Heavy Missiles (group 655), enabling proper cargo ammo selection and DPS calculation (0 → 347.24 DPS)
 - **Comprehensive Test Coverage**: Enhanced test suite to 19 cargo ammo selection tests covering all weapon systems with 100% pass rate, ensuring reliability across all EVE weapon types and size compatibility matrices
+- **Drone Control Range Accuracy**: Precise calculation of drone control ranges (base 20km + skills 40km + modules/rigs) eliminating AI guesswork and providing accurate tactical recommendations
 
 ### T3 Strategic Cruiser Architecture
 

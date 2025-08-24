@@ -151,6 +151,38 @@ Javelin S x1000`;
       expect(stats._cargoAmmoUsed).to.have.length(2);
       expect(stats._cargoAmmoUsed[0].ammo).to.match(/(Antimatter|Javelin)/);
     });
+
+    it('should auto-select T2 hybrid charges (group 373) for large railguns', async () => {
+      const nagaFit = `[Naga, T2 Charge Test]
+Magnetic Field Stabilizer II
+Magnetic Field Stabilizer II
+Magnetic Field Stabilizer II
+
+Sensor Booster II
+Tracking Computer II
+Medium Micro Jump Drive
+
+425mm Railgun II
+425mm Railgun II
+425mm Railgun II
+425mm Railgun II
+
+
+
+Javelin L x2000
+Spike L x2000
+Caldari Navy Antimatter Charge L x2648`;
+
+      const parsedFit = await fitCalculator.parseEFT(nagaFit);
+      const fitSimulator = new FitSimulator(parsedFit, staticData);
+      await fitSimulator.applyEffects();
+      const stats = await fitCalculator.calculateShipStats(parsedFit, fitSimulator);
+
+      expect(stats.dps.total).to.be.greaterThan(0);
+      expect(stats._cargoAmmoUsed).to.exist;
+      expect(stats._cargoAmmoUsed).to.have.length(4); // 4 railguns should all get ammo
+      expect(stats._cargoAmmoUsed[0].ammo).to.match(/(Javelin|Spike|Antimatter).*L/);
+    });
   });
 
   describe('Blaster Turrets', () => {
@@ -177,6 +209,42 @@ Null M x1000`;
       expect(stats._cargoAmmoUsed).to.exist;
       expect(stats._cargoAmmoUsed).to.have.length(2);
       expect(stats._cargoAmmoUsed[0].ammo).to.match(/(Antimatter|Null)/);
+    });
+  });
+
+  describe('Artillery Turrets', () => {
+    it('should auto-select projectile ammo from cargo for unloaded artillery', async () => {
+      const ruptureFit = `[Rupture, Test Rupture]
+720mm Howitzer Artillery II
+720mm Howitzer Artillery II
+720mm Howitzer Artillery II
+720mm Howitzer Artillery II
+
+10MN Afterburner II
+Medium Shield Extender II
+
+Gyrostabilizer II
+Damage Control II
+
+Medium Trimark Armor Pump I
+Medium Trimark Armor Pump I
+Medium Trimark Armor Pump I
+
+
+
+Republic Fleet EMP L x1000
+Barrage L x1000
+Hail L x1000`;
+
+      const parsedFit = await fitCalculator.parseEFT(ruptureFit);
+      const fitSimulator = new FitSimulator(parsedFit, staticData);
+      await fitSimulator.applyEffects();
+      const stats = await fitCalculator.calculateShipStats(parsedFit, fitSimulator);
+
+      expect(stats.dps.total).to.be.greaterThan(0);
+      expect(stats._cargoAmmoUsed).to.exist;
+      expect(stats._cargoAmmoUsed).to.have.length(4);
+      expect(stats._cargoAmmoUsed[0].ammo).to.match(/(EMP|Barrage|Hail)/);
     });
   });
 
@@ -262,7 +330,7 @@ Scourge Light Missile x1000`; // Wrong size - small ammo for large weapon
       expect(fitCalculator.extractWeaponSize('heavy missile launcher ii')).to.equal('medium');
       expect(fitCalculator.extractWeaponSize('light missile launcher ii')).to.equal('small');
       expect(fitCalculator.extractWeaponSize('150mm railgun ii')).to.equal('small');
-      expect(fitCalculator.extractWeaponSize('425mm railgun ii')).to.equal('medium');
+      expect(fitCalculator.extractWeaponSize('425mm railgun ii')).to.equal('large');
       expect(fitCalculator.extractWeaponSize('1400mm railgun ii')).to.equal('large');
 
       // Test ammo size extraction
@@ -319,6 +387,31 @@ Scourge Light Missile x1000`; // Wrong size - small ammo for large weapon
       const ammo = await fitCalculator.getItemByName('Caldari Navy Antimatter Charge S');
       
       expect(fitCalculator.isAmmoCompatibleWithWeapon(weapon, ammo)).to.be.true;
+    });
+
+    it('should match T2 hybrid charges (group 373) with railguns', async () => {
+      const weapon = await fitCalculator.getItemByName('425mm Railgun II');
+      const javelinAmmo = await fitCalculator.getItemByName('Javelin L');
+      const spikeAmmo = await fitCalculator.getItemByName('Spike L');
+      
+      expect(fitCalculator.isAmmoCompatibleWithWeapon(weapon, javelinAmmo)).to.be.true;
+      expect(fitCalculator.isAmmoCompatibleWithWeapon(weapon, spikeAmmo)).to.be.true;
+    });
+
+    it('should match basic hybrid charges (group 1042) with railguns', async () => {
+      const weapon = await fitCalculator.getItemByName('425mm Railgun II');
+      const basicAmmo = await fitCalculator.getItemByName('Antimatter Charge L');
+      
+      expect(fitCalculator.isAmmoCompatibleWithWeapon(weapon, basicAmmo)).to.be.true;
+    });
+
+    it('should match advanced projectile ammo (group 372) with artillery', async () => {
+      const weapon = await fitCalculator.getItemByName('720mm Howitzer Artillery II');
+      const barrageAmmo = await fitCalculator.getItemByName('Barrage L');
+      const hailAmmo = await fitCalculator.getItemByName('Hail L');
+      
+      expect(fitCalculator.isAmmoCompatibleWithWeapon(weapon, barrageAmmo)).to.be.true;
+      expect(fitCalculator.isAmmoCompatibleWithWeapon(weapon, hailAmmo)).to.be.true;
     });
 
     it('should match frequency crystals with pulse lasers', async () => {
@@ -386,6 +479,91 @@ Antimatter Charge S x1000`;
       const ammoTypes = stats._cargoAmmoUsed.map(u => u.ammo);
       expect(ammoTypes).to.include('Scourge Heavy Missile');
       expect(ammoTypes).to.include('Antimatter Charge S');
+    });
+  });
+
+  describe('Regression Tests', () => {
+    it('should never show 0 DPS for Naga with T2 railgun charges in cargo', async () => {
+      // Regression test for bug where railguns showed 0 DPS due to missing hybrid charge groups
+      const nagaFit = `[Naga, Splash]
+Magnetic Field Stabilizer II
+Magnetic Field Stabilizer II
+Magnetic Field Stabilizer II
+
+Sensor Booster II
+Sensor Booster II
+Sensor Booster II
+Tracking Computer II
+Tracking Computer II
+Medium Micro Jump Drive
+
+425mm Railgun II
+425mm Railgun II
+425mm Railgun II
+425mm Railgun II
+425mm Railgun II
+425mm Railgun II
+425mm Railgun II
+425mm Railgun II
+
+Medium Ancillary Current Router I
+Medium Hybrid Locus Coordinator I
+Medium Hybrid Locus Coordinator II
+
+Javelin L x2000
+Spike L x2000
+Caldari Navy Antimatter Charge L x2648
+Caldari Navy Uranium Charge L x3320
+Caldari Navy Iridium Charge L x2376`;
+
+      const parsedFit = await fitCalculator.parseEFT(nagaFit);
+      const fitSimulator = new FitSimulator(parsedFit, staticData);
+      await fitSimulator.applyEffects();
+      const stats = await fitCalculator.calculateShipStats(parsedFit, fitSimulator);
+
+      // This was the bug - Naga showed 0 DPS because T2 charges (group 373) weren't recognized
+      expect(stats.dps.total).to.be.greaterThan(0);
+      expect(stats._cargoAmmoUsed).to.exist;
+      expect(stats._cargoAmmoUsed).to.have.length(8); // 8 railguns should all get ammo
+      
+      // Should auto-select one of the available compatible charges
+      expect(stats._cargoAmmoUsed[0].ammo).to.match(/(Javelin|Spike|Antimatter|Uranium|Iridium).*L/);
+    });
+
+    it('should never show 0 DPS for Rupture with artillery and L-size projectile ammo', async () => {
+      // Regression test for bug where artillery showed 0 DPS due to missing projectile ammo group 372
+      const ruptureFit = `[Rupture, Artillery Test]
+720mm Howitzer Artillery II
+720mm Howitzer Artillery II
+720mm Howitzer Artillery II
+720mm Howitzer Artillery II
+
+10MN Afterburner II
+Medium Shield Extender II
+
+Gyrostabilizer II
+Damage Control II
+
+Medium Trimark Armor Pump I
+
+
+
+Republic Fleet EMP L x1000
+Barrage L x1000
+Hail L x1000`;
+
+      const parsedFit = await fitCalculator.parseEFT(ruptureFit);
+      const fitSimulator = new FitSimulator(parsedFit, staticData);
+      await fitSimulator.applyEffects();
+      const stats = await fitCalculator.calculateShipStats(parsedFit, fitSimulator);
+
+      // This was the bug - Rupture showed 0 DPS because advanced projectile ammo (group 372) wasn't recognized
+      expect(stats.dps.total).to.be.greaterThan(0);
+      expect(stats._cargoAmmoUsed).to.exist;
+      expect(stats._cargoAmmoUsed).to.have.length(4); // 4 artillery guns should all get ammo
+      
+      // Should auto-select one of the available compatible projectile charges
+      expect(stats._cargoAmmoUsed[0].ammo).to.match(/(EMP|Barrage|Hail).*L/);
     });
   });
 });
