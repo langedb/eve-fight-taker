@@ -357,6 +357,11 @@ The frontend (`public/script.js`) maintains enhanced state management:
 40. **Weapon Systems Test Suite**: Created dedicated test suite with 15 comprehensive test cases validating specialization bonuses, hull bonuses, stacking penalties, and T1 vs T2 behavior
 41. **Launcher Group ID Mapping**: Complete missile launcher group ID classification system for accurate weapon type detection (Group 509=Light, 510=Heavy, 771=HAM, etc.)
 42. **Performance Optimized Testing**: Achieved weapon systems test completion in under 2 seconds while maintaining comprehensive coverage of all bonus mechanics
+43. **EHP Calculation Bug Fix**: Resolved critical double-inversion bug in resistance calculations that caused impossible negative EHP values (-636,944 EHP → positive values)
+44. **AI Prompt Slot Categorization Fix**: Corrected high/low slot reversal in AI prompts where weapons showed as "LOW SLOTS" and tank modules as "HIGH SLOTS"
+45. **Rapid Heavy Missile Launcher Support**: Added complete support for group 1245 (Rapid Heavy Missile Launchers) and group 655 (Advanced Heavy Missiles) for proper cargo ammo selection
+46. **Comprehensive Cargo Ammo Test Suite**: Created 19-test suite covering all weapon types (cruise/heavy/light/rapid missiles, railguns/blasters, autocannons, pulse lasers) with size compatibility validation
+47. **ESI Fit Integration Fix**: Resolved cargo ammo selection issues for ESI-loaded fits, ensuring proper DPS calculation for all launcher types including specialized variants
 
 ### Development Notes
 
@@ -416,6 +421,10 @@ The frontend (`public/script.js`) maintains enhanced state management:
 - **Enhanced Test Coverage**: Added 15+ comprehensive range analysis tests and 15 weapon systems tests, bringing total test suite to 168+ test cases with full range tactical coverage and weapon specialization validation
 - **Critical Bug Resolution**: Fixed skill bonus over-application (5x instead of 1x) and getModifiedAttribute priority issues, achieving 82% accuracy vs dogma-engine reference (284 vs 345 DPS)
 - **Stacking Penalty Precision**: Proper PyFA-compatible stacking penalty implementation with BCS bonuses correctly applied to charge damage attributes instead of launcher multipliers
+- **EHP Bug Resolution**: Fixed impossible negative EHP calculations (e.g., -636,944 EHP) by correcting double-inversion resistance bug, now properly calculating positive EHP values
+- **AI Slot Classification Accuracy**: Corrected AI prompt slot categorization that was incorrectly showing weapons as "LOW SLOTS" and tank modules as "HIGH SLOTS"
+- **Rapid Heavy Launcher Integration**: Added full support for Rapid Heavy Missile Launchers (group 1245) and Advanced Heavy Missiles (group 655), enabling proper cargo ammo selection and DPS calculation (0 → 347.24 DPS)
+- **Comprehensive Test Coverage**: Enhanced test suite to 19 cargo ammo selection tests covering all weapon systems with 100% pass rate, ensuring reliability across all EVE weapon types and size compatibility matrices
 
 ### T3 Strategic Cruiser Architecture
 
@@ -471,3 +480,5 @@ isT3StrategicCruiser(shipName) {
 - **Unit Tests**: T3 detection, weapon classification, bonus calculation
 - **Integration Tests**: Complete Loki fit processing with expected DPS validation  
 - **Edge Cases**: Multiple subsystems, mixed weapon types, stacking penalty verification
+- zKillboard API documentation: https://github.com/zKillboard/zKillboard/wiki
+- EvE Online ESI Documentation: https://github.com/esi/esi-docs
