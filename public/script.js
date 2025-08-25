@@ -555,7 +555,7 @@ class EVEFightTaker {
     initializeAdvancedDropdown() {
         const searchInput = document.getElementById('fittings-search');
         const dropdownArrow = document.getElementById('dropdown-arrow');
-        const dropdownList = document.getElementById('fittings-dropdown-list');
+        // const dropdownList = document.getElementById('fittings-dropdown-list');
         
         // Search input events
         searchInput.addEventListener('input', (e) => {
@@ -703,7 +703,7 @@ class EVEFightTaker {
     }
 
     filterDropdownOptions(searchTerm) {
-        const options = document.querySelectorAll('.dropdown-option');
+        // const options = document.querySelectorAll('.dropdown-option');
         const groups = document.querySelectorAll('.dropdown-group');
         const lowerSearchTerm = searchTerm.toLowerCase();
         
@@ -808,17 +808,19 @@ class EVEFightTaker {
         }
         
         switch (e.key) {
-            case 'ArrowDown':
+            case 'ArrowDown': {
                 e.preventDefault();
                 const nextIndex = currentIndex < visibleOptions.length - 1 ? currentIndex + 1 : 0;
                 this.selectFitting(visibleOptions[nextIndex].dataset.index, visibleOptions[nextIndex]);
                 break;
+            }
                 
-            case 'ArrowUp':
+            case 'ArrowUp': {
                 e.preventDefault();
                 const prevIndex = currentIndex > 0 ? currentIndex - 1 : visibleOptions.length - 1;
                 this.selectFitting(visibleOptions[prevIndex].dataset.index, visibleOptions[prevIndex]);
                 break;
+            }
                 
             case 'Enter':
                 e.preventDefault();

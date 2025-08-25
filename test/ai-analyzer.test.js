@@ -159,7 +159,7 @@ describe('AIAnalyzer', () => {
     });
 
     it('should handle newlines correctly', () => {
-      const markdown = "Line 1\\nLine 2\\nLine 3";
+      const markdown = "Line 1\nLine 2\nLine 3";
       const html = aiAnalyzer.markdownToHtml(markdown);
       expect(html).to.include('<br>');
     });
@@ -230,14 +230,6 @@ describe('AIAnalyzer', () => {
 
   describe('error handling and edge cases', () => {
     it('should handle missing or malformed ship data gracefully', () => {
-      const malformedShipData = {
-        fit: {
-          shipType: null,
-          modules: {}
-        },
-        stats: {}
-      };
-
       // Should not throw errors
       expect(() => aiAnalyzer.getFallbackAnalysis({}, {})).to.not.throw();
       expect(() => aiAnalyzer.parseAnalysisResponse('')).to.not.throw();

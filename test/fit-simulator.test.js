@@ -15,7 +15,7 @@ describe('FitSimulator', () => {
       shipName: 'Rifter',
       modules: {
         high: [
-          { name: 'Light Missile Launcher II', charge: 'Scourge Light Missile' }
+          { name: 'Light Missile Launcher II', charge: 'Mjolnir Light Missile' }
         ],
         med: [
           { name: 'Medium Shield Extender II' }
@@ -67,7 +67,7 @@ describe('FitSimulator', () => {
 
     it('should create attribute stores for charges', async () => {
       await fitSimulator.applyEffects();
-      expect(fitSimulator.chargeAttributes.has('Scourge Light Missile')).to.be.true;
+      expect(fitSimulator.chargeAttributes.has('Mjolnir Light Missile')).to.be.true;
     });
 
     it('should apply BCS bonuses to missile weapons', async () => {
@@ -96,7 +96,7 @@ describe('FitSimulator', () => {
     });
 
     it('should return modified charge attributes', async () => {
-      const emDamage = await fitSimulator.getModifiedAttribute('Scourge Light Missile', 114);
+      const emDamage = await fitSimulator.getModifiedAttribute('Mjolnir Light Missile', 114);
       expect(emDamage).to.be.a('number');
       expect(emDamage).to.be.greaterThan(0);
     });

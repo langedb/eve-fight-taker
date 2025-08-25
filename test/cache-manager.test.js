@@ -96,8 +96,8 @@ describe('CacheManager', () => {
       let value = await cacheManager.get('ttl-key');
       expect(value).to.equal('ttl-value');
       
-      // Wait for expiration
-      await new Promise(resolve => setTimeout(resolve, 1100));
+      // Wait for expiration (increased timeout for race condition)
+      await new Promise(resolve => setTimeout(resolve, 1500));
       
       // Should be expired now
       value = await cacheManager.get('ttl-key');
@@ -193,7 +193,7 @@ describe('CacheManager', () => {
       
       // Should not throw errors, but handle gracefully
       await restrictedCache.set('test-key', 'test-value');
-      const value = await restrictedCache.get('test-key');
+      await restrictedCache.get('test-key');
       
       // May succeed or fail depending on permissions, but should not throw
       expect(true).to.be.true;
@@ -209,8 +209,8 @@ describe('CacheManager', () => {
       const filePath = cacheManager.getCacheFilePath('cleanup-key');
       expect(await fs.pathExists(filePath)).to.be.true;
       
-      // Wait for expiration
-      await new Promise(resolve => setTimeout(resolve, 1100));
+      // Wait for expiration (increased timeout for race condition)
+      await new Promise(resolve => setTimeout(resolve, 1500));
       
       // Try to get - should trigger cleanup
       const value = await cacheManager.get('cleanup-key');

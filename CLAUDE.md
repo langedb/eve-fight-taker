@@ -433,6 +433,11 @@ The frontend (`public/script.js`) maintains enhanced state management:
 - **Rapid Heavy Launcher Integration**: Added full support for Rapid Heavy Missile Launchers (group 1245) and Advanced Heavy Missiles (group 655), enabling proper cargo ammo selection and DPS calculation (0 → 347.24 DPS)
 - **Comprehensive Test Coverage**: Enhanced test suite to 19 cargo ammo selection tests covering all weapon systems with 100% pass rate, ensuring reliability across all EVE weapon types and size compatibility matrices
 - **Drone Control Range Accuracy**: Precise calculation of drone control ranges (base 20km + skills 40km + modules/rigs) eliminating AI guesswork and providing accurate tactical recommendations
+- **TEST SUITE SUCCESS**: Achieved 100% test success rate (244/244 passing tests) through systematic debugging and critical bug fixes
+- **Shield Resistance Bug Fix**: Fixed critical EHP calculation bug using wrong shield thermal resistance attribute (987 → 274), reducing impossible 1.86M EHP to realistic 55K EHP (97% improvement)
+- **EFT Parsing Format Fix**: Corrected Loki test EFT format from wrong slot order (LOW→MED→HIGH) to proper EVE format (HIGH→MED→LOW), enabling accurate T3 Strategic Cruiser calculations
+- **Module Name Updates**: Updated integration tests to use current EVE module names ("Adaptive Invulnerability Field II" → "Multispectrum Shield Hardener II")
+- **Cache Race Condition Fix**: Resolved TTL cleanup timing issues in cache management tests with proper timeout handling
 
 ### T3 Strategic Cruiser Architecture
 

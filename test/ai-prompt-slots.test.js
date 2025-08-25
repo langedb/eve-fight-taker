@@ -84,7 +84,7 @@ Ballistic Control System II
       expect(weaponsInLow).to.have.lengthOf(0);
     });
 
-    it('should have tank modules accessible via modules.high for AI LOW SLOTS section', async () => {
+    it('should have tank modules accessible via modules.low for AI LOW SLOTS section', async () => {
       const tankFit = `[Drake, Tank Access Test]
 Heavy Missile Launcher II
 
@@ -98,15 +98,15 @@ Damage Control II
 
       const parsedFit = await fitCalculator.parseEFT(tankFit);
       
-      // The AI prompt accesses tank modules via currentFit.modules.high
+      // The AI prompt accesses low slot modules via currentFit.modules.low
       // Verify tank modules are properly placed for AI access
-      const tankInHigh = parsedFit.modules.high.filter(m => 
+      const tankInLow = parsedFit.modules.low.filter(m => 
         m.name.includes('Damage Control') || m.name.includes('Ballistic Control') ||
         m.name.includes('Gyrostabilizer') || m.name.includes('Heat Sink')
       );
       
-      // Tank modules should be accessible via .high for AI prompt
-      expect(tankInHigh).to.have.lengthOf.greaterThan(0);
+      // Tank modules should be accessible via .low for AI prompt
+      expect(tankInLow).to.have.lengthOf.greaterThan(0);
     });
   });
 
@@ -128,19 +128,19 @@ Magnetic Field Stabilizer II
       const parsedFit = await fitCalculator.parseEFT(testFit);
 
       // Simulate what the AI prompt does:
-      // HIGH SLOTS (Weapons): uses modules.low
-      // LOW SLOTS (Modules): uses modules.high
+      // HIGH SLOTS (Weapons): uses modules.high (correct)
+      // LOW SLOTS (Modules): uses modules.low (correct)
       
-      const highSlotData = parsedFit.modules.low; // What AI shows as HIGH SLOTS
-      const lowSlotData = parsedFit.modules.high; // What AI shows as LOW SLOTS
+      const highSlotData = parsedFit.modules.high; // What AI shows as HIGH SLOTS
+      const lowSlotData = parsedFit.modules.low; // What AI shows as LOW SLOTS
       
-      // Weapons should appear in HIGH SLOTS section (via modules.low access)
+      // Weapons should appear in HIGH SLOTS section (via modules.high access)
       const weaponsInHighSection = highSlotData.filter(m => 
         m.name.includes('Blaster') || m.name.includes('Launcher') || 
         m.name.includes('Artillery') || m.name.includes('Pulse')
       );
       
-      // Tank modules should appear in LOW SLOTS section (via modules.high access)
+      // Tank modules should appear in LOW SLOTS section (via modules.low access)
       const tankInLowSection = lowSlotData.filter(m => 
         m.name.includes('Stabilizer') || m.name.includes('Damage Control') ||
         m.name.includes('Heat Sink') || m.name.includes('Gyrostabilizer')

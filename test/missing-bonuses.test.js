@@ -73,7 +73,7 @@ Tracking Computer II`;
       const parsedFit = await fitCalculator.parseEFT(eftFit);
       const fitSimulator = new FitSimulator(parsedFit, staticData);
       await fitSimulator.applyEffects();
-      const result = await fitCalculator.calculateShipStats(parsedFit, fitSimulator);
+      await fitCalculator.calculateShipStats(parsedFit, fitSimulator);
 
       // Should have some module bonus from Tracking Computer
       const moduleCount = fitSimulator.fitBonuses.modules.trackingComputerCount || 0;
@@ -129,14 +129,14 @@ Warrior II x3
 Hornet EC-300 x5
 
 Core Scanner Probe I x16
-Tremor M x500
-Republic Fleet Depleted Uranium M x500
+Tremor L x500
+Republic Fleet Depleted Uranium L x500
 Hornet EC-300 x5
-Republic Fleet EMP M x500
-EMP M x1
+Republic Fleet EMP L x500
+EMP L x1
 Combat Scanner Probe I x16
-Quake M x3000
-Republic Fleet Proton M x500
+Quake L x3000
+Republic Fleet Proton L x500
 F-12 Enduring Tracking Computer x1
 Warrior II x3
 Tracking Speed Script x1`;
@@ -156,34 +156,38 @@ Tracking Speed Script x1`;
   });
 
   describe('Ammunition Damage Calculation', () => {
-    it('should properly calculate Quake M damage attributes', async function() {
+    it('should properly calculate Quake L damage attributes', async function() {
       this.timeout(30000);
 
       const eftFit = `[Rupture, Test fit]
 720mm Howitzer Artillery II
 
-Quake M x1000`;
+
+
+
+
+Quake L x1000`;
 
       const parsedFit = await fitCalculator.parseEFT(eftFit);
       const fitSimulator = new FitSimulator(parsedFit, staticData);
       await fitSimulator.applyEffects();
       const result = await fitCalculator.calculateShipStats(parsedFit, fitSimulator);
 
-      // Should auto-load Quake M and have proper damage
-      expect(parsedFit.modules.high[0].charge).to.equal('Quake M');
+      // Should auto-load Quake L and have proper damage
+      expect(parsedFit.modules.high[0].charge).to.equal('Quake L');
       expect(result.dps.total).to.be.greaterThan(20); // Should have significant DPS
     });
 
-    it('should verify Quake M damage attributes from static data', async function() {
+    it('should verify Quake L damage attributes from static data', async function() {
       this.timeout(30000);
 
-      // Get Quake M item info from static data 
-      const quakeM = staticData.findItemByName('Quake M');
-      expect(quakeM).to.not.be.null;
+      // Get Quake L item info from static data 
+      const quakeL = staticData.findItemByName('Quake L');
+      expect(quakeL).to.not.be.null;
       
       // Should have damage attributes
-      console.log('Quake M type ID:', quakeM.typeID);
-      console.log('Quake M group ID:', quakeM.groupID);
+      console.log('Quake L type ID:', quakeL.typeID);
+      console.log('Quake L group ID:', quakeL.groupID);
     });
   });
 });

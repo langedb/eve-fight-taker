@@ -70,9 +70,9 @@ describe('StaticData', () => {
         expect(attributes).to.be.an('array');
         expect(attributes.length).to.be.greaterThan(0);
         
-        // Should have typical ship attributes
-        const massAttr = attributes.find(attr => attr.attributeID === 4); // mass
-        expect(massAttr).to.exist;
+        // Should have typical ship attributes - check for structure HP (attribute 37) which ships always have
+        const structureHpAttr = attributes.find(attr => attr.attributeID === 37); // structure HP
+        expect(structureHpAttr).to.exist;
       }
     });
 
