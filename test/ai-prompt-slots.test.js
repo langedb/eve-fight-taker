@@ -12,16 +12,16 @@ describe('AI Prompt Slot Categorization Fix', () => {
   });
 
   describe('EFT Format Parsing Validation', () => {
-    it('should parse EFT format in correct order: High → Med → Low → Rigs', async () => {
+    it('should parse EFT format in correct order: Low → Med → High → Rigs', async () => {
       const testFit = `[Hurricane, Section Order Test]
-720mm Howitzer Artillery II
-720mm Howitzer Artillery II
+Gyrostabilizer II
+Damage Control II
 
 10MN Afterburner II
 Large Shield Extender II
 
-Gyrostabilizer II
-Damage Control II
+720mm Howitzer Artillery II
+720mm Howitzer Artillery II
 
 Medium Core Defense Field Extender I
 
@@ -54,45 +54,44 @@ Medium Core Defense Field Extender I
   });
 
   describe('AI Prompt Data Structure Validation', () => {
-    // The actual fix was in the AI prompt template:
-    // HIGH SLOTS (Weapons): ${await this.formatModuleList(currentFit.modules.low, staticData)}
-    // LOW SLOTS (Modules): ${await this.formatModuleList(currentFit.modules.high, staticData)}
+    // The fix was in the EFT parser to use correct Low → Med → High order
+    // The AI prompt correctly calls:
+    // HIGH SLOTS (Weapons): ${await this.formatModuleList(currentFit.modules.high, staticData)}
+    // LOW SLOTS (Modules): ${await this.formatModuleList(currentFit.modules.low, staticData)}
     
-    // This validates that the data is structured correctly for the AI prompt
-    it('should have weapons accessible via modules.low for AI HIGH SLOTS section', async () => {
+    // This validates that weapons end up in the correct .high slot after EFT parsing
+    it('should have weapons accessible via modules.high for AI HIGH SLOTS section', async () => {
       const weaponFit = `[Caracal, Weapon Access Test]
-Heavy Missile Launcher II
-Heavy Missile Launcher II
+Ballistic Control System II
 
 Large Shield Extender II
 
-Ballistic Control System II
+Heavy Missile Launcher II
+Heavy Missile Launcher II
 
 `;
 
       const parsedFit = await fitCalculator.parseEFT(weaponFit);
       
-      // The AI prompt accesses weapons via currentFit.modules.low
-      // So we need to verify weapons are NOT in .low (which was the bug)
-      const weaponsInLow = parsedFit.modules.low.filter(m => 
+      // With correct EFT parsing (Low → Med → High), weapons should be in .high
+      const weaponsInHigh = parsedFit.modules.high.filter(m => 
         m.name.includes('Launcher') || m.name.includes('Blaster') || 
         m.name.includes('Artillery') || m.name.includes('Pulse')
       );
       
-      // In the working system, weapons should not be in .low
-      // (they should be in .high, but AI prompt maps .low to HIGH SLOTS)
-      expect(weaponsInLow).to.have.lengthOf(0);
+      // Weapons should now correctly be in .high (not .low as in the old bug)
+      expect(weaponsInHigh).to.have.lengthOf(2);
     });
 
     it('should have tank modules accessible via modules.low for AI LOW SLOTS section', async () => {
       const tankFit = `[Drake, Tank Access Test]
-Heavy Missile Launcher II
+Ballistic Control System II
+Damage Control II
 
 Large Shield Extender II
 Adaptive Invulnerability Field II
 
-Ballistic Control System II
-Damage Control II
+Heavy Missile Launcher II
 
 `;
 
@@ -116,12 +115,12 @@ Damage Control II
     
     it('should prevent weapons from being labeled as LOW SLOTS in AI prompt', async () => {
       const testFit = `[Thorax, Slot Label Test]
-Neutron Blaster Cannon II
-Neutron Blaster Cannon II
+Magnetic Field Stabilizer II
 
 10MN Afterburner II
 
-Magnetic Field Stabilizer II
+Neutron Blaster Cannon II
+Neutron Blaster Cannon II
 
 `;
 
@@ -146,9 +145,9 @@ Magnetic Field Stabilizer II
         m.name.includes('Heat Sink') || m.name.includes('Gyrostabilizer')
       );
       
-      // This test validates the AI prompt data access is correct
-      // If this fails, weapons would show as "LOW SLOTS" again (the original bug)
-      expect(weaponsInHighSection.length + tankInLowSection.length).to.be.greaterThan(0);
+      // Weapons should be in HIGH section and tank modules in LOW section
+      expect(weaponsInHighSection.length).to.be.greaterThan(0);
+      expect(tankInLowSection.length).to.be.greaterThan(0);
       
       // Ensure proper separation - weapons shouldn't be in LOW section, tank shouldn't be in HIGH section
       const weaponsInLowSection = lowSlotData.filter(m => 

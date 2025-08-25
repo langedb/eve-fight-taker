@@ -367,6 +367,11 @@ The frontend (`public/script.js`) maintains enhanced state management:
 48. **Precise Drone Control Range Calculation**: Comprehensive drone control range calculation system for accurate AI tactical recommendations
 49. **Drone Mechanics Integration**: Complete EVE University drone mechanics implementation including mobile vs sentry drone distinction
 50. **AI Drone Tactical Enhancement**: Replaced guesswork with calculated drone control ranges based on fitted modules and all-V skills
+51. **Hydraulic Bay Thruster Rig Implementation**: Complete support for missile velocity bonuses from Hydraulic Bay Thrusters rigs (T1: +10%, T2: +15% velocity)
+52. **Enhanced Missile Range Calculation**: Range calculation now uses modified velocity (velocity × flight time) accounting for all rig bonuses and stacking penalties
+53. **Comprehensive Rig Bonus System**: Support for all major rig types including velocity, damage, tank, and range bonuses with proper stacking penalty application
+54. **Enhanced Weapons Array**: Added weapons array to fit stats containing velocity, range, cycle time, and DPS data for accurate tactical analysis
+55. **AI Rig Analysis Integration**: AI prompts now include detailed rig performance analysis with tactical impact descriptions and actual weapon ranges
 
 ### Development Notes
 
@@ -433,6 +438,8 @@ The frontend (`public/script.js`) maintains enhanced state management:
 - **Rapid Heavy Launcher Integration**: Added full support for Rapid Heavy Missile Launchers (group 1245) and Advanced Heavy Missiles (group 655), enabling proper cargo ammo selection and DPS calculation (0 → 347.24 DPS)
 - **Comprehensive Test Coverage**: Enhanced test suite to 19 cargo ammo selection tests covering all weapon systems with 100% pass rate, ensuring reliability across all EVE weapon types and size compatibility matrices
 - **Drone Control Range Accuracy**: Precise calculation of drone control ranges (base 20km + skills 40km + modules/rigs) eliminating AI guesswork and providing accurate tactical recommendations
+- **Rig Bonus Implementation**: Successfully implemented Hydraulic Bay Thruster velocity bonuses (user's Caracal: 3,750 → 5,550 m/s velocity, 27.9 → 36.1km range)
+- **AI Tactical Enhancement**: AI prompts now include comprehensive rig analysis with tactical impact assessment, enabling accurate 100-120km kiting recommendations instead of incorrect 50km brawling suggestions
 - **TEST SUITE SUCCESS**: Achieved 100% test success rate (244/244 passing tests) through systematic debugging and critical bug fixes
 - **Shield Resistance Bug Fix**: Fixed critical EHP calculation bug using wrong shield thermal resistance attribute (987 → 274), reducing impossible 1.86M EHP to realistic 55K EHP (97% improvement)
 - **EFT Parsing Format Fix**: Corrected Loki test EFT format from wrong slot order (LOW→MED→HIGH) to proper EVE format (HIGH→MED→LOW), enabling accurate T3 Strategic Cruiser calculations

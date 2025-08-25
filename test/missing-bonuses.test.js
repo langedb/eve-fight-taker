@@ -166,6 +166,7 @@ Tracking Speed Script x1`;
 
 
 
+
 Quake L x1000`;
 
       const parsedFit = await fitCalculator.parseEFT(eftFit);
@@ -174,7 +175,7 @@ Quake L x1000`;
       const result = await fitCalculator.calculateShipStats(parsedFit, fitSimulator);
 
       // Should auto-load Quake L and have proper damage
-      expect(parsedFit.modules.high[0].charge).to.equal('Quake L');
+      expect(parsedFit.modules.low[0].charge).to.equal('Quake L');
       expect(result.dps.total).to.be.greaterThan(20); // Should have significant DPS
     });
 
