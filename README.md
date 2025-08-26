@@ -142,7 +142,7 @@ The system performs comprehensive combat analysis using verified EVE Online mech
 - **No ESI Dependency**: All calculations work offline using static data
 
 ### Google Gemini AI
-- **Gemini 2.5 Flash**: Latest and most advanced AI model for tactical analysis
+- **Gemini 2.5 Flash**: Provides tactical analysis
 - **Detailed Prompts**: Weapon-specific, range-aware combat analysis
 - **Tactical Recommendations**: Ammo selection, module usage, engagement strategies
 - **Natural Language**: Human-readable combat summaries and advice
@@ -191,22 +191,10 @@ The fit calculation engine is fully compatible with [PyFA](https://github.com/py
 - **T3 Strategic Cruiser Engine**: Full hull and subsystem bonus calculations
 - **Rig Processing**: Complete rig bonus system with velocity, range, and tank bonuses
 
-### Calculation Accuracy
-- **609% DPS Improvement**: Enhanced from 40 DPS to 284+ DPS through verified mechanics
-- **Fighter Squadron Support**: Accurate fighter DPS (Nyx: 2,392.5 DPS with Einherji II x29)  
-- **Advanced Weapon Systems**: HAW weapons, breacher pods, doomsday targeting restrictions
-- **PyFA Validation**: Cross-referenced calculations with PyFA for maximum accuracy
-
-### Test Coverage
-- **244 Comprehensive Tests**: Covering all major components and edge cases
-- **100% Test Success Rate**: Systematic debugging ensures reliability
-- **Performance Optimized**: Complete test suite runs in under 10 seconds
-
 ## Performance Metrics
 
 - **Static Data**: 50,243 EVE items loaded with fast name-based lookup
 - **Calculation Speed**: Real-time ship statistics with complex bonus stacking
-- **AI Response Time**: Sub-3-second tactical analysis with Gemini 2.5 Flash
 - **Memory Efficient**: Optimized attribute storage and caching system
 
 ## Development
