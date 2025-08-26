@@ -118,3 +118,21 @@ Desktop.ini
 
 # ESLint cache
 .eslintcache
+
+# Modern build tools
+.turbo
+.next
+.nuxt
+.output
+.vercel
+.netlify
+
+# Package manager lock files (except npm)
+yarn.lock
+pnpm-lock.yaml
+
+# Integration test cache directories
+test-integration-cache-*/
+
+# Claude Code specific
+.claude_code/

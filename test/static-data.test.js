@@ -69,7 +69,7 @@ describe('StaticData', () => {
         const attributes = rifterResult.attributes;
         expect(attributes).to.be.an('array');
         expect(attributes.length).to.be.greaterThan(0);
-        
+
         // Should have typical ship attributes - check for structure HP (attribute 37) which ships always have
         const structureHpAttr = attributes.find(attr => attr.attributeID === 37); // structure HP
         expect(structureHpAttr).to.exist;
@@ -102,7 +102,7 @@ describe('StaticData', () => {
       const launcher = await staticData.searchItemByName('Light Missile Launcher II');
       expect(launcher).to.not.be.null;
       expect(launcher.group_id).to.be.a('number');
-      
+
       // Should be in a missile launcher group
       const groupInfo = staticData.groupsData.get(launcher.group_id);
       expect(groupInfo).to.not.be.null;
@@ -113,9 +113,9 @@ describe('StaticData', () => {
       const missile = await staticData.searchItemByName('Scourge Light Missile');
       expect(missile).to.not.be.null;
       expect(missile.attributes).to.be.an('array');
-      
+
       // Should have damage attributes (114=EM, 116=Explosive, 117=Kinetic, 118=Thermal)
-      const damageAttrs = missile.attributes.filter(attr => 
+      const damageAttrs = missile.attributes.filter(attr =>
         [114, 116, 117, 118].includes(attr.attributeID)
       );
       expect(damageAttrs.length).to.be.greaterThan(0);

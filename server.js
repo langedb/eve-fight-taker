@@ -64,18 +64,18 @@ app.get('/callback', async (req, res) => {
   try {
     const { code } = req.query;
     console.log('OAuth callback - code received:', code ? 'Yes' : 'No');
-    
+
     const tokenData = await esiAuth.exchangeCodeForTokens(code);
     console.log('Token data received:', tokenData ? 'Yes' : 'No');
     console.log('Access token:', tokenData.access_token ? tokenData.access_token.substring(0, 20) + '...' : 'None');
-    
+
     req.session.accessToken = tokenData.access_token;
     req.session.refreshToken = tokenData.refresh_token;
-    
+
     // Get character info
     const characterInfo = await esiAuth.getCharacterInfo(tokenData.access_token);
     req.session.character = characterInfo;
-    
+
     res.redirect('/?authenticated=true');
   } catch (error) {
     console.error('OAuth callback error:', error.message);
@@ -90,38 +90,38 @@ app.get('/api/character/ship', async (req, res) => {
     if (!req.session.accessToken) {
       return res.status(401).json({ error: 'Not authenticated' });
     }
-    
+
     const ship = await esiAuth.getCurrentShip(req.session.accessToken);
-    
+
     // Get ship type name from static data
     const shipInfo = await fitCalculator.staticData.getItemInfo(ship.ship_type_id);
     const shipTypeName = shipInfo ? shipInfo.name : `Ship Type ${ship.ship_type_id}`;
-    
+
     // Use the actual ship name from ESI if available, otherwise use ship type name
     const shipName = ship.ship_name || shipTypeName;
     const fitName = ship.ship_name ? ship.ship_name : 'Current Ship';
-    
-    // Create a basic EFT format for the current ship 
+
+    // Create a basic EFT format for the current ship
     // Note: ESI doesn't provide fitted modules for security reasons
     const eftFormat = `[${shipTypeName}, ${fitName}]\n[Empty High slot]\n[Empty High slot]\n\n[Empty Med slot]\n[Empty Med slot]\n\n[Empty Low slot]\n[Empty Low slot]\n\n[Empty Rig slot]\n\n\n\nNote: ESI API does not provide access to fitted modules for security reasons.\nThis shows only ship type and name. For full fitting analysis,\nplease paste your EFT fit in the Target Ship section.`;
-    
+
     // Calculate stats for current ship hull only
-    const parsedFit = { 
-      shipType: shipTypeName, 
-      fitName: fitName, 
+    const parsedFit = {
+      shipType: shipTypeName,
+      fitName: fitName,
       modules: { high: [], med: [], low: [], rig: [], subsystem: [] },
       drones: [],
       cargo: [],
       implants: []
     };
     const stats = await fitCalculator.calculateFitStats(parsedFit);
-    
-    res.json({ 
-      ship: { 
-        ...ship, 
+
+    res.json({
+      ship: {
+        ...ship,
         ship_type_name: shipTypeName,
         display_name: shipName
-      }, 
+      },
       fit: parsedFit,
       stats: stats,
       eft: eftFormat
@@ -162,31 +162,31 @@ app.post('/api/convert-esi-to-eft', async (req, res) => {
 app.post('/api/analyze-combat', async (req, res) => {
   try {
     const { currentFit, targetFit } = req.body;
-    
+
     if (!currentFit || !targetFit) {
       return res.status(400).json({ error: 'Both current and target fits required' });
     }
-    
+
     console.log('DEBUG: Received fit data');
     console.log('Current fit ship:', currentFit.shipType);
     console.log('Target fit ship:', targetFit.shipType);
     console.log('Current fit high slots:', currentFit.modules?.high?.length || 0);
     console.log('Target fit high slots:', targetFit.modules?.high?.length || 0);
-    
+
     // Calculate stats for both fits
     const currentStats = await fitCalculator.calculateFitStats(currentFit);
     const targetStats = await fitCalculator.calculateFitStats(targetFit);
-    
+
     // Get AI analysis with complete fit data
     const analysis = await aiAnalyzer.analyzeCombat(
       { stats: currentStats, fit: currentFit },
       { stats: targetStats, fit: targetFit }
     );
-    
+
     console.log('DEBUG: AI analysis result');
     console.log('Has ammo recommendations:', !!(analysis.ammoRecommendations?.length));
     console.log('Has module recommendations:', !!(analysis.moduleRecommendations?.length));
-    
+
     res.json({
       currentStats,
       targetStats,
@@ -201,14 +201,14 @@ app.post('/api/analyze-combat', async (req, res) => {
 app.post('/api/parse-eft', async (req, res) => {
   try {
     const { eftText } = req.body;
-    
+
     if (!eftText) {
       return res.status(400).json({ error: 'EFT text required' });
     }
-    
+
     const parsedFit = await fitCalculator.parseEFT(eftText);
     const stats = await fitCalculator.calculateFitStats(parsedFit);
-    
+
     res.json({ fit: parsedFit, stats });
   } catch (error) {
     console.error('Error parsing EFT:', error);
@@ -219,31 +219,31 @@ app.post('/api/parse-eft', async (req, res) => {
 app.post('/api/parse-zkill', async (req, res) => {
   try {
     const { zkillUrl } = req.body;
-    
+
     if (!zkillUrl) {
       return res.status(400).json({ error: 'zKillboard URL required' });
     }
-    
+
     console.log('Parsing zKillboard URL:', zkillUrl);
-    
+
     // Parse the zKillboard URL and get EFT format
     const zkillData = await zkillboardParser.parseZKillboardURL(zkillUrl);
-    
+
     console.log('=== EFT TEXT FROM ZKILLBOARD ===');
     console.log(zkillData.eftText);
     console.log('=== END EFT TEXT ===');
-    
+
     // Parse the EFT format using our existing parser
     const parsedFit = await fitCalculator.parseEFT(zkillData.eftText);
     const stats = await fitCalculator.calculateFitStats(parsedFit);
-    
+
     // Add zkillboard metadata
     parsedFit.zkillboard = {
       killID: zkillData.killID,
       originalUrl: zkillData.originalUrl,
       killTime: zkillData.killTime
     };
-    
+
     res.json({ fit: parsedFit, stats });
   } catch (error) {
     console.error('Error parsing zKillboard URL:', error);
@@ -255,19 +255,19 @@ app.get('/api/zkillboard/:shipTypeId', async (req, res) => {
   try {
     const { shipTypeId } = req.params;
     const cacheKey = `zkb_${shipTypeId}`;
-    
+
     // Check cache first
     let data = await cacheManager.get(cacheKey);
-    
+
     if (!data) {
       // Fetch from zKillboard
       const response = await axios.get(`https://zkillboard.com/api/shipID/${shipTypeId}/`);
       data = response.data;
-      
+
       // Cache for 1 hour
       await cacheManager.set(cacheKey, data, 3600);
     }
-    
+
     res.json(data);
   } catch (error) {
     console.error('Error fetching zKillboard data:', error);
@@ -278,10 +278,10 @@ app.get('/api/zkillboard/:shipTypeId', async (req, res) => {
 app.get('/api/get-ship-name/:ship_type_id', async (req, res) => {
   try {
     const { ship_type_id } = req.params;
-    
+
     // Use static data to look up ship name
     const shipInfo = await fitCalculator.staticData.getItemInfo(parseInt(ship_type_id));
-    
+
     if (shipInfo) {
       res.json({ name: shipInfo.name });
     } else {
@@ -297,19 +297,19 @@ app.get('/api/get-ship-name/:ship_type_id', async (req, res) => {
 app.get('/api/search/character/:characterName', async (req, res) => {
   try {
     const { characterName } = req.params;
-    
+
     if (!characterName || characterName.length < 3) {
       return res.status(400).json({ error: 'Character name must be at least 3 characters' });
     }
 
     console.log(`Searching for character: "${characterName}"`);
-    
+
     // Use the current ESI POST /universe/ids/ endpoint (no authentication required)
-    const searchUrl = `https://esi.evetech.net/latest/universe/ids/`;
-    console.log(`Using ESI POST /universe/ids/ for character search`);
-    
+    const searchUrl = 'https://esi.evetech.net/latest/universe/ids/';
+    console.log('Using ESI POST /universe/ids/ for character search');
+
     try {
-      const searchResponse = await axios.post(searchUrl, 
+      const searchResponse = await axios.post(searchUrl,
         [characterName], // Array of names to search for
         {
           headers: {
@@ -318,11 +318,11 @@ app.get('/api/search/character/:characterName', async (req, res) => {
           }
         }
       );
-      
+
       console.log('ESI search response:', searchResponse.data);
-      
+
       if (!searchResponse.data.characters || searchResponse.data.characters.length === 0) {
-        return res.status(404).json({ 
+        return res.status(404).json({
           error: `No character found named "${characterName}".`,
           suggestion: 'Make sure the character name is spelled exactly as it appears in game.'
         });
@@ -351,9 +351,9 @@ app.get('/api/search/character/:characterName', async (req, res) => {
     } catch (esiError) {
       console.log(`ESI search failed for "${characterName}":`, esiError.response?.status, esiError.response?.statusText);
       console.log('Error details:', esiError.response?.data);
-      
+
       if (esiError.response?.status === 404) {
-        return res.status(404).json({ 
+        return res.status(404).json({
           error: `Character "${characterName}" not found.`,
           suggestion: 'Make sure the character name is spelled exactly as it appears in game.'
         });
@@ -363,13 +363,13 @@ app.get('/api/search/character/:characterName', async (req, res) => {
           suggestion: 'Please enter a valid EVE character name.'
         });
       }
-      
+
       throw esiError;
     }
 
   } catch (error) {
     console.error('Error searching for character:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Character search failed.',
       suggestion: 'Please try again or use the manual EFT input method instead.'
     });
@@ -397,7 +397,7 @@ app.get('/api/character/:characterId/death/:shipTypeId', async (req, res) => {
     // Get recent losses from zKillboard
     const zkillUrl = `https://zkillboard.com/api/losses/characterID/${characterId}/`;
     console.log(`Fetching zKillboard losses from: ${zkillUrl}`);
-    
+
     const zkillResponse = await axios.get(zkillUrl, {
       headers: {
         'User-Agent': 'EVE Fight Taker - Combat Analysis Tool - Contact: your-email@example.com'
@@ -406,26 +406,26 @@ app.get('/api/character/:characterId/death/:shipTypeId', async (req, res) => {
 
     const killmails = zkillResponse.data;
     console.log(`Found ${killmails.length} total killmails for character`);
-    
+
     // Filter for specific ship type by checking each killmail
     console.log(`Looking for ship type ID: ${shipTypeId} (as integer: ${parseInt(shipTypeId)})`);
-    
+
     let shipTypeKill = null;
     let killmailData = null;
-    
+
     // Check each killmail until we find one with the right ship type
     for (let i = 0; i < Math.min(killmails.length, 20); i++) { // Limit to first 20 to avoid rate limits
       const km = killmails[i];
       console.log(`Checking killmail ${i}: ${km.killmail_id}`);
-      
+
       try {
         // Get full killmail data from ESI
         const killmailUrl = `https://esi.evetech.net/latest/killmails/${km.killmail_id}/${km.zkb.hash}/`;
         const killmailResponse = await axios.get(killmailUrl);
         const fullKillmailData = killmailResponse.data;
-        
+
         console.log(`  Ship type: ${fullKillmailData.victim.ship_type_id}`);
-        
+
         if (fullKillmailData.victim.ship_type_id === parseInt(shipTypeId)) {
           console.log(`  ✅ Match found! Using killmail ${km.killmail_id}`);
           shipTypeKill = km;
@@ -437,9 +437,9 @@ app.get('/api/character/:characterId/death/:shipTypeId', async (req, res) => {
         continue;
       }
     }
-    
+
     if (!shipTypeKill || !killmailData) {
-      return res.status(404).json({ 
+      return res.status(404).json({
         error: 'No recent deaths found in that ship type',
         suggestion: 'The character may not have died in this ship type recently, or the killmail may not be available.'
       });
@@ -447,7 +447,7 @@ app.get('/api/character/:characterId/death/:shipTypeId', async (req, res) => {
 
     // Convert killmail to EFT format
     const eftText = await fitCalculator.killmailToEFT(killmailData);
-    
+
     // Parse the EFT and calculate stats
     const parsedFit = await fitCalculator.parseEFT(eftText);
     const stats = await fitCalculator.calculateFitStats(parsedFit);
@@ -471,11 +471,11 @@ app.get('/api/character/:characterId/death/:shipTypeId', async (req, res) => {
     });
   } catch (error) {
     console.error('Error getting character death:', error);
-    
+
     if (error.response?.status === 404) {
       return res.status(404).json({ error: 'Character or killmail not found' });
     }
-    
+
     res.status(500).json({ error: 'Failed to get character death data' });
   }
 });

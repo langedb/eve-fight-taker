@@ -54,7 +54,7 @@ Warrior II x2`; // A simple fit with just drones
 
     await fitSimulator._initializeAttributes(); // Manually call initializeAttributes
 
-    
+
 
     const warriorIIAttributes = fitSimulator.droneAttributes.get('Warrior II');
     expect(warriorIIAttributes).to.exist;

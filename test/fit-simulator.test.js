@@ -29,7 +29,7 @@ describe('FitSimulator', () => {
       drones: [],
       cargo: []
     };
-    
+
     fitSimulator = new FitSimulator(testFit, staticData);
   });
 
@@ -72,7 +72,7 @@ describe('FitSimulator', () => {
 
     it('should apply BCS bonuses to missile weapons', async () => {
       await fitSimulator.applyEffects();
-      
+
       const launcherDamageMultiplier = await fitSimulator.getModifiedAttribute('Light Missile Launcher II', 64);
       expect(launcherDamageMultiplier).to.be.greaterThan(1.0); // Should have BCS bonus
     });
@@ -234,7 +234,7 @@ describe('FitSimulator', () => {
 
       const badSimulator = new FitSimulator(badFit, staticData);
       await badSimulator.applyEffects();
-      
+
       // Should not crash
       expect(true).to.be.true;
     });
@@ -255,7 +255,7 @@ describe('FitSimulator', () => {
 
       const badSimulator = new FitSimulator(badFit, staticData);
       await badSimulator.applyEffects();
-      
+
       // Should not crash
       expect(true).to.be.true;
     });

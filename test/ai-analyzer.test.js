@@ -25,26 +25,26 @@ describe('AIAnalyzer', () => {
   describe('parseAnalysisResponse()', () => {
     it('should parse valid JSON response', () => {
       const jsonResponse = JSON.stringify({
-        winChance: "75%",
-        timeToKill: "45 seconds",
-        majorAdvantages: ["Superior range", "Better tracking"],
-        majorDisadvantages: ["Lower tank"],
-        ammoRecommendations: ["Use Barrage for range"],
-        moduleRecommendations: ["Activate MWD early"],
+        winChance: '75%',
+        timeToKill: '45 seconds',
+        majorAdvantages: ['Superior range', 'Better tracking'],
+        majorDisadvantages: ['Lower tank'],
+        ammoRecommendations: ['Use Barrage for range'],
+        moduleRecommendations: ['Activate MWD early'],
         tactics: {
-          range: "15-20km",
-          movement: "Orbit at speed",
-          engagement: "Open at long range",
-          disengagement: "Burn away if shields drop"
+          range: '15-20km',
+          movement: 'Orbit at speed',
+          engagement: 'Open at long range',
+          disengagement: 'Burn away if shields drop'
         },
-        summary: "Good matchup with proper kiting"
+        summary: 'Good matchup with proper kiting'
       });
 
       const parsed = aiAnalyzer.parseAnalysisResponse(jsonResponse);
-      expect(parsed.winChance).to.equal("75%");
+      expect(parsed.winChance).to.equal('75%');
       expect(parsed.majorAdvantages).to.be.an('array').with.length(2);
       expect(parsed.tactics).to.be.an('object');
-      expect(parsed.tactics.range).to.equal("15-20km");
+      expect(parsed.tactics.range).to.equal('15-20km');
     });
 
     it('should handle response with markdown code blocks', () => {
@@ -69,14 +69,14 @@ describe('AIAnalyzer', () => {
       `;
 
       const parsed = aiAnalyzer.parseAnalysisResponse(markdownResponse);
-      expect(parsed.winChance).to.equal("60%");
-      expect(parsed.majorAdvantages).to.include("Speed advantage");
+      expect(parsed.winChance).to.equal('60%');
+      expect(parsed.majorAdvantages).to.include('Speed advantage');
     });
 
     it('should return fallback for invalid JSON', () => {
-      const invalidResponse = "This is not valid JSON at all";
+      const invalidResponse = 'This is not valid JSON at all';
       const parsed = aiAnalyzer.parseAnalysisResponse(invalidResponse);
-      
+
       expect(parsed.winChance).to.exist;
       expect(parsed.summary).to.include('fallback');
     });
@@ -88,7 +88,7 @@ describe('AIAnalyzer', () => {
       }`;
 
       const parsed = aiAnalyzer.parseAnalysisResponse(partialResponse);
-      expect(parsed.winChance).to.equal("50%");
+      expect(parsed.winChance).to.equal('50%');
       expect(parsed.timeToKill).to.exist; // Should be filled with default
       expect(parsed.tactics).to.exist; // Should be filled with default
     });
@@ -111,7 +111,7 @@ describe('AIAnalyzer', () => {
       };
 
       const fallback = aiAnalyzer.getFallbackAnalysis(currentStats, targetStats);
-      
+
       expect(fallback.winChance).to.be.a('string');
       expect(fallback.timeToKill).to.be.a('string');
       expect(fallback.majorAdvantages).to.be.an('array');
@@ -141,31 +141,31 @@ describe('AIAnalyzer', () => {
 
   describe('markdownToHtml()', () => {
     it('should convert bold markdown to HTML', () => {
-      const markdown = "This is **bold text** and normal text";
+      const markdown = 'This is **bold text** and normal text';
       const html = aiAnalyzer.markdownToHtml(markdown);
       expect(html).to.include('<strong>bold text</strong>');
     });
 
     it('should convert italic markdown to HTML', () => {
-      const markdown = "This is *italic text* and normal text";
+      const markdown = 'This is *italic text* and normal text';
       const html = aiAnalyzer.markdownToHtml(markdown);
       expect(html).to.include('<em>italic text</em>');
     });
 
     it('should convert code blocks to HTML', () => {
-      const markdown = "Use `this command` to execute";
+      const markdown = 'Use `this command` to execute';
       const html = aiAnalyzer.markdownToHtml(markdown);
       expect(html).to.include('<code>this command</code>');
     });
 
     it('should handle newlines correctly', () => {
-      const markdown = "Line 1\nLine 2\nLine 3";
+      const markdown = 'Line 1\nLine 2\nLine 3';
       const html = aiAnalyzer.markdownToHtml(markdown);
       expect(html).to.include('<br>');
     });
 
     it('should handle multiple formatting types', () => {
-      const markdown = "**Bold** and *italic* with `code`";
+      const markdown = '**Bold** and *italic* with `code`';
       const html = aiAnalyzer.markdownToHtml(markdown);
       expect(html).to.include('<strong>Bold</strong>');
       expect(html).to.include('<em>italic</em>');
@@ -312,7 +312,7 @@ describe('AIAnalyzer', () => {
         const radarModule = { name: 'Radar ECM II' };
         const magnetometricModule = { name: 'Magnetometric ECM II' };
         const gravimetricModule = { name: 'Gravimetric ECM II' };
-        
+
         expect(aiAnalyzer.isEWARModule(ladarModule)).to.be.true;
         expect(aiAnalyzer.isEWARModule(radarModule)).to.be.true;
         expect(aiAnalyzer.isEWARModule(magnetometricModule)).to.be.true;
@@ -465,8 +465,8 @@ describe('AIAnalyzer', () => {
     it('should include range strategy in prompt building', async () => {
       // Mock the static data and ensureStaticData
       aiAnalyzer.staticData = {
-        searchItemByName: async (name) => ({ 
-          name: name, 
+        searchItemByName: async (name) => ({
+          name: name,
           group_name: 'Test Group',
           attributes: []
         }),
@@ -487,7 +487,7 @@ describe('AIAnalyzer', () => {
           drones: [],
           cargo: [{ name: 'Missile Range Script', quantity: 1 }]
         },
-        stats: { 
+        stats: {
           dps: { total: 200, em: 0, thermal: 200, kinetic: 0, explosive: 0 },
           ehp: { total: 25000, hull: 5000, armor: 8000, shield: 12000 },
           speed: 1200,
@@ -505,7 +505,7 @@ describe('AIAnalyzer', () => {
           drones: [],
           cargo: []
         },
-        stats: { 
+        stats: {
           dps: { total: 100, em: 0, thermal: 0, kinetic: 0, explosive: 100 },
           ehp: { total: 8000, hull: 2000, armor: 2000, shield: 4000 },
           speed: 2000,
@@ -516,7 +516,7 @@ describe('AIAnalyzer', () => {
       };
 
       const prompt = await aiAnalyzer.buildCombatAnalysisPrompt(mockCurrentShipData, mockTargetShipData);
-      
+
       // Check that range analysis guidance is included
       expect(prompt).to.include('RANGE ANALYSIS AND ENGAGEMENT STRATEGY');
       expect(prompt).to.include('KITING STRATEGY');
@@ -546,7 +546,7 @@ describe('AIAnalyzer', () => {
           drones: [{ name: 'Hobgoblin SD-300', quantity: 5 }],
           cargo: []
         },
-        stats: { 
+        stats: {
           dps: { total: 200, em: 0, thermal: 200, kinetic: 0, explosive: 0 },
           ehp: { total: 25000, hull: 5000, armor: 8000, shield: 12000 },
           speed: 1200,
@@ -560,16 +560,16 @@ describe('AIAnalyzer', () => {
         fit: {
           shipName: 'Rupture',
           fitName: 'Target Fit',
-          modules: { 
+          modules: {
             high: [{ name: '720mm Howitzer Artillery II' }],
-            med: [{ name: 'Remote Tracking Disruptor II' }], 
-            low: [], 
-            rig: [] 
+            med: [{ name: 'Remote Tracking Disruptor II' }],
+            low: [],
+            rig: []
           },
           drones: [{ name: 'Acolyte TD-300', quantity: 3 }],
           cargo: []
         },
-        stats: { 
+        stats: {
           dps: { total: 150, em: 100, thermal: 0, kinetic: 0, explosive: 50 },
           ehp: { total: 18000, hull: 4000, armor: 6000, shield: 8000 },
           speed: 1500,
@@ -580,7 +580,7 @@ describe('AIAnalyzer', () => {
       };
 
       const prompt = await aiAnalyzer.buildCombatAnalysisPrompt(mockCurrentShipData, mockTargetShipData);
-      
+
       // Check that comprehensive EWAR analysis is included
       expect(prompt).to.include('COMPREHENSIVE EWAR ANALYSIS AND COUNTER-STRATEGIES');
       expect(prompt).to.include('SENSOR DAMPENING');
@@ -591,13 +591,13 @@ describe('AIAnalyzer', () => {
       expect(prompt).to.include('COMBINED EWAR STRATEGIES');
       expect(prompt).to.include('EXTREME RANGE KITING STRATEGY');
       expect(prompt).to.include('EWAR IDENTIFICATION AND ENGAGEMENT ADAPTATION');
-      
+
       // Check specific EWAR drones are documented
       expect(prompt).to.include('Hobgoblin SD-300/600');
       expect(prompt).to.include('Acolyte TD-300/600');
       expect(prompt).to.include('Sensor Dampening drone');
       expect(prompt).to.include('Tracking Disruption drone');
-      
+
       // Check that script variations are documented
       expect(prompt).to.include('SCANNING RESOLUTION SCRIPT');
       expect(prompt).to.include('TARGETING RANGE SCRIPT');
@@ -639,7 +639,7 @@ describe('AIAnalyzer', () => {
       };
 
       const analysis = aiAnalyzer.getEwarScriptAnalysis(mockCurrentFit, mockTargetFit);
-      
+
       expect(analysis).to.include('EWAR SCRIPT TACTICAL ANALYSIS');
       expect(analysis).to.include('Remote Sensor Dampener II');
       expect(analysis).to.include('Remote Tracking Disruptor II');
@@ -655,13 +655,13 @@ describe('AIAnalyzer', () => {
 
       expect(targetRangeScript.description).to.include('lock range dramatically');
       expect(targetRangeScript.tactical).to.include('long-range ships');
-      
+
       expect(trackingScript.description).to.include('tracking speed');
       expect(trackingScript.tactical).to.include('fast ships');
-      
+
       expect(precisionScript.description).to.include('explosion velocity AND radius');
       expect(precisionScript.tactical).to.include('small, fast ships');
-      
+
       expect(rangeScript.description).to.include('missile velocity AND flight time');
       expect(rangeScript.tactical).to.include('long-range missile ships');
     });
@@ -785,13 +785,13 @@ describe('AIAnalyzer', () => {
       };
 
       const formatted = aiAnalyzer.formatCalculatedWeaponStats(mockStats);
-      
+
       expect(formatted).to.include('Heavy Missile Launcher II');
       expect(formatted).to.include('125.5 DPS');
       expect(formatted).to.include('ACTUAL RANGE: 95.0km');
       expect(formatted).to.include('⭐ EXTREME LONG RANGE');
       expect(formatted).to.include('4500 m/s velocity');
-      
+
       expect(formatted).to.include('425mm AutoCannon II');
       expect(formatted).to.include('180.2 DPS');
       expect(formatted).to.include('12.0km optimal');
@@ -815,13 +815,13 @@ describe('AIAnalyzer', () => {
       };
 
       const formatted = aiAnalyzer.formatCalculatedWeaponStats(mockStats);
-      
+
       expect(formatted).to.include('Short Range Weapon');
       expect(formatted).to.not.include('Short Range Weapon → 100.0 DPS → ACTUAL RANGE: 25.0km ⭐');
-      
+
       expect(formatted).to.include('Long Range Weapon');
       expect(formatted).to.include('⭐ LONG RANGE');
-      
+
       expect(formatted).to.include('Extreme Range Weapon');
       expect(formatted).to.include('⭐ EXTREME LONG RANGE');
     });
@@ -831,10 +831,10 @@ describe('AIAnalyzer', () => {
     it('should classify ECM drones correctly', () => {
       const hornetECM = { name: 'Hornet EC-300', quantity: 5 };
       const waspECM = { name: 'Wasp EC-600', quantity: 3 };
-      
+
       const hornetClassification = aiAnalyzer.classifyDrone(hornetECM);
       const waspClassification = aiAnalyzer.classifyDrone(waspECM);
-      
+
       expect(hornetClassification).to.include('ECM drone');
       expect(waspClassification).to.include('ECM drone');
     });
@@ -842,10 +842,10 @@ describe('AIAnalyzer', () => {
     it('should classify tracking disruption drones correctly', () => {
       const acolyteTD = { name: 'Acolyte TD-300', quantity: 5 };
       const infiltratorTD = { name: 'Infiltrator TD-600', quantity: 3 };
-      
+
       const acolyteClassification = aiAnalyzer.classifyDrone(acolyteTD);
       const infiltratorClassification = aiAnalyzer.classifyDrone(infiltratorTD);
-      
+
       expect(acolyteClassification).to.include('Tracking Disruption');
       expect(infiltratorClassification).to.include('Tracking Disruption');
     });
@@ -853,10 +853,10 @@ describe('AIAnalyzer', () => {
     it('should classify sensor dampening drones correctly', () => {
       const hobgoblinSD = { name: 'Hobgoblin SD-300', quantity: 5 };
       const hammerheadSD = { name: 'Hammerhead SD-600', quantity: 3 };
-      
+
       const hobgoblinClassification = aiAnalyzer.classifyDrone(hobgoblinSD);
       const hammerheadClassification = aiAnalyzer.classifyDrone(hammerheadSD);
-      
+
       expect(hobgoblinClassification).to.include('Sensor Dampening');
       expect(hammerheadClassification).to.include('Sensor Dampening');
     });
@@ -864,10 +864,10 @@ describe('AIAnalyzer', () => {
     it('should classify target painting drones correctly', () => {
       const warriorTP = { name: 'Warrior TP-300', quantity: 5 };
       const valkyrieTP = { name: 'Valkyrie TP-600', quantity: 3 };
-      
+
       const warriorClassification = aiAnalyzer.classifyDrone(warriorTP);
       const valkyrieClassification = aiAnalyzer.classifyDrone(valkyrieTP);
-      
+
       expect(warriorClassification).to.include('Target Painting');
       expect(valkyrieClassification).to.include('Target Painting');
     });
@@ -875,10 +875,10 @@ describe('AIAnalyzer', () => {
     it('should classify missile guidance disruption drones correctly', () => {
       const hobgoblinGD = { name: 'Hobgoblin GD-300', quantity: 5 };
       const hammerheadGD = { name: 'Hammerhead GD-600', quantity: 3 };
-      
+
       const hobgoblinClassification = aiAnalyzer.classifyDrone(hobgoblinGD);
       const hammerheadClassification = aiAnalyzer.classifyDrone(hammerheadGD);
-      
+
       expect(hobgoblinClassification).to.include('Missile Guidance Disruption');
       expect(hammerheadClassification).to.include('Missile Guidance Disruption');
     });
@@ -886,10 +886,10 @@ describe('AIAnalyzer', () => {
     it('should still classify combat drones correctly', () => {
       const warrior = { name: 'Warrior II', quantity: 5 };
       const hobgoblin = { name: 'Hobgoblin II', quantity: 5 };
-      
+
       const warriorClassification = aiAnalyzer.classifyDrone(warrior);
       const hobgoblinClassification = aiAnalyzer.classifyDrone(hobgoblin);
-      
+
       expect(warriorClassification).to.include('EXPLOSIVE damage');
       expect(hobgoblinClassification).to.include('THERMAL damage');
     });

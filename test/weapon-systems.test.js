@@ -11,7 +11,7 @@ describe('Weapon Systems', function() {
   });
 
   describe('Missile Weapons', function() {
-    
+
     it('should apply Light Missile Specialization ROF bonus to T2 light missile launchers', async function() {
       this.timeout(10000);
       const eft = `[Corax, Light Missile Test]
@@ -20,7 +20,7 @@ Light Missile Launcher II, Inferno Light Missile`;
 
       const fit = await fitCalculator.parseEFT(eft);
       const stats = await fitCalculator.calculateFitStats(fit);
-      
+
       expect(stats.dps.total).to.be.greaterThan(0);
       // T2 launcher should have specialization bonus applied
     });
@@ -33,7 +33,7 @@ Heavy Missile Launcher II, Inferno Heavy Missile`;
 
       const fit = await fitCalculator.parseEFT(eft);
       const stats = await fitCalculator.calculateFitStats(fit);
-      
+
       expect(stats.dps.total).to.be.greaterThan(0);
       // Should include all missile skills + Caldari Cruiser bonus
     });
@@ -46,7 +46,7 @@ Heavy Assault Missile Launcher II, Inferno Heavy Assault Missile`;
 
       const fit = await fitCalculator.parseEFT(eft);
       const stats = await fitCalculator.calculateFitStats(fit);
-      
+
       expect(stats.dps.total).to.be.greaterThan(0);
     });
 
@@ -58,7 +58,7 @@ Cruise Missile Launcher II, Inferno Cruise Missile`;
 
       const fit = await fitCalculator.parseEFT(eft);
       const stats = await fitCalculator.calculateFitStats(fit);
-      
+
       expect(stats.dps.total).to.be.greaterThan(0);
     });
 
@@ -70,7 +70,7 @@ Torpedo Launcher II, Inferno Torpedo`;
 
       const fit = await fitCalculator.parseEFT(eft);
       const stats = await fitCalculator.calculateFitStats(fit);
-      
+
       expect(stats.dps.total).to.be.greaterThan(0);
     });
 
@@ -85,14 +85,14 @@ Heavy Missile Launcher II, Inferno Heavy Missile`;
 
       const fit = await fitCalculator.parseEFT(eft);
       const stats = await fitCalculator.calculateFitStats(fit);
-      
+
       expect(stats.dps.total).to.be.greaterThan(0);
       // Should have ~24% damage increase from 3 BCS with stacking
     });
   });
 
   describe('Turret Weapons', function() {
-    
+
     it('should apply Small Pulse Laser Specialization damage bonus to T2 small pulse lasers', async function() {
       this.timeout(10000);
       const eft = `[Punisher, Small Pulse Test]
@@ -103,7 +103,7 @@ Small Focused Pulse Laser II, Multifrequency S`;
 
       const fit = await fitCalculator.parseEFT(eft);
       const stats = await fitCalculator.calculateFitStats(fit);
-      
+
       expect(stats.dps.total).to.be.greaterThan(0);
     });
 
@@ -117,7 +117,7 @@ Neutron Blaster Cannon II, Void M`;
 
       const fit = await fitCalculator.parseEFT(eft);
       const stats = await fitCalculator.calculateFitStats(fit);
-      
+
       expect(stats.dps.total).to.be.greaterThan(0);
     });
 
@@ -131,7 +131,7 @@ Neutron Blaster Cannon II, Void M`;
 
       const fit = await fitCalculator.parseEFT(eft);
       const stats = await fitCalculator.calculateFitStats(fit);
-      
+
       expect(stats.dps.total).to.be.greaterThan(0);
     });
 
@@ -145,7 +145,7 @@ Neutron Blaster Cannon II, Void M`;
 
       const fit = await fitCalculator.parseEFT(eft);
       const stats = await fitCalculator.calculateFitStats(fit);
-      
+
       expect(stats.dps.total).to.be.greaterThan(0);
     });
 
@@ -159,7 +159,7 @@ Neutron Blaster Cannon II, Void M`;
 
       const fit = await fitCalculator.parseEFT(eft);
       const stats = await fitCalculator.calculateFitStats(fit);
-      
+
       expect(stats.dps.total).to.be.greaterThan(0);
     });
 
@@ -167,23 +167,23 @@ Neutron Blaster Cannon II, Void M`;
       this.timeout(10000);
       const t1Eft = `[Punisher, T1 Test]
 Small Focused Pulse Laser I, Multifrequency S`;
-      
+
       const t2Eft = `[Punisher, T2 Test]
 Small Focused Pulse Laser II, Multifrequency S`;
 
       const t1Fit = await fitCalculator.parseEFT(t1Eft);
       const t2Fit = await fitCalculator.parseEFT(t2Eft);
-      
+
       const t1Stats = await fitCalculator.calculateFitStats(t1Fit);
       const t2Stats = await fitCalculator.calculateFitStats(t2Fit);
-      
+
       // T2 should have higher DPS due to specialization skill
       expect(t2Stats.dps.total).to.be.greaterThan(t1Stats.dps.total * 1.05); // At least 5% higher
     });
   });
 
   describe('Ship Hull Bonuses', function() {
-    
+
     it('should apply Caldari Cruiser missile rate of fire bonus', async function() {
       this.timeout(10000);
       const eft = `[Caracal, Caldari Cruiser Test]
@@ -191,14 +191,14 @@ Heavy Missile Launcher II, Inferno Heavy Missile`;
 
       const fit = await fitCalculator.parseEFT(eft);
       const stats = await fitCalculator.calculateFitStats(fit);
-      
+
       expect(stats.dps.total).to.be.greaterThan(0);
       // Caldari Cruiser skill should provide 25% ROF bonus at level V
     });
   });
 
   describe('Damage Module Bonuses', function() {
-    
+
     it('should apply stacking penalties correctly for multiple damage modules', async function() {
       this.timeout(10000);
       const singleBCS = `[Caracal, Single BCS]
@@ -213,12 +213,12 @@ Heavy Missile Launcher II, Inferno Heavy Missile`;
 
       const singleFit = await fitCalculator.parseEFT(singleBCS);
       const tripleFit = await fitCalculator.parseEFT(tripleBCS);
-      
+
       const singleStats = await fitCalculator.calculateFitStats(singleFit);
       const tripleStats = await fitCalculator.calculateFitStats(tripleFit);
-      
+
       const damageIncrease = tripleStats.dps.total / singleStats.dps.total;
-      
+
       // Should be around 1.13x due to stacking penalties (10% + 8.7% + 5.7% effective)
       expect(damageIncrease).to.be.greaterThan(1.10);
       expect(damageIncrease).to.be.lessThan(1.20);
@@ -226,7 +226,7 @@ Heavy Missile Launcher II, Inferno Heavy Missile`;
   });
 
   describe('Performance', function() {
-    
+
     it('should calculate complex fits within reasonable time', async function() {
       this.timeout(5000);
       const complexFit = `[Rattlesnake, Complex Test]
@@ -257,7 +257,7 @@ Warrior II x5`;
       const fit = await fitCalculator.parseEFT(complexFit);
       const stats = await fitCalculator.calculateFitStats(fit);
       const endTime = Date.now();
-      
+
       expect(stats.dps.total).to.be.greaterThan(0);
       expect(endTime - startTime).to.be.lessThan(2000); // Should complete within 2 seconds
     });

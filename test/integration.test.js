@@ -16,10 +16,10 @@ describe('Integration Tests', () => {
   before(async () => {
     // Initialize static data once for all integration tests
     staticData = await StaticData.getInstance();
-    
+
     fitCalculator = new FitCalculator();
     fitCalculator.staticData = staticData;
-    
+
     // Setup test cache
     testCacheDir = path.join(__dirname, '../test-integration-cache-' + Date.now());
     cacheManager = new CacheManager(testCacheDir);
@@ -62,26 +62,26 @@ Warrior II x5`;
       expect(fit).to.be.an('object');
       expect(fit.shipName || fit.shipType).to.equal('Rifter');
       expect(fit.fitName).to.equal('Test Rifter');
-      
+
       // Step 2: Create fit simulator
       const fitSimulator = new FitSimulator(fit, staticData);
       await fitSimulator.applyEffects();
-      
+
       // Step 3: Calculate ship statistics
       const stats = await fitCalculator.calculateShipStats(fit, fitSimulator);
-      
+
       // Verify comprehensive statistics
       expect(stats.dps.total).to.be.greaterThan(0);
       expect(stats.ehp.total).to.be.greaterThan(0);
       expect(stats.speed).to.be.greaterThan(0);
       expect(stats.signatureRadius).to.be.greaterThan(0);
-      
+
       // Verify weapon stats
       expect(stats.dps.total).to.be.greaterThan(50); // Should have some meaningful DPS
-      
+
       // Verify drone stats are included
       expect(stats.droneDPS).to.be.greaterThan(0); // Has drones fitted
-      
+
       // Verify EHP calculation
       expect(stats.ehp.hull).to.be.greaterThan(0);
       expect(stats.ehp.armor).to.be.greaterThan(0);
@@ -114,13 +114,13 @@ Medium Core Defense Field Extender I
       const fitSimulator = new FitSimulator(fit, staticData);
       await fitSimulator.applyEffects();
       const stats = await fitCalculator.calculateShipStats(fit, fitSimulator);
-      
+
       // Should have substantial DPS with 5 launchers and 3 BCS
       expect(stats.dps.total).to.be.greaterThan(200);
-      
+
       // Should have good tank with shield extenders
       expect(stats.ehp.total).to.be.greaterThan(8000); // Adjusted based on realistic EHP calculations
-      
+
       // Verify damage multipliers are applied correctly
       const launcherDamageMultiplier = await fitSimulator.getModifiedAttribute('Heavy Missile Launcher II', 64);
       expect(launcherDamageMultiplier).to.be.greaterThan(1.2); // Should have significant bonuses from all-V skills
@@ -132,16 +132,16 @@ Medium Core Defense Field Extender I
       // Test that weapon/ammo compatibility works end-to-end
       const launcher = await staticData.searchItemByName('Light Missile Launcher II');
       const missile = await staticData.searchItemByName('Scourge Light Missile');
-      
+
       expect(launcher).to.not.be.null;
       expect(missile).to.not.be.null;
-      
+
       // Should have damage attributes
-      const damageAttrs = missile.attributes.filter(attr => 
+      const damageAttrs = missile.attributes.filter(attr =>
         [114, 116, 117, 118].includes(attr.attributeID)
       );
       expect(damageAttrs.length).to.be.greaterThan(0);
-      
+
       // Should be able to create a fit with them
       const testFit = {
         shipName: 'Rifter',
@@ -155,10 +155,10 @@ Medium Core Defense Field Extender I
         drones: [],
         cargo: []
       };
-      
+
       const fitSimulator = new FitSimulator(testFit, staticData);
       await fitSimulator.applyEffects();
-      
+
       const missileDamage = await fitSimulator.getModifiedAttribute('Scourge Light Missile', 117);
       expect(missileDamage).to.be.greaterThan(0);
     });
@@ -181,14 +181,14 @@ Small Anti-EM Screen Reinforcer I`;
       const fitSimulator = new FitSimulator(fit, staticData);
       await fitSimulator.applyEffects();
       const stats1 = await fitCalculator.calculateShipStats(fit, fitSimulator);
-      
+
       // Cache the results
       await cacheManager.set(fitKey, stats1, 3600);
-      
+
       // Retrieve from cache
       const cachedStats = await cacheManager.get(fitKey);
       expect(cachedStats).to.deep.equal(stats1);
-      
+
       // Verify cache hit returns same data
       expect(cachedStats.dps.total).to.equal(stats1.dps.total);
       expect(cachedStats.ehp.total).to.equal(stats1.ehp.total);
@@ -197,7 +197,7 @@ Small Anti-EM Screen Reinforcer I`;
     it('should handle cache misses gracefully', async () => {
       const nonExistentStats = await cacheManager.get('non-existent-fit');
       expect(nonExistentStats).to.be.null;
-      
+
       // Should continue to work normally
       const fit = await fitCalculator.parseEFT('[Rifter, Test]\nLight Missile Launcher II,Scourge Light Missile');
       expect(fit.shipName || fit.shipType).to.equal('Rifter');
@@ -208,23 +208,23 @@ Small Anti-EM Screen Reinforcer I`;
     it('should generate fallback analysis when AI is unavailable', () => {
       // Use fake API key to test fallback
       const aiAnalyzer = new AIAnalyzer('fake-key-for-testing');
-      
+
       const currentStats = {
         dps: { total: 200, em: 100, thermal: 100, kinetic: 0, explosive: 0 },
         ehp: { total: 10000, hull: 1000, armor: 4000, shield: 5000 },
         speed: 1200,
         signatureRadius: 40
       };
-      
+
       const targetStats = {
         dps: { total: 150, em: 0, thermal: 150, kinetic: 0, explosive: 0 },
         ehp: { total: 8000, hull: 1000, armor: 3000, shield: 4000 },
         speed: 800,
         signatureRadius: 120
       };
-      
+
       const analysis = aiAnalyzer.getFallbackAnalysis(currentStats, targetStats);
-      
+
       expect(analysis.winChance).to.be.a('string');
       expect(analysis.timeToKill).to.be.a('string');
       expect(analysis.majorAdvantages).to.be.an('array');
@@ -234,10 +234,10 @@ Small Anti-EM Screen Reinforcer I`;
 
     it('should parse and format AI responses correctly', () => {
       const aiAnalyzer = new AIAnalyzer('fake-key');
-      
-      const markdownText = "**Strong** advantage with *good* range using `afterburner`";
+
+      const markdownText = '**Strong** advantage with *good* range using `afterburner`';
       const html = aiAnalyzer.markdownToHtml(markdownText);
-      
+
       expect(html).to.include('<strong>Strong</strong>');
       expect(html).to.include('<em>good</em>');
       expect(html).to.include('<code>afterburner</code>');
@@ -246,8 +246,8 @@ Small Anti-EM Screen Reinforcer I`;
 
   describe('Error Handling and Edge Cases', () => {
     it('should handle malformed EFT strings gracefully', async () => {
-      const malformedEft = `This is not a valid EFT string at all`;
-      
+      const malformedEft = 'This is not a valid EFT string at all';
+
       try {
         const fit = await fitCalculator.parseEFT(malformedEft);
         // If parsing succeeds, should still have basic structure
@@ -271,10 +271,10 @@ Small Anti-EM Screen Reinforcer I`;
         drones: [],
         cargo: []
       };
-      
+
       const fitSimulator = new FitSimulator(unknownShipFit, staticData);
       await fitSimulator.applyEffects();
-      
+
       // Should not crash, even with unknown ship
       const stats = await fitCalculator.calculateShipStats(unknownShipFit, fitSimulator);
       expect(stats).to.be.an('object');
@@ -289,11 +289,11 @@ Large Shield Extender II
 Multispectrum Shield Hardener II
 
 Power Diagnostic System II`);
-      
+
       const fitSimulator = new FitSimulator(supportFit, staticData);
       await fitSimulator.applyEffects();
       const stats = await fitCalculator.calculateShipStats(supportFit, fitSimulator);
-      
+
       // Should have 0 DPS but still calculate other stats
       expect(stats.dps.total).to.equal(0);
       expect(stats.ehp.total).to.be.greaterThan(0);
@@ -310,21 +310,21 @@ Power Diagnostic System II`);
         '[Incursus, Test4]\nLight Electron Blaster II,Void S\n1MN Afterburner II\nMagnetic Field Stabilizer II',
         '[Tormentor, Test5]\nSmall Focused Pulse Laser II,Scorch S\n1MN Afterburner II\nHeat Sink II'
       ];
-      
+
       const start = Date.now();
-      
+
       const results = await Promise.all(fits.map(async eftString => {
         const fit = await fitCalculator.parseEFT(eftString);
         const fitSimulator = new FitSimulator(fit, staticData);
         await fitSimulator.applyEffects();
         return fitCalculator.calculateShipStats(fit, fitSimulator);
       }));
-      
+
       const elapsed = Date.now() - start;
-      
+
       // Should process all fits in reasonable time (less than 5 seconds)
       expect(elapsed).to.be.lessThan(5000);
-      
+
       // All fits should have been processed successfully
       expect(results.length).to.equal(5);
       results.forEach(stats => {
@@ -346,7 +346,7 @@ Large Shield Extender II
 
 Ballistic Control System II
 Ballistic Control System II`;
-      
+
       // Calculate same fit multiple times
       const results = [];
       for (let i = 0; i < 3; i++) {
@@ -356,7 +356,7 @@ Ballistic Control System II`;
         const stats = await fitCalculator.calculateShipStats(fit, fitSimulator);
         results.push(stats);
       }
-      
+
       // Results should be identical
       expect(results[0].dps.total).to.equal(results[1].dps.total);
       expect(results[1].dps.total).to.equal(results[2].dps.total);

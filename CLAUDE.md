@@ -17,6 +17,12 @@ npm start
 # Run test suite
 npm test
 
+# Run ESLint with auto-fix
+npm run lint
+
+# Update dependencies
+npm run update-deps
+
 # Environment setup
 cp .env.example .env
 # Then edit .env with your API credentials

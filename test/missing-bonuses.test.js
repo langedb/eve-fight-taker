@@ -147,10 +147,10 @@ Tracking Speed Script x1`;
       const result = await fitCalculator.calculateShipStats(parsedFit, fitSimulator);
 
       console.log(`\nComplete Rupture DPS: ${result.dps.total.toFixed(1)}`);
-      console.log(`Expected DPS: 193.3`);
+      console.log('Expected DPS: 193.3');
       console.log(`Gap: ${(193.3 - result.dps.total).toFixed(1)}`);
-      
-      // With all bonuses, should be much closer to 193.3 
+
+      // With all bonuses, should be much closer to 193.3
       expect(result.dps.total).to.be.greaterThan(120); // Significant improvement from initial 40 DPS
     });
   });
@@ -182,10 +182,10 @@ Quake L x1000`;
     it('should verify Quake L damage attributes from static data', async function() {
       this.timeout(30000);
 
-      // Get Quake L item info from static data 
+      // Get Quake L item info from static data
       const quakeL = staticData.findItemByName('Quake L');
       expect(quakeL).to.not.be.null;
-      
+
       // Should have damage attributes
       console.log('Quake L type ID:', quakeL.typeID);
       console.log('Quake L group ID:', quakeL.groupID);

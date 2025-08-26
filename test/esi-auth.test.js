@@ -43,7 +43,7 @@ describe('ESIAuth', () => {
   describe('generateAuthUrl()', () => {
     it('should generate valid authorization URL', () => {
       const authUrl = esiAuth.generateAuthUrl();
-      
+
       expect(authUrl).to.be.a('string');
       expect(authUrl).to.include('https://login.eveonline.com/v2/oauth/authorize');
       expect(authUrl).to.include('response_type=code');
@@ -61,10 +61,10 @@ describe('ESIAuth', () => {
     it('should generate unique state parameter', () => {
       const url1 = esiAuth.generateAuthUrl();
       const url2 = esiAuth.generateAuthUrl();
-      
+
       const state1 = new URL(url1).searchParams.get('state');
       const state2 = new URL(url2).searchParams.get('state');
-      
+
       expect(state1).to.not.equal(state2);
     });
 
@@ -78,7 +78,7 @@ describe('ESIAuth', () => {
     it('should validate correct state', () => {
       const authUrl = esiAuth.generateAuthUrl();
       const state = new URL(authUrl).searchParams.get('state');
-      
+
       expect(esiAuth.validateState(state)).to.be.true;
     });
 
@@ -104,7 +104,7 @@ describe('ESIAuth', () => {
         scopes: ['esi-fittings.read_fittings.v1', 'esi-universe.read_structures.v1']
       };
       const esiAuth = new ESIAuth(config);
-      
+
       const authUrl = esiAuth.generateAuthUrl();
       expect(authUrl).to.include('esi-fittings.read_fittings.v1');
       expect(authUrl).to.include('esi-universe.read_structures.v1');
@@ -118,7 +118,7 @@ describe('ESIAuth', () => {
         scopes: ['esi-fittings.read_fittings.v1']
       };
       const esiAuth = new ESIAuth(config);
-      
+
       const authUrl = esiAuth.generateAuthUrl();
       // Should properly encode the redirect URI
       expect(authUrl).to.include(encodeURIComponent('http://localhost:3000/auth/callback?param=value'));
@@ -165,7 +165,7 @@ describe('ESIAuth', () => {
         redirectUri: 'http://localhost:3000/callback',
         scopes: []
       };
-      
+
       expect(() => new ESIAuth(config)).to.not.throw();
     });
 
@@ -176,10 +176,10 @@ describe('ESIAuth', () => {
         redirectUri: 'http://localhost:3000/callback',
         scopes: ['esi-fittings.read_fittings.v1', 'esi-fittings.read_fittings.v1']
       };
-      
+
       const esiAuth = new ESIAuth(config);
       const authUrl = esiAuth.generateAuthUrl();
-      
+
       // Should handle duplicates gracefully
       expect(authUrl).to.include('esi-fittings.read_fittings.v1');
     });
@@ -188,7 +188,7 @@ describe('ESIAuth', () => {
   describe('state security', () => {
     it('should generate cryptographically random state', () => {
       const states = new Set();
-      
+
       // Generate multiple states and ensure they're all unique
       for (let i = 0; i < 100; i++) {
         const authUrl = esiAuth.generateAuthUrl();
@@ -232,14 +232,14 @@ describe('ESIAuth', () => {
       // Step 1: Generate auth URL
       const authUrl = esiAuth.generateAuthUrl();
       expect(authUrl).to.be.a('string');
-      
+
       // Step 2: Extract state from URL
       const state = new URL(authUrl).searchParams.get('state');
       expect(state).to.be.a('string');
-      
+
       // Step 3: Validate state (simulating callback)
       expect(esiAuth.validateState(state)).to.be.true;
-      
+
       // Step 4: State should not validate twice (security measure)
       expect(esiAuth.validateState(state)).to.be.false;
     });

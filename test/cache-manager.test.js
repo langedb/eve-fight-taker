@@ -68,7 +68,7 @@ describe('CacheManager', () => {
           deep: true
         }
       };
-      
+
       await cacheManager.set('complex-key', complexObj);
       const retrieved = await cacheManager.get('complex-key');
       expect(retrieved).to.deep.equal(complexObj);
@@ -91,14 +91,14 @@ describe('CacheManager', () => {
     it('should respect TTL and expire entries', async () => {
       // Set with 1 second TTL
       await cacheManager.set('ttl-key', 'ttl-value', 1);
-      
+
       // Should be retrievable immediately
       let value = await cacheManager.get('ttl-key');
       expect(value).to.equal('ttl-value');
-      
+
       // Wait for expiration (increased timeout for race condition)
       await new Promise(resolve => setTimeout(resolve, 1500));
-      
+
       // Should be expired now
       value = await cacheManager.get('ttl-key');
       expect(value).to.be.null;
@@ -114,7 +114,7 @@ describe('CacheManager', () => {
       await cacheManager.set('default-ttl-key', 'default-ttl-value');
       const value = await cacheManager.get('default-ttl-key');
       expect(value).to.equal('default-ttl-value');
-      
+
       // Check that file was created with expiration
       const filePath = cacheManager.getCacheFilePath('default-ttl-key');
       const fileData = await fs.readJson(filePath);
@@ -126,14 +126,14 @@ describe('CacheManager', () => {
   describe('delete()', () => {
     it('should delete existing cache entries', async () => {
       await cacheManager.set('delete-key', 'delete-value');
-      
+
       // Verify it exists
       let value = await cacheManager.get('delete-key');
       expect(value).to.equal('delete-value');
-      
+
       // Delete it
       await cacheManager.delete('delete-key');
-      
+
       // Should be gone
       value = await cacheManager.get('delete-key');
       expect(value).to.be.null;
@@ -152,15 +152,15 @@ describe('CacheManager', () => {
       await cacheManager.set('key1', 'value1');
       await cacheManager.set('key2', 'value2');
       await cacheManager.set('key3', 'value3');
-      
+
       // Verify they exist
       expect(await cacheManager.get('key1')).to.equal('value1');
       expect(await cacheManager.get('key2')).to.equal('value2');
       expect(await cacheManager.get('key3')).to.equal('value3');
-      
+
       // Clear all
       await cacheManager.clear();
-      
+
       // Should all be gone
       expect(await cacheManager.get('key1')).to.be.null;
       expect(await cacheManager.get('key2')).to.be.null;
@@ -177,11 +177,11 @@ describe('CacheManager', () => {
     it('should handle read errors gracefully', async () => {
       // Create a cache entry
       await cacheManager.set('corrupt-key', 'test-value');
-      
+
       // Corrupt the file by writing invalid JSON
       const filePath = cacheManager.getCacheFilePath('corrupt-key');
       await fs.writeFile(filePath, 'invalid json content');
-      
+
       // Should return null instead of throwing
       const value = await cacheManager.get('corrupt-key');
       expect(value).to.be.null;
@@ -190,11 +190,11 @@ describe('CacheManager', () => {
     it('should handle permission errors gracefully', async () => {
       // This test might not work on all systems, but demonstrates error handling
       const restrictedCache = new CacheManager('/root/restricted-cache');
-      
+
       // Should not throw errors, but handle gracefully
       await restrictedCache.set('test-key', 'test-value');
       await restrictedCache.get('test-key');
-      
+
       // May succeed or fail depending on permissions, but should not throw
       expect(true).to.be.true;
     });
@@ -204,18 +204,18 @@ describe('CacheManager', () => {
     it('should clean up expired entries during get operations', async () => {
       // Set an entry with very short TTL
       await cacheManager.set('cleanup-key', 'cleanup-value', 1);
-      
+
       // Verify file exists
       const filePath = cacheManager.getCacheFilePath('cleanup-key');
       expect(await fs.pathExists(filePath)).to.be.true;
-      
+
       // Wait for expiration (increased timeout for race condition)
       await new Promise(resolve => setTimeout(resolve, 1500));
-      
+
       // Try to get - should trigger cleanup
       const value = await cacheManager.get('cleanup-key');
       expect(value).to.be.null;
-      
+
       // File should be deleted
       expect(await fs.pathExists(filePath)).to.be.false;
     });
@@ -224,14 +224,14 @@ describe('CacheManager', () => {
   describe('concurrent operations', () => {
     it('should handle multiple simultaneous operations', async () => {
       const promises = [];
-      
+
       // Start multiple set operations simultaneously
       for (let i = 0; i < 10; i++) {
         promises.push(cacheManager.set(`concurrent-key-${i}`, `value-${i}`));
       }
-      
+
       await Promise.all(promises);
-      
+
       // Verify all values were set correctly
       for (let i = 0; i < 10; i++) {
         const value = await cacheManager.get(`concurrent-key-${i}`);

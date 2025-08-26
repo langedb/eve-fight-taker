@@ -7,7 +7,7 @@ describe('ModifiedAttributeStore', () => {
   beforeEach(() => {
     const baseAttributes = [
       { attributeID: 9, value: 1000 },    // capacitorCapacity
-      { attributeID: 37, value: 260 },    // maxVelocity  
+      { attributeID: 37, value: 260 },    // maxVelocity
       { attributeID: 263, value: 2500 },  // shieldCapacity
       { attributeID: 109, value: 0.75 }   // shieldEmDamageResonance
     ];
@@ -76,7 +76,7 @@ describe('ModifiedAttributeStore', () => {
       store.applyModifier(109, 0.2, 'add', 'shieldResistance');
       store.applyModifier(109, 0.2, 'add', 'shieldResistance');
       store.applyModifier(109, 0.2, 'add', 'shieldResistance');
-      
+
       // With 3 modules giving 0.2 resistance bonus each, stacking penalties should apply
       const result = store.get(109);
       expect(result).to.be.greaterThan(0.75); // More than base
@@ -88,7 +88,7 @@ describe('ModifiedAttributeStore', () => {
       store.applyModifier(64, 1.1, 'multiply', 'missileDamage');
       store.applyModifier(64, 1.1, 'multiply', 'missileDamage');
       store.applyModifier(64, 1.1, 'multiply', 'missileDamage');
-      
+
       const result = store.get(64);
       expect(result).to.be.greaterThan(1.0); // Should have some bonus
       expect(result).to.be.lessThan(1.331); // Should be less than 1.1^3 due to stacking
@@ -136,7 +136,7 @@ describe('ModifiedAttributeStore', () => {
       store.applyModifier(37, 50, 'add');
       store.applyModifier(37, 1.2, 'multiply');
       store.applyModifier(37, 1.1, 'multiply', 'velocityBonus');
-      
+
       // Should be: preAssign to 300, add 50 = 350, multiply by 1.2 = 420, then apply stacked 1.1
       const result = store.get(37);
       expect(result).to.be.greaterThan(420); // At least base calculation
@@ -145,11 +145,11 @@ describe('ModifiedAttributeStore', () => {
 
     it('should handle damage multiplier edge cases', () => {
       const emptyStore = new ModifiedAttributeStore([]);
-      
+
       // Apply damage bonuses to an attribute that starts at default 1
       emptyStore.applyModifier(64, 1.1, 'multiply', 'missileDamage');
       emptyStore.applyModifier(64, 1.05, 'multiply', 'skillBonus');
-      
+
       const result = emptyStore.get(64);
       expect(result).to.be.greaterThan(1.0);
       expect(result).to.be.approximately(1.155, 0.01); // 1 * 1.1 * 1.05
@@ -160,12 +160,12 @@ describe('ModifiedAttributeStore', () => {
     it('should recalculate all attributes', () => {
       store.applyModifier(37, 1.2, 'multiply');
       store.applyModifier(263, 1.3, 'multiply');
-      
+
       const velocityBefore = store.get(37);
       const shieldBefore = store.get(263);
-      
+
       store.recalculateAll();
-      
+
       expect(store.get(37)).to.equal(velocityBefore);
       expect(store.get(263)).to.equal(shieldBefore);
     });

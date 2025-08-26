@@ -32,8 +32,8 @@ Medium Core Defense Field Extender I
       // Verify sections have expected content types
       // High slot items (weapons, utilities)
       expect(parsedFit.modules.high).to.have.lengthOf(2);
-      expect(parsedFit.modules.high.every(m => 
-        m.name.includes('Artillery') || m.name.includes('Launcher') || 
+      expect(parsedFit.modules.high.every(m =>
+        m.name.includes('Artillery') || m.name.includes('Launcher') ||
         m.name.includes('Laser') || m.name.includes('Neutralizer')
       )).to.be.true;
 
@@ -58,7 +58,7 @@ Medium Core Defense Field Extender I
     // The AI prompt correctly calls:
     // HIGH SLOTS (Weapons): ${await this.formatModuleList(currentFit.modules.high, staticData)}
     // LOW SLOTS (Modules): ${await this.formatModuleList(currentFit.modules.low, staticData)}
-    
+
     // This validates that weapons end up in the correct .high slot after EFT parsing
     it('should have weapons accessible via modules.high for AI HIGH SLOTS section', async () => {
       const weaponFit = `[Caracal, Weapon Access Test]
@@ -72,13 +72,13 @@ Heavy Missile Launcher II
 `;
 
       const parsedFit = await fitCalculator.parseEFT(weaponFit);
-      
+
       // With correct EFT parsing (Low → Med → High), weapons should be in .high
-      const weaponsInHigh = parsedFit.modules.high.filter(m => 
-        m.name.includes('Launcher') || m.name.includes('Blaster') || 
+      const weaponsInHigh = parsedFit.modules.high.filter(m =>
+        m.name.includes('Launcher') || m.name.includes('Blaster') ||
         m.name.includes('Artillery') || m.name.includes('Pulse')
       );
-      
+
       // Weapons should now correctly be in .high (not .low as in the old bug)
       expect(weaponsInHigh).to.have.lengthOf(2);
     });
@@ -96,14 +96,14 @@ Heavy Missile Launcher II
 `;
 
       const parsedFit = await fitCalculator.parseEFT(tankFit);
-      
+
       // The AI prompt accesses low slot modules via currentFit.modules.low
       // Verify tank modules are properly placed for AI access
-      const tankInLow = parsedFit.modules.low.filter(m => 
+      const tankInLow = parsedFit.modules.low.filter(m =>
         m.name.includes('Damage Control') || m.name.includes('Ballistic Control') ||
         m.name.includes('Gyrostabilizer') || m.name.includes('Heat Sink')
       );
-      
+
       // Tank modules should be accessible via .low for AI prompt
       expect(tankInLow).to.have.lengthOf.greaterThan(0);
     });
@@ -112,7 +112,7 @@ Heavy Missile Launcher II
   describe('Regression Test for Slot Reversal Bug', () => {
     // The original bug: weapons showed as "LOW SLOTS" and tank as "HIGH SLOTS" in AI prompt
     // This was fixed by swapping the data access in the AI prompt template
-    
+
     it('should prevent weapons from being labeled as LOW SLOTS in AI prompt', async () => {
       const testFit = `[Thorax, Slot Label Test]
 Magnetic Field Stabilizer II
@@ -129,36 +129,36 @@ Neutron Blaster Cannon II
       // Simulate what the AI prompt does:
       // HIGH SLOTS (Weapons): uses modules.high (correct)
       // LOW SLOTS (Modules): uses modules.low (correct)
-      
+
       const highSlotData = parsedFit.modules.high; // What AI shows as HIGH SLOTS
       const lowSlotData = parsedFit.modules.low; // What AI shows as LOW SLOTS
-      
+
       // Weapons should appear in HIGH SLOTS section (via modules.high access)
-      const weaponsInHighSection = highSlotData.filter(m => 
-        m.name.includes('Blaster') || m.name.includes('Launcher') || 
+      const weaponsInHighSection = highSlotData.filter(m =>
+        m.name.includes('Blaster') || m.name.includes('Launcher') ||
         m.name.includes('Artillery') || m.name.includes('Pulse')
       );
-      
+
       // Tank modules should appear in LOW SLOTS section (via modules.low access)
-      const tankInLowSection = lowSlotData.filter(m => 
+      const tankInLowSection = lowSlotData.filter(m =>
         m.name.includes('Stabilizer') || m.name.includes('Damage Control') ||
         m.name.includes('Heat Sink') || m.name.includes('Gyrostabilizer')
       );
-      
+
       // Weapons should be in HIGH section and tank modules in LOW section
       expect(weaponsInHighSection.length).to.be.greaterThan(0);
       expect(tankInLowSection.length).to.be.greaterThan(0);
-      
+
       // Ensure proper separation - weapons shouldn't be in LOW section, tank shouldn't be in HIGH section
-      const weaponsInLowSection = lowSlotData.filter(m => 
-        m.name.includes('Blaster') || m.name.includes('Launcher') || 
+      const weaponsInLowSection = lowSlotData.filter(m =>
+        m.name.includes('Blaster') || m.name.includes('Launcher') ||
         m.name.includes('Artillery') || m.name.includes('Pulse')
       );
-      const tankInHighSection = highSlotData.filter(m => 
+      const tankInHighSection = highSlotData.filter(m =>
         m.name.includes('Stabilizer') || m.name.includes('Damage Control') ||
         m.name.includes('Heat Sink') || m.name.includes('Gyrostabilizer')
       );
-      
+
       // These should be empty to prevent the slot reversal bug
       expect(weaponsInLowSection).to.have.lengthOf(0, 'Weapons found in AI LOW SLOTS section');
       expect(tankInHighSection).to.have.lengthOf(0, 'Tank modules found in AI HIGH SLOTS section');
@@ -170,15 +170,15 @@ Neutron Blaster Cannon II
       // This is a conceptual test - the actual fix is in ai-analyzer.js:
       // Line 93: HIGH SLOTS (Weapons): ${await this.formatModuleList(currentFit.modules.low, staticData)}
       // Line 99: LOW SLOTS (Modules): ${await this.formatModuleList(currentFit.modules.high, staticData)}
-      
+
       // The fix swapped .high and .low access to correct the slot labeling
       // This ensures the mapping is conceptually correct
-      
+
       const mapping = {
         highSlotsData: 'modules.low',  // AI HIGH SLOTS pulls from modules.low
         lowSlotsData: 'modules.high'   // AI LOW SLOTS pulls from modules.high
       };
-      
+
       expect(mapping.highSlotsData).to.equal('modules.low');
       expect(mapping.lowSlotsData).to.equal('modules.high');
     });

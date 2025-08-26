@@ -18,7 +18,7 @@ describe('Drone Control Range Calculation', () => {
         modules: { high: [], med: [], low: [], rig: [] },
         shipName: 'Caracal'
       };
-      
+
       const baseRange = aiAnalyzer.calculateDroneControlRange(ship);
       // Base 20km + Drone Avionics V (+25km) + Advanced Drone Avionics V (+15km) = 60km
       expect(baseRange).to.equal(60);
@@ -34,7 +34,7 @@ describe('Drone Control Range Calculation', () => {
         },
         shipName: 'Dominix'
       };
-      
+
       const range = aiAnalyzer.calculateDroneControlRange(ship);
       // Base 60km + Drone Link Augmentor I (+20km) = 80km
       expect(range).to.equal(80);
@@ -50,7 +50,7 @@ describe('Drone Control Range Calculation', () => {
         },
         shipName: 'Dominix'
       };
-      
+
       const range = aiAnalyzer.calculateDroneControlRange(ship);
       // Base 60km + Drone Link Augmentor II (+24km) = 84km
       expect(range).to.equal(84);
@@ -69,7 +69,7 @@ describe('Drone Control Range Calculation', () => {
         },
         shipName: 'Dominix'
       };
-      
+
       const range = aiAnalyzer.calculateDroneControlRange(ship);
       // Base 60km + DLA II (+24km) + DLA I (+20km) = 104km
       expect(range).to.equal(104);
@@ -85,7 +85,7 @@ describe('Drone Control Range Calculation', () => {
         },
         shipName: 'Dominix'
       };
-      
+
       const range = aiAnalyzer.calculateDroneControlRange(ship);
       // Base 60km + rig (+15km) = 75km
       expect(range).to.equal(75);
@@ -101,7 +101,7 @@ describe('Drone Control Range Calculation', () => {
         },
         shipName: 'Dominix'
       };
-      
+
       const range = aiAnalyzer.calculateDroneControlRange(ship);
       // Base 60km + T2 rig (+20km) = 80km
       expect(range).to.equal(80);
@@ -123,7 +123,7 @@ describe('Drone Control Range Calculation', () => {
         },
         shipName: 'Dominix'
       };
-      
+
       const range = aiAnalyzer.calculateDroneControlRange(ship);
       // Base 60km + 2x DLA II (+48km) + Large T2 rig (+20km) + Medium T1 rig (+15km) = 143km
       expect(range).to.equal(143);
@@ -139,7 +139,7 @@ describe('Drone Control Range Calculation', () => {
         },
         shipName: 'Caracal'
       };
-      
+
       const range = aiAnalyzer.calculateDroneControlRange(ship);
       // Base 60km only (no drone range modules)
       expect(range).to.equal(60);
@@ -152,7 +152,7 @@ describe('Drone Control Range Calculation', () => {
         modules: { high: [], med: [], low: [], rig: [] },
         shipName: 'Caracal'
       };
-      
+
       const analysis = aiAnalyzer.formatDroneControlRangeAnalysis(ship);
       expect(analysis).to.include('DRONE CONTROL RANGE: 60km');
       expect(analysis).to.include('Base: 20km + Skills: 40km');
@@ -168,7 +168,7 @@ describe('Drone Control Range Calculation', () => {
         },
         shipName: 'Dominix'
       };
-      
+
       const analysis = aiAnalyzer.formatDroneControlRangeAnalysis(ship);
       expect(analysis).to.include('DRONE CONTROL RANGE: 104km');
       expect(analysis).to.include('Modules: +24km');
@@ -185,7 +185,7 @@ describe('Drone Control Range Calculation', () => {
         },
         shipName: 'Dominix'
       };
-      
+
       const analysis = aiAnalyzer.formatDroneControlRangeAnalysis(ship);
       expect(analysis).to.include('EXTENDED RANGE: +20km beyond base skilled range');
     });
@@ -197,7 +197,7 @@ describe('Drone Control Range Calculation', () => {
         modules: { high: [], med: [], low: [], rig: [] },
         shipName: 'Rupture'
       };
-      
+
       const advice = aiAnalyzer.generateDroneRangeTacticalAdvice(targetShip, 65);
       expect(advice).to.include('Fight at 65km+');
       expect(advice).to.include('beyond their 60km drone control range');
@@ -213,7 +213,7 @@ describe('Drone Control Range Calculation', () => {
         },
         shipName: 'Rupture'
       };
-      
+
       const advice = aiAnalyzer.generateDroneRangeTacticalAdvice(targetShip, 100);
       expect(advice).to.include('TARGET HAS EXTENDED DRONE RANGE');
       expect(advice).to.include('84km drone control range');
@@ -230,7 +230,7 @@ describe('Drone Control Range Calculation', () => {
         },
         shipName: 'Rupture'
       };
-      
+
       const advice = aiAnalyzer.generateDroneRangeTacticalAdvice(targetShip, 25);
       expect(advice).to.include('Your weapons cannot outrange their drones');
       expect(advice).to.include('De-fang strategy recommended');

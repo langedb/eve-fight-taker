@@ -14,7 +14,7 @@ describe('Rig Bonuses and Penalties', function() {
   });
 
   describe('Hydraulic Bay Thruster Velocity Bonuses', function() {
-    
+
     it('should apply Medium Hydraulic Bay Thrusters II missile velocity bonus', async function() {
       // Caracal fit with Heavy Missile Launcher and Hydraulic Bay Thrusters
       const eftWithRigs = `[Caracal, Hydraulic Test]
@@ -36,7 +36,7 @@ Heavy Missile Launcher II,Nova Heavy Missile
 
       const parsedWithRigs = await fitCalculator.parseEFT(eftWithRigs);
       const parsedWithoutRigs = await fitCalculator.parseEFT(eftWithoutRigs);
-      
+
       const statsWithRigs = await fitCalculator.calculateFitStats(parsedWithRigs);
       const statsWithoutRigs = await fitCalculator.calculateFitStats(parsedWithoutRigs);
 
@@ -44,13 +44,13 @@ Heavy Missile Launcher II,Nova Heavy Missile
       // Base Nova Heavy Missile velocity is ~3000 m/s, should increase with rigs
       expect(statsWithRigs.weapons[0]).to.exist;
       expect(statsWithoutRigs.weapons[0]).to.exist;
-      
+
       // With 2x Medium Hydraulic Bay Thrusters II, missile velocity should be significantly higher
       const rigVelocity = statsWithRigs.weapons[0].velocity;
       const baseVelocity = statsWithoutRigs.weapons[0].velocity;
-      
+
       expect(rigVelocity).to.be.greaterThan(baseVelocity);
-      
+
       // Each Medium Hydraulic Bay Thruster II should provide ~15% velocity increase
       // Two rigs should provide ~30% total (with stacking penalties)
       const expectedMinIncrease = 1.25; // At least 25% increase
@@ -74,7 +74,7 @@ Light Missile Launcher II,Caldari Navy Inferno Light Missile
 
       const parsedWithRigs = await fitCalculator.parseEFT(eftWithRigs);
       const parsedWithoutRigs = await fitCalculator.parseEFT(eftWithoutRigs);
-      
+
       const statsWithRigs = await fitCalculator.calculateFitStats(parsedWithRigs);
       const statsWithoutRigs = await fitCalculator.calculateFitStats(parsedWithoutRigs);
 
@@ -101,7 +101,7 @@ Cruise Missile Launcher II,Nova Cruise Missile
 
       const parsedWithRigs = await fitCalculator.parseEFT(eftWithRigs);
       const parsedWithoutRigs = await fitCalculator.parseEFT(eftWithoutRigs);
-      
+
       const statsWithRigs = await fitCalculator.calculateFitStats(parsedWithRigs);
       const statsWithoutRigs = await fitCalculator.calculateFitStats(parsedWithoutRigs);
 
@@ -128,14 +128,14 @@ Heavy Missile Launcher II,Nova Heavy Missile
 
       const parsedWithRigs = await fitCalculator.parseEFT(eftWithRigs);
       const parsedWithoutRigs = await fitCalculator.parseEFT(eftWithoutRigs);
-      
+
       const statsWithRigs = await fitCalculator.calculateFitStats(parsedWithRigs);
       const statsWithoutRigs = await fitCalculator.calculateFitStats(parsedWithoutRigs);
 
       // Missile range = velocity * flight time
       // Higher velocity should mean higher range
       expect(statsWithRigs.weapons[0].range).to.be.greaterThan(statsWithoutRigs.weapons[0].range);
-      
+
       // The user's Caracal should get 100-120km range with these rigs
       // Base Heavy Missile range is ~27km, with rigs should be much higher
       expect(statsWithRigs.weapons[0].range).to.be.at.least(60); // At least 60km
@@ -143,7 +143,7 @@ Heavy Missile Launcher II,Nova Heavy Missile
   });
 
   describe('Rig Drawback Penalties', function() {
-    
+
     it('should apply signature radius penalty from rigs', async function() {
       const eftWithRigs = `[Caracal, Sig Penalty Test]
 Heavy Missile Launcher II,Nova Heavy Missile
@@ -158,13 +158,13 @@ Heavy Missile Launcher II,Nova Heavy Missile
 
       const parsedWithRigs = await fitCalculator.parseEFT(eftWithRigs);
       const parsedWithoutRigs = await fitCalculator.parseEFT(eftWithoutRigs);
-      
+
       const statsWithRigs = await fitCalculator.calculateFitStats(parsedWithRigs);
       const statsWithoutRigs = await fitCalculator.calculateFitStats(parsedWithoutRigs);
 
       // Rigs should increase signature radius as a drawback
       expect(statsWithRigs.signatureRadius).to.be.greaterThan(statsWithoutRigs.signatureRadius);
-      
+
       // Each rig typically has 10% signature radius penalty
       // Two rigs should be ~20% penalty (with stacking)
       const expectedMinPenalty = 1.15; // At least 15% increase in sig radius
@@ -196,7 +196,7 @@ Medium Core Defense Field Extender I`;
       const parsedOneRig = await fitCalculator.parseEFT(eftOneRig);
       const parsedTwoRigs = await fitCalculator.parseEFT(eftTwoRigs);
       const parsedThreeRigs = await fitCalculator.parseEFT(eftThreeRigs);
-      
+
       const statsOneRig = await fitCalculator.calculateFitStats(parsedOneRig);
       const statsTwoRigs = await fitCalculator.calculateFitStats(parsedTwoRigs);
       const statsThreeRigs = await fitCalculator.calculateFitStats(parsedThreeRigs);
@@ -204,7 +204,7 @@ Medium Core Defense Field Extender I`;
       // Signature radius should increase with each additional rig
       expect(statsTwoRigs.signatureRadius).to.be.greaterThan(statsOneRig.signatureRadius);
       expect(statsThreeRigs.signatureRadius).to.be.greaterThan(statsTwoRigs.signatureRadius);
-      
+
       // But the effect should diminish due to stacking penalties
       const firstRigEffect = statsTwoRigs.signatureRadius / statsOneRig.signatureRadius;
       const secondRigEffect = statsThreeRigs.signatureRadius / statsTwoRigs.signatureRadius;
@@ -213,7 +213,7 @@ Medium Core Defense Field Extender I`;
   });
 
   describe('Other Rig Bonuses', function() {
-    
+
     it('should apply shield capacity bonuses from Core Defense Field Extenders', async function() {
       const eftWithRigs = `[Caracal, Shield Rig Test]
 Heavy Missile Launcher II,Nova Heavy Missile
@@ -234,7 +234,7 @@ Heavy Missile Launcher II,Nova Heavy Missile
 
       const parsedWithRigs = await fitCalculator.parseEFT(eftWithRigs);
       const parsedWithoutRigs = await fitCalculator.parseEFT(eftWithoutRigs);
-      
+
       const statsWithRigs = await fitCalculator.calculateFitStats(parsedWithRigs);
       const statsWithoutRigs = await fitCalculator.calculateFitStats(parsedWithoutRigs);
 
@@ -262,7 +262,7 @@ Medium Trimark Armor Pump I`;
 
       const parsedWithRigs = await fitCalculator.parseEFT(eftWithRigs);
       const parsedWithoutRigs = await fitCalculator.parseEFT(eftWithoutRigs);
-      
+
       const statsWithRigs = await fitCalculator.calculateFitStats(parsedWithRigs);
       const statsWithoutRigs = await fitCalculator.calculateFitStats(parsedWithoutRigs);
 
@@ -290,7 +290,7 @@ Medium Energy Burst Aerator I`;
 
       const parsedWithRigs = await fitCalculator.parseEFT(eftWithRigs);
       const parsedWithoutRigs = await fitCalculator.parseEFT(eftWithoutRigs);
-      
+
       const statsWithRigs = await fitCalculator.calculateFitStats(parsedWithRigs);
       const statsWithoutRigs = await fitCalculator.calculateFitStats(parsedWithoutRigs);
 
@@ -300,7 +300,7 @@ Medium Energy Burst Aerator I`;
   });
 
   describe('T2 vs T1 Rig Differences', function() {
-    
+
     it('should have different bonus values between T1 and T2 rigs', async function() {
       const eftT1Rigs = `[Caracal, T1 Rigs Test]
 Heavy Missile Launcher II,Nova Heavy Missile
@@ -330,14 +330,14 @@ Medium Hydraulic Bay Thrusters II`;
       // T2 rigs should provide better bonuses than T1 rigs
       expect(statsT2.weapons[0].velocity).to.be.greaterThan(statsT1.weapons[0].velocity);
       expect(statsT2.weapons[0].range).to.be.greaterThan(statsT1.weapons[0].range);
-      
+
       // T2 and T1 Hydraulic Bay Thrusters have the same signature radius penalty (10% each)
       expect(statsT2.signatureRadius).to.be.approximately(statsT1.signatureRadius, 0.1);
     });
   });
 
   describe('Rig Size Compatibility', function() {
-    
+
     it('should not apply medium rigs to small ships', async function() {
       // This should fail gracefully or not apply the bonus
       const eftInvalidRigs = `[Merlin, Invalid Rigs Test]
@@ -365,7 +365,7 @@ Small Hydraulic Bay Thrusters II`;
   });
 
   describe('Mixed Rig Types', function() {
-    
+
     it('should apply different rig effects simultaneously', async function() {
       const eftMixedRigs = `[Caracal, Mixed Rigs Test]
 Heavy Missile Launcher II,Nova Heavy Missile
@@ -392,10 +392,10 @@ Heavy Missile Launcher II,Nova Heavy Missile
 
       // Should have velocity bonus from Hydraulic Bay Thrusters
       expect(statsMixed.weapons[0].velocity).to.be.greaterThan(statsBaseline.weapons[0].velocity);
-      
+
       // Should have shield capacity bonus from Core Defense Field Extender
       expect(statsMixed.ehp.shield).to.be.greaterThan(statsBaseline.ehp.shield);
-      
+
       // Should have increased signature radius penalty from all rigs
       expect(statsMixed.signatureRadius).to.be.greaterThan(statsBaseline.signatureRadius);
     });

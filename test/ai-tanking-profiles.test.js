@@ -4,48 +4,48 @@ describe('AI Tanking Profiles', () => {
   // Since AIAnalyzer requires Google API key, we'll test the function logic directly
   function getShipTankingProfile(shipName) {
     if (!shipName) return 'Unknown';
-    
+
     const name = shipName.toLowerCase();
-    
+
     // Minmatar ships - most are shield tanked
-    if (name.includes('rupture') || name.includes('stabber') || name.includes('hurricane') || 
+    if (name.includes('rupture') || name.includes('stabber') || name.includes('hurricane') ||
         name.includes('cyclone') || name.includes('typhoon') || name.includes('maelstrom')) {
       return 'Shield-tanked';
     }
-    
+
     // Minmatar ships that are armor tanked
     if (name.includes('vagabond') || name.includes('muninn') || name.includes('sacrilege')) {
       return 'Armor-tanked';
     }
-    
+
     // Caldari ships - typically shield tanked
-    if (name.includes('merlin') || name.includes('kestrel') || name.includes('caracal') || 
-        name.includes('moa') || name.includes('drake') || name.includes('raven') || 
+    if (name.includes('merlin') || name.includes('kestrel') || name.includes('caracal') ||
+        name.includes('moa') || name.includes('drake') || name.includes('raven') ||
         name.includes('rokh') || name.includes('scorpion') || name.includes('tengu')) {
       return 'Shield-tanked';
     }
-    
+
     // Gallente ships - mixed tanking
-    if (name.includes('incursus') || name.includes('thorax') || name.includes('brutix') || 
+    if (name.includes('incursus') || name.includes('thorax') || name.includes('brutix') ||
         name.includes('megathron') || name.includes('dominix') || name.includes('proteus')) {
       return 'Armor-tanked';
     }
-    if (name.includes('atron') || name.includes('catalyst') || name.includes('vexor') || 
+    if (name.includes('atron') || name.includes('catalyst') || name.includes('vexor') ||
         name.includes('myrmidon') || name.includes('hyperion')) {
       return 'Shield or Armor-tanked';
     }
-    
+
     // Amarr ships - typically armor tanked
-    if (name.includes('punisher') || name.includes('omen') || name.includes('harbinger') || 
+    if (name.includes('punisher') || name.includes('omen') || name.includes('harbinger') ||
         name.includes('apocalypse') || name.includes('abaddon') || name.includes('legion')) {
       return 'Armor-tanked';
     }
-    
+
     // T3 Strategic Cruisers - versatile
     if (name.includes('loki') || name.includes('tengu') || name.includes('proteus') || name.includes('legion')) {
       return 'Versatile (Shield or Armor)';
     }
-    
+
     // Faction/pirate ships
     if (name.includes('gila') || name.includes('rattlesnake') || name.includes('barghest')) {
       return 'Shield-tanked';
@@ -53,7 +53,7 @@ describe('AI Tanking Profiles', () => {
     if (name.includes('ashimmu') || name.includes('bhaalgorn') || name.includes('vindicator')) {
       return 'Armor-tanked';
     }
-    
+
     return 'Unknown tanking profile';
   }
 
@@ -119,7 +119,7 @@ describe('AI Tanking Profiles', () => {
     it('should identify T3 cruisers as versatile', () => {
       expect(getShipTankingProfile('Loki')).to.equal('Versatile (Shield or Armor)');
       expect(getShipTankingProfile('Tengu')).to.equal('Shield-tanked'); // Caldari rule takes precedence
-      expect(getShipTankingProfile('Proteus')).to.equal('Armor-tanked'); // Gallente rule takes precedence  
+      expect(getShipTankingProfile('Proteus')).to.equal('Armor-tanked'); // Gallente rule takes precedence
       expect(getShipTankingProfile('Legion')).to.equal('Armor-tanked'); // Amarr rule takes precedence
     });
   });
@@ -169,7 +169,7 @@ describe('AI Tanking Profiles', () => {
       expect(getShipTankingProfile('Hurricane')).to.not.equal('Armor-tanked');
       expect(getShipTankingProfile('Stabber')).to.not.equal('Armor-tanked');
       expect(getShipTankingProfile('Cyclone')).to.not.equal('Armor-tanked');
-      
+
       // They should all be shield-tanked
       expect(getShipTankingProfile('Rupture')).to.equal('Shield-tanked');
       expect(getShipTankingProfile('Hurricane')).to.equal('Shield-tanked');

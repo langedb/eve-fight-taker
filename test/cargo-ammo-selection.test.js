@@ -38,7 +38,7 @@ Nova Fury Cruise Missile x1000`;
       expect(stats.dps.total).to.be.greaterThan(0);
       expect(stats._cargoAmmoUsed).to.exist;
       expect(stats._cargoAmmoUsed).to.have.length(2);
-      
+
       // Both launchers should use the same optimal ammo
       expect(stats._cargoAmmoUsed[0].ammo).to.equal('Scourge Fury Cruise Missile');
       expect(stats._cargoAmmoUsed[1].ammo).to.equal('Scourge Fury Cruise Missile');
@@ -371,21 +371,21 @@ Scourge Light Missile x1000`; // Wrong size - small ammo for large weapon
     it('should match cruise missiles with cruise launchers', async () => {
       const launcher = await fitCalculator.getItemByName('Cruise Missile Launcher II');
       const ammo = await fitCalculator.getItemByName('Scourge Fury Cruise Missile');
-      
+
       expect(fitCalculator.isAmmoCompatibleWithWeapon(launcher, ammo)).to.be.true;
     });
 
     it('should match heavy missiles with heavy launchers', async () => {
       const launcher = await fitCalculator.getItemByName('Heavy Missile Launcher II');
       const ammo = await fitCalculator.getItemByName('Scourge Fury Heavy Missile');
-      
+
       expect(fitCalculator.isAmmoCompatibleWithWeapon(launcher, ammo)).to.be.true;
     });
 
     it('should match hybrid charges with railguns', async () => {
       const weapon = await fitCalculator.getItemByName('150mm Railgun II');
       const ammo = await fitCalculator.getItemByName('Caldari Navy Antimatter Charge S');
-      
+
       expect(fitCalculator.isAmmoCompatibleWithWeapon(weapon, ammo)).to.be.true;
     });
 
@@ -393,7 +393,7 @@ Scourge Light Missile x1000`; // Wrong size - small ammo for large weapon
       const weapon = await fitCalculator.getItemByName('425mm Railgun II');
       const javelinAmmo = await fitCalculator.getItemByName('Javelin L');
       const spikeAmmo = await fitCalculator.getItemByName('Spike L');
-      
+
       expect(fitCalculator.isAmmoCompatibleWithWeapon(weapon, javelinAmmo)).to.be.true;
       expect(fitCalculator.isAmmoCompatibleWithWeapon(weapon, spikeAmmo)).to.be.true;
     });
@@ -401,7 +401,7 @@ Scourge Light Missile x1000`; // Wrong size - small ammo for large weapon
     it('should match basic hybrid charges (group 1042) with railguns', async () => {
       const weapon = await fitCalculator.getItemByName('425mm Railgun II');
       const basicAmmo = await fitCalculator.getItemByName('Antimatter Charge L');
-      
+
       expect(fitCalculator.isAmmoCompatibleWithWeapon(weapon, basicAmmo)).to.be.true;
     });
 
@@ -409,7 +409,7 @@ Scourge Light Missile x1000`; // Wrong size - small ammo for large weapon
       const weapon = await fitCalculator.getItemByName('720mm Howitzer Artillery II');
       const barrageAmmo = await fitCalculator.getItemByName('Barrage L');
       const hailAmmo = await fitCalculator.getItemByName('Hail L');
-      
+
       expect(fitCalculator.isAmmoCompatibleWithWeapon(weapon, barrageAmmo)).to.be.true;
       expect(fitCalculator.isAmmoCompatibleWithWeapon(weapon, hailAmmo)).to.be.true;
     });
@@ -417,14 +417,14 @@ Scourge Light Missile x1000`; // Wrong size - small ammo for large weapon
     it('should match frequency crystals with pulse lasers', async () => {
       const weapon = await fitCalculator.getItemByName('Small Focused Pulse Laser II');
       const ammo = await fitCalculator.getItemByName('Multifrequency S');
-      
+
       expect(fitCalculator.isAmmoCompatibleWithWeapon(weapon, ammo)).to.be.true;
     });
 
     it('should not match incompatible weapon/ammo types', async () => {
       const missileWeapon = await fitCalculator.getItemByName('Heavy Missile Launcher II');
       const hybridAmmo = await fitCalculator.getItemByName('Antimatter Charge M');
-      
+
       expect(fitCalculator.isAmmoCompatibleWithWeapon(missileWeapon, hybridAmmo)).to.be.false;
     });
   });
@@ -474,7 +474,7 @@ Antimatter Charge S x1000`;
       expect(stats.dps.total).to.be.greaterThan(0);
       expect(stats._cargoAmmoUsed).to.exist;
       expect(stats._cargoAmmoUsed).to.have.length(2);
-      
+
       // Should match missile launcher with missile ammo and railgun with hybrid ammo
       const ammoTypes = stats._cargoAmmoUsed.map(u => u.ammo);
       expect(ammoTypes).to.include('Scourge Heavy Missile');
@@ -525,7 +525,7 @@ Caldari Navy Iridium Charge L x2376`;
       expect(stats.dps.total).to.be.greaterThan(0);
       expect(stats._cargoAmmoUsed).to.exist;
       expect(stats._cargoAmmoUsed).to.have.length(8); // 8 railguns should all get ammo
-      
+
       // Should auto-select one of the available compatible charges
       expect(stats._cargoAmmoUsed[0].ammo).to.match(/(Javelin|Spike|Antimatter|Uranium|Iridium).*L/);
     });
@@ -561,7 +561,7 @@ Hail L x1000`;
       expect(stats.dps.total).to.be.greaterThan(0);
       expect(stats._cargoAmmoUsed).to.exist;
       expect(stats._cargoAmmoUsed).to.have.length(4); // 4 artillery guns should all get ammo
-      
+
       // Should auto-select one of the available compatible projectile charges
       expect(stats._cargoAmmoUsed[0].ammo).to.match(/(EMP|Barrage|Hail).*L/);
     });
