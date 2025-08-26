@@ -91,11 +91,9 @@ A comprehensive EVE Online ship combat analysis tool that uses static data, adva
 
 ```
 [Caracal Navy Issue, Missile Kiting]
-Heavy Missile Launcher II, Scourge Fury Heavy Missile
-Heavy Missile Launcher II, Scourge Fury Heavy Missile
-Heavy Missile Launcher II, Scourge Fury Heavy Missile
-Heavy Missile Launcher II, Scourge Fury Heavy Missile
-Heavy Missile Launcher II, Scourge Fury Heavy Missile
+Ballistic Control System II
+Ballistic Control System II
+Ballistic Control System II
 
 Large Shield Extender II
 50MN Y-T8 Compact Microwarpdrive
@@ -103,9 +101,11 @@ Missile Guidance Computer II, Missile Range Script
 Adaptive Invulnerability Field II
 EM Ward Field II
 
-Ballistic Control System II
-Ballistic Control System II
-Ballistic Control System II
+Heavy Missile Launcher II, Scourge Fury Heavy Missile
+Heavy Missile Launcher II, Scourge Fury Heavy Missile
+Heavy Missile Launcher II, Scourge Fury Heavy Missile
+Heavy Missile Launcher II, Scourge Fury Heavy Missile
+Heavy Missile Launcher II, Scourge Fury Heavy Missile
 
 Medium Hydraulic Bay Thrusters II
 Medium Rocket Fuel Cache Partition I
