@@ -19,7 +19,13 @@ A comprehensive EVE Online ship combat analysis tool that uses static data, adva
 
 - **Node.js**: Version 18.18.0 or higher
 - **Google AI API Key**: Get an API key from [Google AI Studio](https://aistudio.google.com/) for Gemini AI analysis
-- **EVE ESI Application** (optional): Only needed for future ESI integration features
+- **EVE ESI Application**: Required for EVE SSO authentication and ship loading features
+  - Create an application at [EVE Developers](https://developers.eveonline.com/)
+  - Set callback URL to: `http://localhost:8080/callback`
+  - Required scopes:
+    - `esi-location.read_location.v1`
+    - `esi-location.read_ship_type.v1`
+    - `esi-fittings.read_fittings.v1`
 
 ## Installation
 
@@ -37,8 +43,17 @@ A comprehensive EVE Online ship combat analysis tool that uses static data, adva
    
    Edit `.env` with your credentials:
    ```
+   # Required for AI analysis
    GOOGLE_API_KEY=your_google_api_key_here
+   
+   # Required for EVE SSO and ship loading
+   ESI_CLIENT_ID=your_esi_client_id_here
+   ESI_CLIENT_SECRET=your_esi_client_secret_here
+   
+   # Required for session management
    SESSION_SECRET=your_random_session_secret_here
+   
+   # Optional
    PORT=8080
    ```
 
@@ -132,10 +147,11 @@ The system performs comprehensive combat analysis using verified EVE Online mech
 - **Tactical Recommendations**: Ammo selection, module usage, engagement strategies
 - **Natural Language**: Human-readable combat summaries and advice
 
-### Legacy ESI Support
-- **Future Features**: EVE SSO authentication for live ship loading
-- **zKillboard Integration**: Historical combat data analysis
-- **Optional**: System works fully without ESI integration
+### EVE ESI Integration
+- **EVE SSO Authentication**: Secure login with your EVE Online character
+- **Live Ship Loading**: Automatically load your current ship and fitting
+- **Fitting Management**: Access and analyze your saved fittings
+- **Character Data**: Location and ship type detection
 
 ## Architecture
 
