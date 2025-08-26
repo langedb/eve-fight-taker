@@ -55,6 +55,7 @@ A comprehensive EVE Online ship combat analysis tool that uses static data, adva
    
    # Optional
    PORT=8080
+   LOG_LEVEL=info
    ```
 
 3. **Start the Server**
@@ -196,6 +197,32 @@ The fit calculation engine is fully compatible with [PyFA](https://github.com/py
 - **Static Data**: 50,243 EVE items loaded with fast name-based lookup
 - **Calculation Speed**: Real-time ship statistics with complex bonus stacking
 - **Memory Efficient**: Optimized attribute storage and caching system
+
+## Logging System
+
+The application uses Winston for professional-grade logging:
+
+### **Log Levels**
+- **ERROR**: Critical issues, API failures, system errors
+- **WARN**: Non-fatal issues, missing data, deprecation warnings  
+- **INFO**: Application startup, major operations, user actions (default)
+- **DEBUG**: Detailed application flow, fit processing steps
+- **TRACE**: Extremely verbose debugging information
+
+### **Log Files** (`logs/` directory)
+- `error.log` - Error level logs only (10MB rotation, 5 files)
+- `combined.log` - All log levels (10MB rotation, 5 files)  
+- `debug.log` - Debug and trace logs (10MB rotation, 3 files)
+
+### **Configuration**
+Set `LOG_LEVEL` in `.env` to control verbosity:
+```bash
+LOG_LEVEL=debug  # Show debug information
+LOG_LEVEL=info   # Standard logging (default)
+LOG_LEVEL=error  # Only critical errors
+```
+
+In development mode, logs also appear in the console with color coding.
 
 ## Development
 

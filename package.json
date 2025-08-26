@@ -1,7 +1,7 @@
 {
   "name": "eve-fight-taker",
-  "version": "2.1.0",
-  "description": "EVE Online ship combat analysis tool using static data and AI-powered tactical recommendations with comprehensive weapon systems support",
+  "version": "2.2.0",
+  "description": "EVE Online ship combat analysis tool using static data and AI-powered tactical recommendations with professional logging system",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -19,7 +19,8 @@
     "express": "^5.1.0",
     "express-session": "^1.18.0",
     "fs-extra": "^11.2.0",
-    "mocha": "^11.7.1"
+    "mocha": "^11.7.1",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
     "@babel/core": "^7.28.3",
@@ -42,7 +43,9 @@
     "tactical",
     "dps-calculation",
     "pyfa",
-    "static-data"
+    "static-data",
+    "winston",
+    "logging"
   ],
   "author": "EVE Fight Taker",
   "license": "MIT",

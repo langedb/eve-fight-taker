@@ -34,13 +34,14 @@ EVE Fight Taker is a Node.js/Express web application that analyzes EVE Online sh
 
 ### Core Service Architecture
 
-The application follows a service-oriented architecture with five main services initialized in `server.js`:
+The application follows a service-oriented architecture with six main services initialized in `server.js`:
 
 1. **ESIAuth** (`lib/esi-auth.js`) - Handles EVE Online SSO OAuth flow and ESI API interactions
 2. **CacheManager** (`lib/cache-manager.js`) - Manages local disk-based caching with automatic hourly cleanup
 3. **StaticData** (`lib/static-data.js`) - Loads and manages PyFA's EVE static data from JSON files for offline item lookup
 4. **FitCalculator** (`lib/fit-calculator.js`) - Parses EFT format fits, calculates ship statistics with all-V skill bonuses (adapted from PyFA algorithms)
 5. **AIAnalyzer** (`lib/ai-analyzer.js`) - Integrates with Google Gemini 2.5 Flash for detailed combat analysis and tactical recommendations
+6. **Logger** (`lib/logger.js`) - Winston-based professional logging system with file rotation and multiple log levels
 
 ### Current Application Flow
 
@@ -53,9 +54,10 @@ The application now implements a dual EFT input system:
 ### Environment Dependencies
 
 Required environment variables in `.env`:
-- `ESI_CLIENT_ID` / `ESI_CLIENT_SECRET` - EVE Developer application credentials (legacy, for future features)
+- `ESI_CLIENT_ID` / `ESI_CLIENT_SECRET` - EVE Developer application credentials (legacy, for future features)  
 - `GOOGLE_API_KEY` - Google AI Studio API key for Gemini 2.5 Flash
 - `SESSION_SECRET` - Express session encryption key
+- `LOG_LEVEL` - Logging verbosity (error, warn, info, debug) - defaults to 'info'
 
 ### Static Data Integration
 

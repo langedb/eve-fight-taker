@@ -3,6 +3,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const axios = require('axios');
+const log = require('./lib/logger');
 const { ESIAuth } = require('./lib/esi-auth');
 const { CacheManager } = require('./lib/cache-manager');
 const { FitCalculator } = require('./lib/fit-calculator');
@@ -30,7 +31,7 @@ app.use(session({
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Initialize services
-console.log('ESI_CLIENT_ID:', process.env.ESI_CLIENT_ID ? 'Set' : 'Not set');
+log.info(`ESI_CLIENT_ID: ${process.env.ESI_CLIENT_ID ? 'Set' : 'Not set'}`);
 const esiAuth = new ESIAuth({
   clientId: process.env.ESI_CLIENT_ID,
   clientSecret: process.env.ESI_CLIENT_SECRET,
@@ -44,9 +45,9 @@ const zkillboardParser = new ZKillboardParser();
 
 // Initialize static data
 (async () => {
-  console.log('Initializing static data...');
+  log.info('Initializing static data...');
   await fitCalculator.ensureStaticData(); // Ensure staticData is initialized
-  console.log('Static data loaded successfully');
+  log.info('Static data loaded successfully');
 })();
 
 // Routes
@@ -63,11 +64,11 @@ app.get('/auth', (req, res) => {
 app.get('/callback', async (req, res) => {
   try {
     const { code } = req.query;
-    console.log('OAuth callback - code received:', code ? 'Yes' : 'No');
+    log.debug(`OAuth callback - code received: ${code ? 'Yes' : 'No'}`);
 
     const tokenData = await esiAuth.exchangeCodeForTokens(code);
-    console.log('Token data received:', tokenData ? 'Yes' : 'No');
-    console.log('Access token:', tokenData.access_token ? tokenData.access_token.substring(0, 20) + '...' : 'None');
+    log.debug(`Token data received: ${tokenData ? 'Yes' : 'No'}`);
+    log.debug(`Access token: ${tokenData.access_token ? tokenData.access_token.substring(0, 20) + '...' : 'None'}`);
 
     req.session.accessToken = tokenData.access_token;
     req.session.refreshToken = tokenData.refresh_token;
@@ -78,8 +79,8 @@ app.get('/callback', async (req, res) => {
 
     res.redirect('/?authenticated=true');
   } catch (error) {
-    console.error('OAuth callback error:', error.message);
-    console.error('Error details:', error.response?.data || 'No response data');
+    log.error('OAuth callback error', { error: error.message });
+    log.error('OAuth callback error details', { details: error.response?.data || 'No response data' });
     res.redirect('/?error=auth_failed');
   }
 });
@@ -127,7 +128,7 @@ app.get('/api/character/ship', async (req, res) => {
       eft: eftFormat
     });
   } catch (error) {
-    console.error('Error getting character ship:', error);
+    log.error('Error getting character ship', { error: error.message });
     res.status(500).json({ error: 'Failed to get ship data' });
   }
 });
@@ -140,7 +141,7 @@ app.get('/api/fittings', async (req, res) => {
     const fittings = await esiAuth.getAllFittings(req.session.accessToken);
     res.json(fittings);
   } catch (error) {
-    console.error('Error getting fittings:', error);
+    log.error('Error getting fittings', { error: error.message });
     res.status(500).json({ error: 'Failed to retrieve fittings' });
   }
 });
@@ -154,7 +155,7 @@ app.post('/api/convert-esi-to-eft', async (req, res) => {
     const eftText = await fitCalculator.esiToEFT(esiFitting);
     res.json({ eftText });
   } catch (error) {
-    console.error('Error converting ESI to EFT:', error);
+    log.error('Error converting ESI to EFT:', error);
     res.status(500).json({ error: 'Failed to convert ESI fitting to EFT' });
   }
 });
@@ -167,11 +168,11 @@ app.post('/api/analyze-combat', async (req, res) => {
       return res.status(400).json({ error: 'Both current and target fits required' });
     }
 
-    console.log('DEBUG: Received fit data');
-    console.log('Current fit ship:', currentFit.shipType);
-    console.log('Target fit ship:', targetFit.shipType);
-    console.log('Current fit high slots:', currentFit.modules?.high?.length || 0);
-    console.log('Target fit high slots:', targetFit.modules?.high?.length || 0);
+    log.info('DEBUG: Received fit data');
+    log.info('Current fit ship:', currentFit.shipType);
+    log.info('Target fit ship:', targetFit.shipType);
+    log.info('Current fit high slots:', currentFit.modules?.high?.length || 0);
+    log.info('Target fit high slots:', targetFit.modules?.high?.length || 0);
 
     // Calculate stats for both fits
     const currentStats = await fitCalculator.calculateFitStats(currentFit);
@@ -183,9 +184,9 @@ app.post('/api/analyze-combat', async (req, res) => {
       { stats: targetStats, fit: targetFit }
     );
 
-    console.log('DEBUG: AI analysis result');
-    console.log('Has ammo recommendations:', !!(analysis.ammoRecommendations?.length));
-    console.log('Has module recommendations:', !!(analysis.moduleRecommendations?.length));
+    log.info('DEBUG: AI analysis result');
+    log.info('Has ammo recommendations:', !!(analysis.ammoRecommendations?.length));
+    log.info('Has module recommendations:', !!(analysis.moduleRecommendations?.length));
 
     res.json({
       currentStats,
@@ -193,7 +194,7 @@ app.post('/api/analyze-combat', async (req, res) => {
       analysis
     });
   } catch (error) {
-    console.error('Error analyzing combat:', error);
+    log.error('Error analyzing combat:', error);
     res.status(500).json({ error: 'Failed to analyze combat' });
   }
 });
@@ -211,7 +212,7 @@ app.post('/api/parse-eft', async (req, res) => {
 
     res.json({ fit: parsedFit, stats });
   } catch (error) {
-    console.error('Error parsing EFT:', error);
+    log.error('Error parsing EFT:', error);
     res.status(500).json({ error: 'Failed to parse EFT fit' });
   }
 });
@@ -224,14 +225,14 @@ app.post('/api/parse-zkill', async (req, res) => {
       return res.status(400).json({ error: 'zKillboard URL required' });
     }
 
-    console.log('Parsing zKillboard URL:', zkillUrl);
+    log.info('Parsing zKillboard URL:', zkillUrl);
 
     // Parse the zKillboard URL and get EFT format
     const zkillData = await zkillboardParser.parseZKillboardURL(zkillUrl);
 
-    console.log('=== EFT TEXT FROM ZKILLBOARD ===');
-    console.log(zkillData.eftText);
-    console.log('=== END EFT TEXT ===');
+    log.info('=== EFT TEXT FROM ZKILLBOARD ===');
+    log.info(zkillData.eftText);
+    log.info('=== END EFT TEXT ===');
 
     // Parse the EFT format using our existing parser
     const parsedFit = await fitCalculator.parseEFT(zkillData.eftText);
@@ -246,7 +247,7 @@ app.post('/api/parse-zkill', async (req, res) => {
 
     res.json({ fit: parsedFit, stats });
   } catch (error) {
-    console.error('Error parsing zKillboard URL:', error);
+    log.error('Error parsing zKillboard URL:', error);
     res.status(500).json({ error: 'Failed to parse zKillboard URL: ' + error.message });
   }
 });
@@ -270,7 +271,7 @@ app.get('/api/zkillboard/:shipTypeId', async (req, res) => {
 
     res.json(data);
   } catch (error) {
-    console.error('Error fetching zKillboard data:', error);
+    log.error('Error fetching zKillboard data:', error);
     res.status(500).json({ error: 'Failed to fetch killboard data' });
   }
 });
@@ -288,7 +289,7 @@ app.get('/api/get-ship-name/:ship_type_id', async (req, res) => {
       res.status(404).json({ error: 'Ship type not found' });
     }
   } catch (error) {
-    console.error('Error getting ship name:', error);
+    log.error('Error getting ship name:', error);
     res.status(500).json({ error: 'Failed to get ship name' });
   }
 });
@@ -302,11 +303,11 @@ app.get('/api/search/character/:characterName', async (req, res) => {
       return res.status(400).json({ error: 'Character name must be at least 3 characters' });
     }
 
-    console.log(`Searching for character: "${characterName}"`);
+    log.info(`Searching for character: "${characterName}"`);
 
     // Use the current ESI POST /universe/ids/ endpoint (no authentication required)
     const searchUrl = 'https://esi.evetech.net/latest/universe/ids/';
-    console.log('Using ESI POST /universe/ids/ for character search');
+    log.info('Using ESI POST /universe/ids/ for character search');
 
     try {
       const searchResponse = await axios.post(searchUrl,
@@ -319,7 +320,7 @@ app.get('/api/search/character/:characterName', async (req, res) => {
         }
       );
 
-      console.log('ESI search response:', searchResponse.data);
+      log.info('ESI search response:', searchResponse.data);
 
       if (!searchResponse.data.characters || searchResponse.data.characters.length === 0) {
         return res.status(404).json({
@@ -330,7 +331,7 @@ app.get('/api/search/character/:characterName', async (req, res) => {
 
       const character = searchResponse.data.characters[0];
       const characterId = character.id;
-      console.log(`Found character: ${character.name} (ID: ${characterId})`);
+      log.info(`Found character: ${character.name} (ID: ${characterId})`);
 
       // Get additional character info (this endpoint is public, no auth needed)
       const characterInfoUrl = `https://esi.evetech.net/latest/characters/${characterId}/`;
@@ -349,8 +350,8 @@ app.get('/api/search/character/:characterName', async (req, res) => {
       });
 
     } catch (esiError) {
-      console.log(`ESI search failed for "${characterName}":`, esiError.response?.status, esiError.response?.statusText);
-      console.log('Error details:', esiError.response?.data);
+      log.info(`ESI search failed for "${characterName}":`, esiError.response?.status, esiError.response?.statusText);
+      log.info('Error details:', esiError.response?.data);
 
       if (esiError.response?.status === 404) {
         return res.status(404).json({
@@ -368,7 +369,7 @@ app.get('/api/search/character/:characterName', async (req, res) => {
     }
 
   } catch (error) {
-    console.error('Error searching for character:', error);
+    log.error('Error searching for character:', error);
     res.status(500).json({
       error: 'Character search failed.',
       suggestion: 'Please try again or use the manual EFT input method instead.'
@@ -382,7 +383,7 @@ app.get('/api/ship-types', async (req, res) => {
     const shipTypes = await fitCalculator.staticData.getShipTypes();
     res.json(shipTypes);
   } catch (error) {
-    console.error('Error getting ship types:', error);
+    log.error('Error getting ship types:', error);
     res.status(500).json({ error: 'Failed to get ship types' });
   }
 });
@@ -392,11 +393,11 @@ app.get('/api/character/:characterId/death/:shipTypeId', async (req, res) => {
   try {
     const { characterId, shipTypeId } = req.params;
 
-    console.log(`Looking for death data: characterId=${characterId}, shipTypeId=${shipTypeId}`);
+    log.info(`Looking for death data: characterId=${characterId}, shipTypeId=${shipTypeId}`);
 
     // Get recent losses from zKillboard
     const zkillUrl = `https://zkillboard.com/api/losses/characterID/${characterId}/`;
-    console.log(`Fetching zKillboard losses from: ${zkillUrl}`);
+    log.info(`Fetching zKillboard losses from: ${zkillUrl}`);
 
     const zkillResponse = await axios.get(zkillUrl, {
       headers: {
@@ -405,10 +406,10 @@ app.get('/api/character/:characterId/death/:shipTypeId', async (req, res) => {
     });
 
     const killmails = zkillResponse.data;
-    console.log(`Found ${killmails.length} total killmails for character`);
+    log.info(`Found ${killmails.length} total killmails for character`);
 
     // Filter for specific ship type by checking each killmail
-    console.log(`Looking for ship type ID: ${shipTypeId} (as integer: ${parseInt(shipTypeId)})`);
+    log.info(`Looking for ship type ID: ${shipTypeId} (as integer: ${parseInt(shipTypeId)})`);
 
     let shipTypeKill = null;
     let killmailData = null;
@@ -416,7 +417,7 @@ app.get('/api/character/:characterId/death/:shipTypeId', async (req, res) => {
     // Check each killmail until we find one with the right ship type
     for (let i = 0; i < Math.min(killmails.length, 20); i++) { // Limit to first 20 to avoid rate limits
       const km = killmails[i];
-      console.log(`Checking killmail ${i}: ${km.killmail_id}`);
+      log.info(`Checking killmail ${i}: ${km.killmail_id}`);
 
       try {
         // Get full killmail data from ESI
@@ -424,16 +425,16 @@ app.get('/api/character/:characterId/death/:shipTypeId', async (req, res) => {
         const killmailResponse = await axios.get(killmailUrl);
         const fullKillmailData = killmailResponse.data;
 
-        console.log(`  Ship type: ${fullKillmailData.victim.ship_type_id}`);
+        log.info(`  Ship type: ${fullKillmailData.victim.ship_type_id}`);
 
         if (fullKillmailData.victim.ship_type_id === parseInt(shipTypeId)) {
-          console.log(`  ✅ Match found! Using killmail ${km.killmail_id}`);
+          log.info(`  ✅ Match found! Using killmail ${km.killmail_id}`);
           shipTypeKill = km;
           killmailData = fullKillmailData;
           break;
         }
       } catch (error) {
-        console.log(`  ❌ Error fetching killmail ${km.killmail_id}:`, error.message);
+        log.info(`  ❌ Error fetching killmail ${km.killmail_id}:`, error.message);
         continue;
       }
     }
@@ -470,7 +471,7 @@ app.get('/api/character/:characterId/death/:shipTypeId', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Error getting character death:', error);
+    log.error('Error getting character death:', error);
 
     if (error.response?.status === 404) {
       return res.status(404).json({ error: 'Character or killmail not found' });
@@ -491,5 +492,5 @@ app.post('/api/logout', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`EVE Fight Taker server running on http://localhost:${PORT}`);
+  log.info(`EVE Fight Taker server running on http://localhost:${PORT}`);
 });

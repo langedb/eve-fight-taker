@@ -136,3 +136,7 @@ test-integration-cache-*/
 
 # Claude Code specific
 .claude_code/
+
+# Log files
+logs/
+*.log
