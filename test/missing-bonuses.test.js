@@ -174,8 +174,8 @@ Quake L x1000`;
       await fitSimulator.applyEffects();
       const result = await fitCalculator.calculateShipStats(parsedFit, fitSimulator);
 
-      // Should auto-load Quake L and have proper damage
-      expect(parsedFit.modules.low[0].charge).to.equal('Quake L');
+      // Should auto-load Quake L from cargo into the weapon
+      expect(parsedFit.modules.high[0].charge).to.equal('Quake L');
       expect(result.dps.total).to.be.greaterThan(20); // Should have significant DPS
     });
 

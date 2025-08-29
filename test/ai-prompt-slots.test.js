@@ -12,7 +12,7 @@ describe('AI Prompt Slot Categorization Fix', () => {
   });
 
   describe('EFT Format Parsing Validation', () => {
-    it('should parse EFT format in correct order: Low → Med → High → Rigs', async () => {
+    it('should parse EFT format in correct order: Low → Med → High → Rigs (official specification)', async () => {
       const testFit = `[Hurricane, Section Order Test]
 Gyrostabilizer II
 Damage Control II
@@ -29,23 +29,23 @@ Medium Core Defense Field Extender I
 
       const parsedFit = await fitCalculator.parseEFT(testFit);
 
-      // Verify sections have expected content types
+      // Verify sections have expected content types according to official EFT format order
+      // Low slot items (tank, damage mods)
+      expect(parsedFit.modules.low).to.have.lengthOf(2);
+      expect(parsedFit.modules.low.some(m => m.name.includes('Gyrostabilizer'))).to.be.true;
+      expect(parsedFit.modules.low.some(m => m.name.includes('Damage Control'))).to.be.true;
+
+      // Med slot items (prop, tank, ewar)
+      expect(parsedFit.modules.med).to.have.lengthOf(2);
+      expect(parsedFit.modules.med.some(m => m.name.includes('Afterburner'))).to.be.true;
+      expect(parsedFit.modules.med.some(m => m.name.includes('Shield Extender'))).to.be.true;
+
       // High slot items (weapons, utilities)
       expect(parsedFit.modules.high).to.have.lengthOf(2);
       expect(parsedFit.modules.high.every(m =>
         m.name.includes('Artillery') || m.name.includes('Launcher') ||
         m.name.includes('Laser') || m.name.includes('Neutralizer')
       )).to.be.true;
-
-      // Mid slot items (prop, tank, ewar)
-      expect(parsedFit.modules.med).to.have.lengthOf(2);
-      expect(parsedFit.modules.med.some(m => m.name.includes('Afterburner'))).to.be.true;
-      expect(parsedFit.modules.med.some(m => m.name.includes('Shield Extender'))).to.be.true;
-
-      // Low slot items (damage mods, tank mods)
-      expect(parsedFit.modules.low).to.have.lengthOf(2);
-      expect(parsedFit.modules.low.some(m => m.name.includes('Gyrostabilizer'))).to.be.true;
-      expect(parsedFit.modules.low.some(m => m.name.includes('Damage Control'))).to.be.true;
 
       // Rigs
       expect(parsedFit.modules.rig).to.have.lengthOf(1);
@@ -54,7 +54,7 @@ Medium Core Defense Field Extender I
   });
 
   describe('AI Prompt Data Structure Validation', () => {
-    // The fix was in the EFT parser to use correct Low → Med → High order
+    // The fix was in the EFT parser to use correct High → Med → Low order
     // The AI prompt correctly calls:
     // HIGH SLOTS (Weapons): ${await this.formatModuleList(currentFit.modules.high, staticData)}
     // LOW SLOTS (Modules): ${await this.formatModuleList(currentFit.modules.low, staticData)}
@@ -73,7 +73,7 @@ Heavy Missile Launcher II
 
       const parsedFit = await fitCalculator.parseEFT(weaponFit);
 
-      // With correct EFT parsing (Low → Med → High), weapons should be in .high
+      // With correct EFT parsing (High → Med → Low), weapons should be in .high
       const weaponsInHigh = parsedFit.modules.high.filter(m =>
         m.name.includes('Launcher') || m.name.includes('Blaster') ||
         m.name.includes('Artillery') || m.name.includes('Pulse')

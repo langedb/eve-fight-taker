@@ -159,17 +159,6 @@ Caldari Navy Mjolnir Heavy Assault Missile x940`;
     this.timeout(10000); // Increase timeout for potentially longer calculation
 
     const eft = `[Loki,  A]
-Damage Control II
-Ballistic Control System II
-Ballistic Control System II
-Ballistic Control System II
-
-Stasis Webifier II
-Stasis Webifier II
-Warp Disruptor II
-Republic Fleet Large Shield Extender
-50MN Y-T8 Compact Microwarpdrive
-
 Heavy Assault Missile Launcher II, Mjolnir Rage Heavy Assault Missile x42
 Heavy Assault Missile Launcher II, Mjolnir Rage Heavy Assault Missile x42
 Heavy Assault Missile Launcher II, Mjolnir Rage Heavy Assault Missile x42
@@ -178,6 +167,17 @@ Heavy Assault Missile Launcher II, Mjolnir Rage Heavy Assault Missile x42
 Covert Ops Cloaking Device II
 Sisters Expanded Probe Launcher, Sisters Combat Scanner Probe x8
 Medium Energy Neutralizer II
+
+Stasis Webifier II
+Stasis Webifier II
+Warp Disruptor II
+Republic Fleet Large Shield Extender
+50MN Y-T8 Compact Microwarpdrive
+
+Damage Control II
+Ballistic Control System II
+Ballistic Control System II
+Ballistic Control System II
 
 Medium Core Defense Field Extender II
 Medium Thermal Shield Reinforcer I

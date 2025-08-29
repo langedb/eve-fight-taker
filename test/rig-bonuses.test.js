@@ -355,7 +355,7 @@ Small Hydraulic Bay Thrusters II`;
 
       const parsedInvalid = await fitCalculator.parseEFT(eftInvalidRigs);
       const parsedValid = await fitCalculator.parseEFT(eftValidRigs);
-      const statsInvalid = await fitCalculator.calculateFitStats(parsedInvalid);
+      const _statsInvalid = await fitCalculator.calculateFitStats(parsedInvalid);
       const statsValid = await fitCalculator.calculateFitStats(parsedValid);
 
       // The invalid rig should not provide bonus (or should error gracefully)
