@@ -99,8 +99,8 @@ Ballistic Control System II
 Large Shield Extender II
 50MN Y-T8 Compact Microwarpdrive
 Missile Guidance Computer II, Missile Range Script
-Adaptive Invulnerability Field II
-EM Ward Field II
+Multispectrum Shield Hardener II
+EM Shield Hardener II
 
 Heavy Missile Launcher II, Scourge Fury Heavy Missile
 Heavy Missile Launcher II, Scourge Fury Heavy Missile
