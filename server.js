@@ -481,6 +481,159 @@ app.get('/api/character/:characterId/death/:shipTypeId', async (req, res) => {
   }
 });
 
+// Get character's last 10 deaths with ship info
+app.get('/api/character/:characterId/deaths', async (req, res) => {
+  try {
+    const { characterId } = req.params;
+    const limit = parseInt(req.query.limit) || 10;
+
+    log.info(`Getting last ${limit} deaths for characterId=${characterId}`);
+
+    // Get recent losses from zKillboard
+    const zkillUrl = `https://zkillboard.com/api/losses/characterID/${characterId}/`;
+    log.info(`Fetching zKillboard losses from: ${zkillUrl}`);
+
+    const zkillResponse = await axios.get(zkillUrl, {
+      headers: {
+        'User-Agent': 'EVE Fight Taker - Combat Analysis Tool - Contact: your-email@example.com'
+      }
+    });
+
+    const killmails = zkillResponse.data;
+    log.info(`Found ${killmails.length} total killmails for character`);
+
+    if (!killmails || killmails.length === 0) {
+      return res.status(404).json({
+        error: 'No recent deaths found for this character',
+        suggestion: 'The character may not have recent PvP activity or their killmails may not be available.'
+      });
+    }
+
+    // Process the first N killmails to get ship details
+    const deaths = [];
+    const maxToCheck = Math.min(killmails.length, limit + 5); // Check a few extra in case some fail
+
+    for (let i = 0; i < maxToCheck && deaths.length < limit; i++) {
+      const km = killmails[i];
+      log.info(`Processing killmail ${i + 1}/${maxToCheck}: ${km.killmail_id}`);
+
+      try {
+        // Get full killmail data from ESI
+        const killmailUrl = `https://esi.evetech.net/latest/killmails/${km.killmail_id}/${km.zkb.hash}/`;
+        const killmailResponse = await axios.get(killmailUrl);
+        const fullKillmailData = killmailResponse.data;
+
+        // Get ship type name from static data
+        const shipTypeId = fullKillmailData.victim.ship_type_id;
+        const shipType = await fitCalculator.staticData.getItemInfo(shipTypeId);
+        const shipName = shipType ? shipType.name : `Ship Type ${shipTypeId}`;
+
+        // Filter: Only include actual ships (category 6) but exclude capsules (group 29)
+        if (!shipType || shipType.category_id !== 6 || shipType.groupID === 29) {
+          log.info(`  ⏭️ Skipping non-ship: ${shipName} (category: ${shipType?.category_id}, group: ${shipType?.groupID})`);
+          continue;
+        }
+
+        // Add to deaths list
+        deaths.push({
+          killmailId: km.killmail_id,
+          killmailHash: km.zkb.hash,
+          shipTypeId: shipTypeId,
+          shipName: shipName,
+          killTime: fullKillmailData.killmail_time,
+          zkbUrl: `https://zkillboard.com/kill/${km.killmail_id}/`,
+          displayText: `${shipName} - ${new Date(fullKillmailData.killmail_time).toLocaleDateString()}`,
+          location: fullKillmailData.solar_system_id
+        });
+
+        log.info(`  ✅ Added: ${shipName} from ${fullKillmailData.killmail_time}`);
+
+      } catch (error) {
+        log.info(`  ❌ Error processing killmail ${km.killmail_id}:`, error.message || error);
+        continue;
+      }
+    }
+
+    if (deaths.length === 0) {
+      return res.status(404).json({
+        error: 'Unable to process recent deaths',
+        suggestion: 'The character\'s recent killmails may be corrupted or unavailable from the ESI API.'
+      });
+    }
+
+    log.info(`Successfully processed ${deaths.length} deaths for character ${characterId}`);
+
+    res.json({
+      characterId: parseInt(characterId),
+      deaths: deaths,
+      totalFound: deaths.length
+    });
+
+  } catch (error) {
+    log.error('Error getting character deaths:', error);
+
+    if (error.response?.status === 404) {
+      return res.status(404).json({ 
+        error: 'Character not found or has no recent deaths',
+        suggestion: 'Verify the character name is spelled correctly and has recent PvP activity.'
+      });
+    }
+
+    res.status(500).json({ error: 'Failed to get character deaths data' });
+  }
+});
+
+// Load specific death by killmail ID
+app.get('/api/killmail/:killmailId/:killmailHash', async (req, res) => {
+  try {
+    const { killmailId, killmailHash } = req.params;
+
+    log.info(`Loading death fit for killmail ${killmailId}`);
+
+    // Get full killmail data from ESI
+    const killmailUrl = `https://esi.evetech.net/latest/killmails/${killmailId}/${killmailHash}/`;
+    const killmailResponse = await axios.get(killmailUrl);
+    const killmailData = killmailResponse.data;
+
+    // Convert killmail to EFT format
+    const eftText = await fitCalculator.killmailToEFT(killmailData);
+
+    // Parse the EFT and calculate stats
+    const parsedFit = await fitCalculator.parseEFT(eftText);
+    const stats = await fitCalculator.calculateFitStats(parsedFit);
+
+    // Add zkillboard metadata
+    parsedFit.zkillboard = {
+      killID: parseInt(killmailId),
+      originalUrl: `https://zkillboard.com/kill/${killmailId}/`,
+      killTime: killmailData.killmail_time
+    };
+
+    res.json({
+      fit: parsedFit,
+      stats: stats,
+      eftText: eftText,
+      killmail: {
+        id: parseInt(killmailId),
+        time: killmailData.killmail_time,
+        zkb_url: `https://zkillboard.com/kill/${killmailId}/`
+      }
+    });
+
+  } catch (error) {
+    log.error('Error loading killmail:', error);
+
+    if (error.response?.status === 404) {
+      return res.status(404).json({ 
+        error: 'Killmail not found',
+        suggestion: 'The killmail may have been deleted or is not available from the ESI API.'
+      });
+    }
+
+    res.status(500).json({ error: 'Failed to load killmail data' });
+  }
+});
+
 app.post('/api/logout', (req, res) => {
   req.session.destroy((err) => {
     if (err) {

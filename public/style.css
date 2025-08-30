@@ -696,6 +696,41 @@ body {
     color: #00d4ff;
 }
 
+/* Deaths dropdown styling */
+.deaths-dropdown-container {
+    position: relative;
+    width: 100%;
+}
+
+.deaths-select {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: #e0e0e0;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23e0e0e0' viewBox='0 0 16 16'%3E%3Cpath d='M4.646 6.646a.5.5 0 0 1 .708 0L8 9.293l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 40px;
+}
+
+.deaths-select:focus {
+    outline: none;
+    border-color: #00d4ff;
+    box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.2);
+}
+
+.deaths-select option {
+    background: #1a2332;
+    color: #e0e0e0;
+    padding: 8px;
+}
+
 /* Death analysis input styling improvements */
 @media (min-width: 768px) {
     .death-analysis-inputs {

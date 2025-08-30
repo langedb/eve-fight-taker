@@ -88,7 +88,7 @@ Right-click your ship in-game → Copy → Copy Fitting" rows="15" class="eft-te
                         <!-- Death Analysis Section -->
                         <div class="death-analysis-section">
                             <h4><i class="fas fa-skull"></i> Death Analysis</h4>
-                            <p>Load a character's most recent death in a specific ship type from zKillboard:</p>
+                            <p>Load a character's recent deaths from zKillboard:</p>
                             <div class="feature-notice">
                                 <i class="fas fa-info-circle"></i>
                                 <span>This feature requires the character to have recent PvP activity. For best results, use characters with recent killmails.</span>
@@ -100,24 +100,23 @@ Right-click your ship in-game → Copy → Copy Fitting" rows="15" class="eft-te
                                     <input type="text" id="character-name-input" placeholder="Enter character name..." class="character-input">
                                 </div>
                                 
-                                <div class="input-group">
-                                    <label for="ship-type-search">Ship Type:</label>
-                                    <div class="ship-type-dropdown-container">
+                                <button id="search-deaths-btn" class="btn btn-secondary" disabled>
+                                    <i class="fas fa-search"></i> Search Deaths
+                                </button>
+                                
+                                <div class="input-group" id="deaths-dropdown-group" style="display: none;">
+                                    <label for="deaths-dropdown">Recent Deaths:</label>
+                                    <div class="deaths-dropdown-container">
                                         <div class="search-input-container">
-                                            <input type="text" id="ship-type-search" class="search-input" placeholder="Type to search ship types..." autocomplete="off">
-                                            <i class="fas fa-search search-icon"></i>
-                                            <i class="fas fa-chevron-down dropdown-arrow" id="ship-dropdown-arrow"></i>
-                                        </div>
-                                        <div class="dropdown-list" id="ship-type-dropdown-list" style="display: none;">
-                                            <div class="dropdown-content" id="ship-type-dropdown-content">
-                                                <!-- Ship type options will be populated here -->
-                                            </div>
+                                            <select id="deaths-dropdown" class="deaths-select">
+                                                <option value="">Select a death to load...</option>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <button id="load-death-fit-btn" class="btn btn-warning" disabled>
-                                    <i class="fas fa-download"></i> Load Death Fit
+                                <button id="load-selected-death-btn" class="btn btn-warning" disabled>
+                                    <i class="fas fa-download"></i> Load Selected Death
                                 </button>
                             </div>
                             

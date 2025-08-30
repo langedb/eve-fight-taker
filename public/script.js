@@ -49,32 +49,22 @@ class EVEFightTaker {
         });
 
         // Death analysis functionality
-        document.getElementById('load-death-fit-btn').addEventListener('click', () => {
-            this.loadDeathFit();
+        document.getElementById('search-deaths-btn').addEventListener('click', () => {
+            this.searchCharacterDeaths();
+        });
+
+        document.getElementById('load-selected-death-btn').addEventListener('click', () => {
+            this.loadSelectedDeath();
         });
 
         // Character name input validation
         document.getElementById('character-name-input').addEventListener('input', () => {
-            this.validateDeathAnalysisInputs();
+            this.validateCharacterNameInput();
         });
 
-        // Ship type search functionality
-        document.getElementById('ship-type-search').addEventListener('input', (e) => {
-            this.filterShipTypes(e.target.value);
-        });
-
-        document.getElementById('ship-type-search').addEventListener('focus', () => {
-            this.showShipTypeDropdown();
-        });
-
-        // Initialize ship type dropdown
-        this.initializeShipTypeDropdown();
-
-        // Close dropdowns when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.ship-type-dropdown-container')) {
-                this.hideShipTypeDropdown();
-            }
+        // Deaths dropdown change handler
+        document.getElementById('deaths-dropdown').addEventListener('change', () => {
+            this.validateDeathSelection();
         });
 
         // Swap fits
@@ -868,108 +858,23 @@ class EVEFightTaker {
     }
 
     // Death Analysis Methods
-    async initializeShipTypeDropdown() {
-        try {
-            const response = await fetch('/api/ship-types');
-            if (!response.ok) {
-                throw new Error('Failed to load ship types');
-            }
-
-            this.shipTypes = await response.json();
-            this.allShipTypes = this.flattenShipTypes(this.shipTypes);
-            this.renderShipTypeDropdown(this.allShipTypes);
-        } catch (error) {
-            console.error('Error loading ship types:', error);
-        }
-    }
-
-    flattenShipTypes(shipGroups) {
-        const flatTypes = [];
-        for (const group of shipGroups) {
-            for (const ship of group.ships) {
-                flatTypes.push({
-                    typeId: ship.typeId,
-                    name: ship.name,
-                    groupName: ship.groupName
-                });
-            }
-        }
-        return flatTypes.sort((a, b) => a.name.localeCompare(b.name));
-    }
-
-    renderShipTypeDropdown(ships) {
-        const dropdownContent = document.getElementById('ship-type-dropdown-content');
-        dropdownContent.innerHTML = '';
-
-        let currentGroup = '';
-        for (const ship of ships) {
-            if (ship.groupName !== currentGroup) {
-                currentGroup = ship.groupName;
-                const groupHeader = document.createElement('div');
-                groupHeader.className = 'dropdown-group-header';
-                groupHeader.textContent = currentGroup;
-                dropdownContent.appendChild(groupHeader);
-            }
-
-            const option = document.createElement('div');
-            option.className = 'dropdown-option';
-            option.dataset.typeId = ship.typeId;
-            option.textContent = ship.name;
-            
-            option.addEventListener('click', () => {
-                this.selectShipType(ship);
-            });
-
-            dropdownContent.appendChild(option);
-        }
-    }
-
-    selectShipType(ship) {
-        document.getElementById('ship-type-search').value = ship.name;
-        document.getElementById('ship-type-search').dataset.selectedTypeId = ship.typeId;
-        this.hideShipTypeDropdown();
-        this.validateDeathAnalysisInputs();
-    }
-
-    showShipTypeDropdown() {
-        document.getElementById('ship-type-dropdown-list').style.display = 'block';
-        document.getElementById('ship-dropdown-arrow').style.transform = 'rotate(180deg)';
-    }
-
-    hideShipTypeDropdown() {
-        document.getElementById('ship-type-dropdown-list').style.display = 'none';
-        document.getElementById('ship-dropdown-arrow').style.transform = 'rotate(0deg)';
-    }
-
-    filterShipTypes(searchTerm) {
-        if (!this.allShipTypes) return;
-
-        const filtered = this.allShipTypes.filter(ship =>
-            ship.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            ship.groupName.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-
-        this.renderShipTypeDropdown(filtered);
-        
-        if (searchTerm && filtered.length > 0) {
-            this.showShipTypeDropdown();
-        }
-    }
-
-    validateDeathAnalysisInputs() {
+    validateCharacterNameInput() {
         const characterName = document.getElementById('character-name-input').value.trim();
-        const shipTypeId = document.getElementById('ship-type-search').dataset.selectedTypeId;
-        
-        const loadBtn = document.getElementById('load-death-fit-btn');
-        loadBtn.disabled = !(characterName.length >= 3 && shipTypeId);
+        const searchBtn = document.getElementById('search-deaths-btn');
+        searchBtn.disabled = characterName.length < 3;
     }
 
-    async loadDeathFit() {
-        const characterName = document.getElementById('character-name-input').value.trim();
-        const shipTypeId = document.getElementById('ship-type-search').dataset.selectedTypeId;
+    validateDeathSelection() {
+        const deathDropdown = document.getElementById('deaths-dropdown');
+        const loadBtn = document.getElementById('load-selected-death-btn');
+        loadBtn.disabled = !deathDropdown.value;
+    }
 
-        if (!characterName || !shipTypeId) {
-            alert('Please enter a character name and select a ship type.');
+    async searchCharacterDeaths() {
+        const characterName = document.getElementById('character-name-input').value.trim();
+
+        if (characterName.length < 3) {
+            alert('Please enter at least 3 characters for the character name.');
             return;
         }
 
@@ -999,33 +904,100 @@ class EVEFightTaker {
 
             const characterData = await charResponse.json();
             
-            // Then get the death fit
-            const deathResponse = await fetch(`/api/character/${characterData.character_id}/death/${shipTypeId}`);
+            // Then get the character's deaths
+            const deathsResponse = await fetch(`/api/character/${characterData.character_id}/deaths?limit=10`);
             
-            if (!deathResponse.ok) {
-                if (deathResponse.status === 404) {
-                    const shipName = document.getElementById('ship-type-search').value;
-                    throw new Error(`No recent deaths found for "${characterName}" in a ${shipName}.`);
+            if (!deathsResponse.ok) {
+                const errorData = await deathsResponse.json().catch(() => ({}));
+                if (deathsResponse.status === 404) {
+                    throw new Error(errorData.error || `No recent deaths found for "${characterName}".`);
                 }
-                throw new Error('Failed to retrieve death data.');
+                throw new Error(errorData.error || 'Failed to retrieve deaths data.');
             }
 
-            const deathData = await deathResponse.json();
+            const deathsData = await deathsResponse.json();
+            
+            // Populate the dropdown
+            this.populateDeathsDropdown(deathsData.deaths);
+            
+            // Show the dropdown section
+            document.getElementById('deaths-dropdown-group').style.display = 'block';
+            
+            // Show success message
+            alert(`Found ${deathsData.totalFound} recent deaths for ${characterName}. Select one to load.`);
+
+        } catch (error) {
+            console.error('Error searching character deaths:', error);
+            alert('Failed to search character deaths: ' + error.message);
+            
+            // Hide dropdown on error
+            document.getElementById('deaths-dropdown-group').style.display = 'none';
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    populateDeathsDropdown(deaths) {
+        const dropdown = document.getElementById('deaths-dropdown');
+        
+        // Clear existing options except the first one
+        dropdown.innerHTML = '<option value="">Select a death to load...</option>';
+        
+        deaths.forEach(death => {
+            const option = document.createElement('option');
+            option.value = JSON.stringify({
+                killmailId: death.killmailId,
+                killmailHash: death.killmailHash
+            });
+            option.textContent = death.displayText;
+            dropdown.appendChild(option);
+        });
+
+        // Reset validation
+        this.validateDeathSelection();
+    }
+
+    async loadSelectedDeath() {
+        const deathDropdown = document.getElementById('deaths-dropdown');
+        
+        if (!deathDropdown.value) {
+            alert('Please select a death to load.');
+            return;
+        }
+
+        this.showLoading();
+
+        try {
+            const deathInfo = JSON.parse(deathDropdown.value);
+            
+            // Load the specific killmail
+            const killmailResponse = await fetch(`/api/killmail/${deathInfo.killmailId}/${deathInfo.killmailHash}`);
+            
+            if (!killmailResponse.ok) {
+                const errorData = await killmailResponse.json().catch(() => ({}));
+                if (killmailResponse.status === 404) {
+                    throw new Error(errorData.error || 'Killmail not found or no longer available.');
+                }
+                throw new Error(errorData.error || 'Failed to load killmail data.');
+            }
+
+            const killmailData = await killmailResponse.json();
             
             // Load the fit into the target textarea
-            document.getElementById('eft-input').value = deathData.eftText;
+            document.getElementById('eft-input').value = killmailData.eftText;
             
             // Display the ship using the existing method
-            this.displayTargetShip(deathData);
+            this.displayTargetShip(killmailData);
             this.updateAnalysisVisibility();
 
             // Show success message with killmail link
-            const killDate = new Date(deathData.killmail.time).toLocaleDateString();
-            alert(`Loaded death fit for ${characterName} from ${killDate}. View killmail: ${deathData.killmail.zkb_url}`);
+            const killDate = new Date(killmailData.killmail.time).toLocaleDateString();
+            const selectedOption = deathDropdown.options[deathDropdown.selectedIndex].textContent;
+            alert(`Loaded death fit: ${selectedOption}. View killmail: ${killmailData.killmail.zkb_url}`);
 
         } catch (error) {
-            console.error('Error loading death fit:', error);
-            alert('Failed to load death fit: ' + error.message);
+            console.error('Error loading selected death:', error);
+            alert('Failed to load selected death: ' + error.message);
         } finally {
             this.hideLoading();
         }

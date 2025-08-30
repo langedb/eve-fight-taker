@@ -210,6 +210,8 @@ The `AIAnalyzer` now uses **Gemini 2.5 Flash** and constructs highly detailed pr
 - **Combat Context**: EVE Online mechanics, range considerations, and damage application
 - **Precise Drone Control Analysis**: Calculated drone control ranges based on fitted modules and skills
 - **EVE University Drone Mechanics**: Comprehensive drone behavior documentation for accurate tactical recommendations
+- **5-Drone Active Limit Enforcement**: AI system prevents impossible "launch all drones" recommendations
+- **Tactical Drone Deployment**: Provides MAX DPS, EWAR, and MIXED deployment strategies based on available drones
 
 #### AI Response Format:
 ```json
@@ -234,6 +236,45 @@ The `AIAnalyzer` now uses **Gemini 2.5 Flash** and constructs highly detailed pr
 - **Markdown to HTML Conversion**: AI responses in Markdown are converted to HTML with proper formatting
 - **Styled Display**: Bold text, code blocks, and emphasis properly styled in the UI
 - **Fallback Analysis**: Mathematical backup when AI is unavailable
+
+### Character Death Search API
+
+The application provides advanced character death analysis through dedicated API endpoints:
+
+#### Death Search Endpoints:
+- **`GET /api/character/:characterId/deaths`** - Retrieves last 10 ship deaths for a character
+- **`GET /api/killmail/:killmailId/:killmailHash`** - Loads specific death fit by killmail ID
+
+#### Ship-Only Filtering System:
+- **Category 6 Filter**: Only includes items from EVE's "Ship" category (categoryID: 6)
+- **Capsule Exclusion**: Filters out capsules (groupID: 29) despite being in ship category
+- **Comprehensive Coverage**: Includes all actual ships (frigates, cruisers, battleships, capitals, etc.)
+- **Smart Fallback**: Shows ship type ID if name lookup fails
+
+#### Death Data Structure:
+```json
+{
+  "characterId": 90922771,
+  "deaths": [{
+    "killmailId": 117016119,
+    "killmailHash": "f5c4f2faa09607d7f4202d444b0c69ae70be5f8f",
+    "shipTypeId": 33470,
+    "shipName": "Stratios",
+    "killTime": "2024-04-14T18:22:18Z",
+    "zkbUrl": "https://zkillboard.com/kill/117016119/",
+    "displayText": "Stratios - 4/14/2024",
+    "location": 30002803
+  }],
+  "totalFound": 3
+}
+```
+
+#### User Workflow:
+1. **Character Name Input**: User enters character name (3+ characters)
+2. **Death Search**: System queries zKillboard + ESI for recent losses
+3. **Ship Filtering**: API filters to only show actual ship deaths
+4. **Dropdown Population**: Deaths appear as "Ship Name - Date" options
+5. **Fit Loading**: Selected death loads into target ship analysis area
 
 ### Advanced Range Analysis System
 
@@ -322,6 +363,7 @@ The frontend (`public/script.js`) maintains enhanced state management:
 - `staticdata/` - PyFA-compatible EVE static data files
 - `test/` - Comprehensive test suite covering all components including T3 mechanics and weapon systems
   - `test/weapon-systems.test.js` - Comprehensive weapon systems validation with 15 test cases covering missile/turret specialization, hull bonuses, and stacking penalties
+  - `test/drone-limits.test.js` - Complete drone deployment limitation testing with 7 test cases covering 5-drone active limit enforcement, bandwidth calculations, and tactical deployment strategies
 
 ### Recent Major Enhancements
 
@@ -380,6 +422,11 @@ The frontend (`public/script.js`) maintains enhanced state management:
 53. **Comprehensive Rig Bonus System**: Support for all major rig types including velocity, damage, tank, and range bonuses with proper stacking penalty application
 54. **Enhanced Weapons Array**: Added weapons array to fit stats containing velocity, range, cycle time, and DPS data for accurate tactical analysis
 55. **AI Rig Analysis Integration**: AI prompts now include detailed rig performance analysis with tactical impact descriptions and actual weapon ranges
+56. **Drone Deployment Limitation System**: Complete implementation of EVE Online's 5-drone active limit with tactical deployment strategies
+57. **EVE University Drone Mechanics Integration**: Comprehensive drone behavior documentation ensuring game-legal tactical recommendations
+58. **README Module Name Modernization**: Updated EFT format examples to use current EVE Online module names
+59. **Character Deaths Search Enhancement**: Completely revamped target search to use character name input with dropdown showing last 10 ship deaths (filters out capsules and non-ship losses)
+60. **Ship-Only Death Filtering**: API endpoint filters deaths to only include actual ships (category 6) while excluding capsules (group 29) and other non-ship items for meaningful combat analysis
 
 ### Development Notes
 
@@ -417,6 +464,9 @@ The frontend (`public/script.js`) maintains enhanced state management:
 - **Turret Specialization System**: Framework for all turret specialization skills with proper T2 weapon identification
 - **Drone Control Range System**: Accurate calculation of drone control ranges using base range (20km), skill bonuses (Drone Avionics V +25km, Advanced Drone Avionics V +15km), Drone Link Augmentor modules (+20/24km), and range rigs (+15/20km)
 - **EVE University Drone Mechanics**: Complete implementation of official EVE University drone documentation including mobile drone engagement rules and sentry drone limitations
+- **5-Drone Active Limit**: AI system enforces EVE Online's fundamental 5-drone active limit, preventing impossible "launch all drones" recommendations
+- **Tactical Deployment Strategies**: AI provides MAX DPS, EWAR, and MIXED deployment options when more than 5 drones are available
+- **Bandwidth Validation**: Complete drone bandwidth calculation system using ship capacity (attribute 1271) and individual drone usage (attribute 1272)
 
 ### Performance Metrics
 
@@ -453,6 +503,9 @@ The frontend (`public/script.js`) maintains enhanced state management:
 - **EFT Parsing Format Fix**: Corrected Loki test EFT format from wrong slot order (LOW→MED→HIGH) to proper EVE format (HIGH→MED→LOW), enabling accurate T3 Strategic Cruiser calculations
 - **Module Name Updates**: Updated integration tests to use current EVE module names ("Adaptive Invulnerability Field II" → "Multispectrum Shield Hardener II")
 - **Cache Race Condition Fix**: Resolved TTL cleanup timing issues in cache management tests with proper timeout handling
+- **Drone Deployment AI Fix**: Resolved AI recommending impossible "launch all drones" tactics, now provides game-legal 5-drone tactical deployment strategies
+- **Drone Control Range Precision**: Accurate drone control range calculations (20km base + 40km skills + modules/rigs) for tactical AI recommendations
+- **Module Name Currency**: Updated documentation examples to use current EVE Online module names instead of outdated/fictional modules
 
 ### T3 Strategic Cruiser Architecture
 
