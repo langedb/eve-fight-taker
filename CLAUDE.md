@@ -510,3 +510,4 @@ isT3StrategicCruiser(shipName) {
 - **Edge Cases**: Multiple subsystems, mixed weapon types, stacking penalty verification
 - zKillboard API documentation: https://github.com/zKillboard/zKillboard/wiki
 - EvE Online ESI Documentation: https://github.com/esi/esi-docs
+- official documentation of EFT Format: https://developers.eveonline.com/docs/guides/fitting/
