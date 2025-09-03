@@ -5,9 +5,84 @@ class EVEFightTaker {
         this.targetShipStats = null;
         this.targetShipFit = null;
         this.isAuthenticated = false;
+        this.notificationId = 0;
         
         this.initializeEventListeners();
         this.checkAuthStatus();
+    }
+
+    // Notification system
+    showNotification(message, type = 'info', duration = 5000) {
+        const container = document.getElementById('notifications');
+        const notification = document.createElement('div');
+        const id = this.notificationId++;
+        
+        notification.className = `notification ${type}`;
+        notification.dataset.id = id;
+        
+        const iconMap = {
+            success: 'fas fa-check-circle',
+            error: 'fas fa-exclamation-circle',
+            warning: 'fas fa-exclamation-triangle',
+            info: 'fas fa-info-circle'
+        };
+        
+        notification.innerHTML = `
+            <div class="notification-content">
+                <i class="notification-icon ${iconMap[type] || iconMap.info}"></i>
+                <div class="notification-message">${message}</div>
+            </div>
+            <button class="notification-close" type="button">×</button>
+        `;
+        
+        // Add close functionality
+        const closeBtn = notification.querySelector('.notification-close');
+        closeBtn.addEventListener('click', () => {
+            this.hideNotification(notification);
+        });
+        
+        container.appendChild(notification);
+        
+        // Trigger animation
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 10);
+        
+        // Auto-hide after duration
+        if (duration > 0) {
+            setTimeout(() => {
+                this.hideNotification(notification);
+            }, duration);
+        }
+        
+        return id;
+    }
+    
+    hideNotification(notification) {
+        notification.classList.remove('show');
+        notification.classList.add('hide');
+        
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }
+    
+    showSuccess(message, duration = 4000) {
+        return this.showNotification(message, 'success', duration);
+    }
+    
+    showError(message, duration = 6000) {
+        return this.showNotification(message, 'error', duration);
+    }
+    
+    showWarning(message, duration = 5000) {
+        return this.showNotification(message, 'warning', duration);
+    }
+    
+    showInfo(message, duration = 4000) {
+        return this.showNotification(message, 'info', duration);
     }
 
     initializeEventListeners() {
@@ -79,7 +154,7 @@ class EVEFightTaker {
         if (urlParams.get('authenticated') === 'true') {
             this.showAuthenticated();
         } else if (urlParams.get('error') === 'auth_failed') {
-            alert('Authentication failed. Please try again.');
+            this.showError('Authentication failed. Please try again.');
         }
     }
 
@@ -104,7 +179,7 @@ class EVEFightTaker {
         const input = document.getElementById('your-eft-input').value.trim();
         
         if (!input) {
-            alert('Please enter your EFT fit or zKillboard URL.');
+            this.showWarning('Please enter your EFT fit or zKillboard URL.');
             return;
         }
 
@@ -139,7 +214,7 @@ class EVEFightTaker {
 
         } catch (error) {
             console.error('Error parsing your fit:', error);
-            alert('Failed to parse your fit data. Please check the format and try again.');
+            this.showError('Failed to parse your fit data. Please check the format and try again.');
         } finally {
             this.hideLoading();
         }
@@ -163,7 +238,7 @@ class EVEFightTaker {
         const input = document.getElementById('eft-input').value.trim();
         
         if (!input) {
-            alert('Please enter an EFT fit or zKillboard URL.');
+            this.showWarning('Please enter an EFT fit or zKillboard URL.');
             return;
         }
 
@@ -198,7 +273,7 @@ class EVEFightTaker {
 
         } catch (error) {
             console.error('Error parsing fit:', error);
-            alert('Failed to parse fit data. Please check the format and try again.');
+            this.showError('Failed to parse fit data. Please check the format and try again.');
         } finally {
             this.hideLoading();
         }
@@ -305,7 +380,7 @@ class EVEFightTaker {
 
     async analyzeCombat() {
         if (!this.currentShipStats || !this.targetShipStats || !this.currentShipFit || !this.targetShipFit) {
-            alert('Please load both your current ship and a target ship first.');
+            this.showWarning('Please load both your current ship and a target ship first.');
             return;
         }
 
@@ -505,7 +580,7 @@ class EVEFightTaker {
 
     async loadStoredFittings() {
         if (!this.isAuthenticated) {
-            alert('Please log in with EVE SSO to load stored fittings.');
+            this.showWarning('Please log in with EVE SSO to load stored fittings.');
             return;
         }
 
@@ -520,7 +595,7 @@ class EVEFightTaker {
             await this.displayFittings(fittings);
         } catch (error) {
             console.error('Error loading stored fittings:', error);
-            alert('Failed to load stored fittings. Please ensure you are logged in and have granted the necessary ESI scope.');
+            this.showError('Failed to load stored fittings. Please ensure you are logged in and have granted the necessary ESI scope.');
         } finally {
             this.hideLoading();
         }
@@ -828,7 +903,7 @@ class EVEFightTaker {
 
     async loadSelectedFitting() {
         if (this.selectedFittingIndex === null || !this.storedFittings || !this.storedFittings[this.selectedFittingIndex]) {
-            alert('Please select a fitting to load.');
+            this.showWarning('Please select a fitting to load.');
             return;
         }
 
@@ -851,7 +926,7 @@ class EVEFightTaker {
             this.parseYourEFTFit(); // Parse the converted EFT
         } catch (error) {
             console.error('Error loading selected fitting:', error);
-            alert('Failed to load selected fitting. ' + error.message);
+            this.showError('Failed to load selected fitting. ' + error.message);
         } finally {
             this.hideLoading();
         }
@@ -874,7 +949,7 @@ class EVEFightTaker {
         const characterName = document.getElementById('character-name-input').value.trim();
 
         if (characterName.length < 3) {
-            alert('Please enter at least 3 characters for the character name.');
+            this.showWarning('Please enter at least 3 characters for the character name.');
             return;
         }
 
@@ -924,11 +999,11 @@ class EVEFightTaker {
             document.getElementById('deaths-dropdown-group').style.display = 'block';
             
             // Show success message
-            alert(`Found ${deathsData.totalFound} recent deaths for ${characterName}. Select one to load.`);
+            this.showSuccess(`Found ${deathsData.totalFound} recent deaths for ${characterName}. Select one to load.`);
 
         } catch (error) {
             console.error('Error searching character deaths:', error);
-            alert('Failed to search character deaths: ' + error.message);
+            this.showError('Failed to search character deaths: ' + error.message);
             
             // Hide dropdown on error
             document.getElementById('deaths-dropdown-group').style.display = 'none';
@@ -961,7 +1036,7 @@ class EVEFightTaker {
         const deathDropdown = document.getElementById('deaths-dropdown');
         
         if (!deathDropdown.value) {
-            alert('Please select a death to load.');
+            this.showWarning('Please select a death to load.');
             return;
         }
 
@@ -993,11 +1068,11 @@ class EVEFightTaker {
             // Show success message with killmail link
             const killDate = new Date(killmailData.killmail.time).toLocaleDateString();
             const selectedOption = deathDropdown.options[deathDropdown.selectedIndex].textContent;
-            alert(`Loaded death fit: ${selectedOption}. View killmail: ${killmailData.killmail.zkb_url}`);
+            this.showSuccess(`Loaded death fit: ${selectedOption}. <a href="${killmailData.killmail.zkb_url}" target="_blank" style="color: #00d4ff;">View killmail</a>`, 8000);
 
         } catch (error) {
             console.error('Error loading selected death:', error);
-            alert('Failed to load selected death: ' + error.message);
+            this.showError('Failed to load selected death: ' + error.message);
         } finally {
             this.hideLoading();
         }
