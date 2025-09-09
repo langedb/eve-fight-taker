@@ -68300,10 +68300,6 @@
     ], 
     "dogmaEffects": [
       {
-        "effectID": 6747, 
-        "isDefault": 0
-      }, 
-      {
         "effectID": 6754, 
         "isDefault": 0
       }, 
@@ -84675,10 +84671,6 @@
     ], 
     "dogmaEffects": [
       {
-        "effectID": 6747, 
-        "isDefault": 0
-      }, 
-      {
         "effectID": 6754, 
         "isDefault": 0
       }, 
@@ -89792,10 +89784,6 @@
       }
     ], 
     "dogmaEffects": [
-      {
-        "effectID": 6747, 
-        "isDefault": 0
-      }, 
       {
         "effectID": 6754, 
         "isDefault": 0
@@ -152232,10 +152220,6 @@
         "isDefault": 0
       }, 
       {
-        "effectID": 6747, 
-        "isDefault": 0
-      }, 
-      {
         "effectID": 6754, 
         "isDefault": 0
       }, 
@@ -189256,7 +189240,7 @@
       }, 
       {
         "attributeID": 14, 
-        "value": 1.0
+        "value": 2.0
       }, 
       {
         "attributeID": 15, 
@@ -189606,7 +189590,7 @@
       }, 
       {
         "attributeID": 14, 
-        "value": 1.0
+        "value": 2.0
       }, 
       {
         "attributeID": 15, 
@@ -189862,7 +189846,7 @@
       }, 
       {
         "attributeID": 1259, 
-        "value": 0.0
+        "value": 0.25
       }, 
       {
         "attributeID": 1261, 
@@ -212836,10 +212820,6 @@
         "value": 1.0
       }, 
       {
-        "attributeID": 854, 
-        "value": 1.0
-      }, 
-      {
         "attributeID": 1579, 
         "value": 5000.0
       }, 
@@ -213219,10 +213199,6 @@
       }, 
       {
         "attributeID": 798, 
-        "value": 1.0
-      }, 
-      {
-        "attributeID": 854, 
         "value": 1.0
       }, 
       {
@@ -213608,10 +213584,6 @@
         "value": 1.0
       }, 
       {
-        "attributeID": 854, 
-        "value": 1.0
-      }, 
-      {
         "attributeID": 1579, 
         "value": 5000.0
       }, 
@@ -213987,10 +213959,6 @@
       }, 
       {
         "attributeID": 798, 
-        "value": 1.0
-      }, 
-      {
-        "attributeID": 854, 
         "value": 1.0
       }, 
       {
@@ -214376,10 +214344,6 @@
         "value": 1.0
       }, 
       {
-        "attributeID": 854, 
-        "value": 1.0
-      }, 
-      {
         "attributeID": 1579, 
         "value": 5000.0
       }, 
@@ -214759,10 +214723,6 @@
       }, 
       {
         "attributeID": 798, 
-        "value": 1.0
-      }, 
-      {
-        "attributeID": 854, 
         "value": 1.0
       }, 
       {
@@ -216690,10 +216650,6 @@
         "value": 1.0
       }, 
       {
-        "attributeID": 854, 
-        "value": 1.0
-      }, 
-      {
         "attributeID": 858, 
         "value": 0.7541
       }, 
@@ -217124,10 +217080,6 @@
         "value": 1.0
       }, 
       {
-        "attributeID": 854, 
-        "value": 1.0
-      }, 
-      {
         "attributeID": 858, 
         "value": 0.7541
       }, 
@@ -217551,10 +217503,6 @@
       }, 
       {
         "attributeID": 798, 
-        "value": 1.0
-      }, 
-      {
-        "attributeID": 854, 
         "value": 1.0
       }, 
       {
@@ -217996,10 +217944,6 @@
         "value": 1.0
       }, 
       {
-        "attributeID": 854, 
-        "value": 1.0
-      }, 
-      {
         "attributeID": 858, 
         "value": 0.8566
       }, 
@@ -218426,10 +218370,6 @@
         "value": 1.0
       }, 
       {
-        "attributeID": 854, 
-        "value": 1.0
-      }, 
-      {
         "attributeID": 858, 
         "value": 0.8566
       }, 
@@ -218852,10 +218792,6 @@
         "value": 1.0
       }, 
       {
-        "attributeID": 854, 
-        "value": 1.0
-      }, 
-      {
         "attributeID": 858, 
         "value": 0.8566
       }, 
@@ -219263,10 +219199,6 @@
       }, 
       {
         "attributeID": 798, 
-        "value": 1.0
-      }, 
-      {
-        "attributeID": 854, 
         "value": 1.0
       }, 
       {
@@ -219680,10 +219612,6 @@
         "value": 1.0
       }, 
       {
-        "attributeID": 854, 
-        "value": 1.0
-      }, 
-      {
         "attributeID": 858, 
         "value": 0.9755
       }, 
@@ -220087,10 +220015,6 @@
       }, 
       {
         "attributeID": 798, 
-        "value": 1.0
-      }, 
-      {
-        "attributeID": 854, 
         "value": 1.0
       }, 
       {
@@ -220512,10 +220436,6 @@
         "value": 1.0
       }, 
       {
-        "attributeID": 854, 
-        "value": 1.0
-      }, 
-      {
         "attributeID": 858, 
         "value": 0.7541
       }, 
@@ -220922,10 +220842,6 @@
         "value": 1.0
       }, 
       {
-        "attributeID": 854, 
-        "value": 1.0
-      }, 
-      {
         "attributeID": 858, 
         "value": 0.7541
       }, 
@@ -221325,10 +221241,6 @@
       }, 
       {
         "attributeID": 798, 
-        "value": 1.0
-      }, 
-      {
-        "attributeID": 854, 
         "value": 1.0
       }, 
       {
@@ -221746,10 +221658,6 @@
         "value": 1.0
       }, 
       {
-        "attributeID": 854, 
-        "value": 1.0
-      }, 
-      {
         "attributeID": 858, 
         "value": 0.8566
       }, 
@@ -222152,10 +222060,6 @@
         "value": 1.0
       }, 
       {
-        "attributeID": 854, 
-        "value": 1.0
-      }, 
-      {
         "attributeID": 858, 
         "value": 0.8566
       }, 
@@ -222551,10 +222455,6 @@
       }, 
       {
         "attributeID": 798, 
-        "value": 1.0
-      }, 
-      {
-        "attributeID": 854, 
         "value": 1.0
       }, 
       {
@@ -222968,10 +222868,6 @@
         "value": 1.0
       }, 
       {
-        "attributeID": 854, 
-        "value": 1.0
-      }, 
-      {
         "attributeID": 858, 
         "value": 0.9755
       }, 
@@ -223382,10 +223278,6 @@
         "value": 1.0
       }, 
       {
-        "attributeID": 854, 
-        "value": 1.0
-      }, 
-      {
         "attributeID": 858, 
         "value": 0.9755
       }, 
@@ -223789,10 +223681,6 @@
       }, 
       {
         "attributeID": 798, 
-        "value": 1.0
-      }, 
-      {
-        "attributeID": 854, 
         "value": 1.0
       }, 
       {
@@ -224214,10 +224102,6 @@
         "value": 1.0
       }, 
       {
-        "attributeID": 854, 
-        "value": 1.0
-      }, 
-      {
         "attributeID": 858, 
         "value": 0.7541
       }, 
@@ -224624,10 +224508,6 @@
         "value": 1.0
       }, 
       {
-        "attributeID": 854, 
-        "value": 1.0
-      }, 
-      {
         "attributeID": 858, 
         "value": 0.7541
       }, 
@@ -225027,10 +224907,6 @@
       }, 
       {
         "attributeID": 798, 
-        "value": 1.0
-      }, 
-      {
-        "attributeID": 854, 
         "value": 1.0
       }, 
       {
@@ -225448,10 +225324,6 @@
         "value": 1.0
       }, 
       {
-        "attributeID": 854, 
-        "value": 1.0
-      }, 
-      {
         "attributeID": 858, 
         "value": 0.8566
       }, 
@@ -225854,10 +225726,6 @@
         "value": 1.0
       }, 
       {
-        "attributeID": 854, 
-        "value": 1.0
-      }, 
-      {
         "attributeID": 858, 
         "value": 0.8566
       }, 
@@ -226253,10 +226121,6 @@
       }, 
       {
         "attributeID": 798, 
-        "value": 1.0
-      }, 
-      {
-        "attributeID": 854, 
         "value": 1.0
       }, 
       {
@@ -226670,10 +226534,6 @@
         "value": 1.0
       }, 
       {
-        "attributeID": 854, 
-        "value": 1.0
-      }, 
-      {
         "attributeID": 858, 
         "value": 0.9755
       }, 
@@ -227084,10 +226944,6 @@
         "value": 1.0
       }, 
       {
-        "attributeID": 854, 
-        "value": 1.0
-      }, 
-      {
         "attributeID": 858, 
         "value": 0.9755
       }, 
@@ -227491,10 +227347,6 @@
       }, 
       {
         "attributeID": 798, 
-        "value": 1.0
-      }, 
-      {
-        "attributeID": 854, 
         "value": 1.0
       }, 
       {
@@ -305318,6 +305170,10 @@
       {
         "attributeID": 422, 
         "value": 2.0
+      }, 
+      {
+        "attributeID": 552, 
+        "value": 300.0
       }
     ], 
     "dogmaEffects": [
@@ -324383,6 +324239,10 @@
       {
         "attributeID": 2711, 
         "value": 1228.0
+      }, 
+      {
+        "attributeID": 3236, 
+        "value": 0.0
       }
     ], 
     "dogmaEffects": []
@@ -324412,6 +324272,10 @@
       {
         "attributeID": 2711, 
         "value": 1228.0
+      }, 
+      {
+        "attributeID": 3236, 
+        "value": 0.0
       }
     ], 
     "dogmaEffects": []
@@ -324441,6 +324305,10 @@
       {
         "attributeID": 2711, 
         "value": 1228.0
+      }, 
+      {
+        "attributeID": 3236, 
+        "value": 0.0
       }
     ], 
     "dogmaEffects": []
@@ -324470,6 +324338,10 @@
       {
         "attributeID": 2711, 
         "value": 46687.0
+      }, 
+      {
+        "attributeID": 3236, 
+        "value": 0.0
       }
     ], 
     "dogmaEffects": []
@@ -372959,7 +372831,7 @@
       }, 
       {
         "attributeID": 37, 
-        "value": 190.0
+        "value": 180.0
       }, 
       {
         "attributeID": 48, 
@@ -373259,7 +373131,7 @@
       }, 
       {
         "attributeID": 5207, 
-        "value": -5.0
+        "value": -3.0
       }, 
       {
         "attributeID": 5796, 
@@ -373309,7 +373181,7 @@
       }, 
       {
         "attributeID": 11, 
-        "value": 1250.0
+        "value": 1150.0
       }, 
       {
         "attributeID": 12, 
@@ -373341,7 +373213,7 @@
       }, 
       {
         "attributeID": 48, 
-        "value": 565.0
+        "value": 515.0
       }, 
       {
         "attributeID": 49, 
@@ -373537,11 +373409,11 @@
       }, 
       {
         "attributeID": 743, 
-        "value": 7.5
+        "value": 5.0
       }, 
       {
         "attributeID": 745, 
-        "value": 10.0
+        "value": 7.5
       }, 
       {
         "attributeID": 1132, 
@@ -373642,6 +373514,10 @@
       {
         "attributeID": 5796, 
         "value": 2147483647000.0
+      }, 
+      {
+        "attributeID": 5956, 
+        "value": -10.0
       }
     ], 
     "dogmaEffects": [
@@ -375997,7 +375873,7 @@
       }, 
       {
         "attributeID": 283, 
-        "value": 250.0
+        "value": 300.0
       }, 
       {
         "attributeID": 422, 
@@ -376191,6 +376067,10 @@
       }, 
       {
         "effectID": 11061, 
+        "isDefault": 0
+      }, 
+      {
+        "effectID": 12565, 
         "isDefault": 0
       }
     ]
@@ -376756,7 +376636,7 @@
       }, 
       {
         "attributeID": 55, 
-        "value": 130000.0
+        "value": 140000.0
       }, 
       {
         "attributeID": 70, 
@@ -376912,7 +376792,7 @@
       }, 
       {
         "attributeID": 482, 
-        "value": 235.0
+        "value": 280.0
       }, 
       {
         "attributeID": 484, 
@@ -377130,7 +377010,7 @@
       }, 
       {
         "attributeID": 55, 
-        "value": 135000.0
+        "value": 150000.0
       }, 
       {
         "attributeID": 70, 
@@ -377286,7 +377166,7 @@
       }, 
       {
         "attributeID": 482, 
-        "value": 245.0
+        "value": 300.0
       }, 
       {
         "attributeID": 484, 
@@ -377504,7 +377384,7 @@
       }, 
       {
         "attributeID": 55, 
-        "value": 180000.0
+        "value": 250000.0
       }, 
       {
         "attributeID": 70, 
@@ -377660,7 +377540,7 @@
       }, 
       {
         "attributeID": 482, 
-        "value": 325.0
+        "value": 500.0
       }, 
       {
         "attributeID": 484, 
@@ -377878,7 +377758,7 @@
       }, 
       {
         "attributeID": 55, 
-        "value": 150000.0
+        "value": 200000.0
       }, 
       {
         "attributeID": 70, 
@@ -378034,7 +377914,7 @@
       }, 
       {
         "attributeID": 482, 
-        "value": 270.0
+        "value": 400.0
       }, 
       {
         "attributeID": 484, 
@@ -388759,11 +388639,11 @@
       }, 
       {
         "attributeID": 12, 
-        "value": 6.0
+        "value": 5.0
       }, 
       {
         "attributeID": 13, 
-        "value": 6.0
+        "value": 7.0
       }, 
       {
         "attributeID": 14, 
@@ -389095,11 +388975,11 @@
       }, 
       {
         "attributeID": 1261, 
-        "value": 0.76
+        "value": 0.79
       }, 
       {
         "attributeID": 1262, 
-        "value": 0.76
+        "value": 0.71
       }, 
       {
         "attributeID": 1271, 
@@ -395366,6 +395246,14 @@
       {
         "attributeID": 633, 
         "value": 0.0
+      }, 
+      {
+        "attributeID": 1285, 
+        "value": 16281.0
+      }, 
+      {
+        "attributeID": 1286, 
+        "value": 1.0
       }, 
       {
         "attributeID": 1768, 
@@ -477418,6 +477306,10 @@
         "value": 1.0
       }, 
       {
+        "attributeID": 2303, 
+        "value": 50.0
+      }, 
+      {
         "attributeID": 2789, 
         "value": 25.0
       }, 
@@ -477441,6 +477333,10 @@
       }, 
       {
         "effectID": 11919, 
+        "isDefault": 0
+      }, 
+      {
+        "effectID": 12567, 
         "isDefault": 0
       }
     ]
@@ -477958,7 +477854,7 @@
       }, 
       {
         "attributeID": 37, 
-        "value": 245.0
+        "value": 255.0
       }, 
       {
         "attributeID": 48, 
@@ -478261,6 +478157,10 @@
         "value": 1.0
       }, 
       {
+        "attributeID": 2303, 
+        "value": 25.0
+      }, 
+      {
         "attributeID": 5796, 
         "value": 2147483647000.0
       }
@@ -478304,6 +478204,10 @@
       }, 
       {
         "effectID": 11943, 
+        "isDefault": 0
+      }, 
+      {
+        "effectID": 12566, 
         "isDefault": 0
       }
     ]
@@ -511236,7 +511140,7 @@
       }, 
       {
         "attributeID": 263, 
-        "value": 12000.0
+        "value": 18000.0
       }, 
       {
         "attributeID": 265, 
@@ -511562,7 +511466,7 @@
       }, 
       {
         "attributeID": 552, 
-        "value": 25.0
+        "value": 80.0
       }, 
       {
         "attributeID": 562, 
@@ -511812,7 +511716,7 @@
       }, 
       {
         "attributeID": 552, 
-        "value": 25.0
+        "value": 80.0
       }, 
       {
         "attributeID": 562, 
@@ -512352,7 +512256,7 @@
       }, 
       {
         "attributeID": 263, 
-        "value": 12000.0
+        "value": 18000.0
       }, 
       {
         "attributeID": 265, 
@@ -512908,7 +512812,7 @@
       }, 
       {
         "attributeID": 263, 
-        "value": 12000.0
+        "value": 18000.0
       }, 
       {
         "attributeID": 265, 
@@ -513246,7 +513150,7 @@
       }, 
       {
         "attributeID": 552, 
-        "value": 25.0
+        "value": 80.0
       }, 
       {
         "attributeID": 562, 
@@ -513496,7 +513400,7 @@
       }, 
       {
         "attributeID": 552, 
-        "value": 25.0
+        "value": 80.0
       }, 
       {
         "attributeID": 562, 
@@ -514452,7 +514356,7 @@
       }, 
       {
         "attributeID": 263, 
-        "value": 12000.0
+        "value": 18000.0
       }, 
       {
         "attributeID": 265, 
@@ -514718,7 +514622,7 @@
       }, 
       {
         "attributeID": 263, 
-        "value": 12000.0
+        "value": 18000.0
       }, 
       {
         "attributeID": 265, 
@@ -514976,7 +514880,7 @@
       }, 
       {
         "attributeID": 263, 
-        "value": 12000.0
+        "value": 18000.0
       }, 
       {
         "attributeID": 265, 
@@ -515906,7 +515810,7 @@
       }, 
       {
         "attributeID": 263, 
-        "value": 12000.0
+        "value": 18000.0
       }, 
       {
         "attributeID": 265, 
@@ -516228,7 +516132,7 @@
       }, 
       {
         "attributeID": 263, 
-        "value": 12000.0
+        "value": 18000.0
       }, 
       {
         "attributeID": 265, 
@@ -516542,7 +516446,7 @@
       }, 
       {
         "attributeID": 263, 
-        "value": 12000.0
+        "value": 18000.0
       }, 
       {
         "attributeID": 265, 
@@ -517646,7 +517550,7 @@
       }, 
       {
         "attributeID": 263, 
-        "value": 12000.0
+        "value": 18000.0
       }, 
       {
         "attributeID": 265, 
@@ -517928,7 +517832,7 @@
       }, 
       {
         "attributeID": 263, 
-        "value": 12000.0
+        "value": 18000.0
       }, 
       {
         "attributeID": 265, 
@@ -518202,7 +518106,7 @@
       }, 
       {
         "attributeID": 263, 
-        "value": 12000.0
+        "value": 18000.0
       }, 
       {
         "attributeID": 265, 
@@ -567540,7 +567444,7 @@
       }, 
       {
         "attributeID": 37, 
-        "value": 650.0
+        "value": 1050.0
       }, 
       {
         "attributeID": 55, 
@@ -567552,11 +567456,11 @@
       }, 
       {
         "attributeID": 70, 
-        "value": 0.43
+        "value": 0.4
       }, 
       {
         "attributeID": 76, 
-        "value": 55000.0
+        "value": 150000.0
       }, 
       {
         "attributeID": 99, 
@@ -567616,35 +567520,35 @@
       }, 
       {
         "attributeID": 267, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 268, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 269, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 270, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 271, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 272, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 273, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 274, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 479, 
@@ -567663,12 +567567,16 @@
         "value": 0.75
       }, 
       {
+        "attributeID": 508, 
+        "value": 350.0
+      }, 
+      {
         "attributeID": 525, 
         "value": 1.0
       }, 
       {
         "attributeID": 552, 
-        "value": 115.0
+        "value": 240.0
       }, 
       {
         "attributeID": 562, 
@@ -567710,7 +567618,7 @@
       }, 
       {
         "attributeID": 37, 
-        "value": 650.0
+        "value": 1050.0
       }, 
       {
         "attributeID": 51, 
@@ -567718,7 +567626,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 17500.0
+        "value": 40000.0
       }, 
       {
         "attributeID": 55, 
@@ -567730,11 +567638,11 @@
       }, 
       {
         "attributeID": 70, 
-        "value": 0.43
+        "value": 0.4
       }, 
       {
         "attributeID": 76, 
-        "value": 55000.0
+        "value": 150000.0
       }, 
       {
         "attributeID": 90, 
@@ -567758,11 +567666,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 6000.0
+        "value": 30000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 12.096
+        "value": 200.0
       }, 
       {
         "attributeID": 192, 
@@ -567802,35 +567710,35 @@
       }, 
       {
         "attributeID": 267, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 268, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 269, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 270, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 271, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 272, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 273, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 274, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 479, 
@@ -567849,12 +567757,16 @@
         "value": 0.75
       }, 
       {
+        "attributeID": 508, 
+        "value": 350.0
+      }, 
+      {
         "attributeID": 525, 
         "value": 1.0
       }, 
       {
         "attributeID": 552, 
-        "value": 115.0
+        "value": 240.0
       }, 
       {
         "attributeID": 562, 
@@ -567904,7 +567816,7 @@
       }, 
       {
         "attributeID": 37, 
-        "value": 650.0
+        "value": 1050.0
       }, 
       {
         "attributeID": 51, 
@@ -567912,7 +567824,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 17500.0
+        "value": 40000.0
       }, 
       {
         "attributeID": 55, 
@@ -567924,11 +567836,11 @@
       }, 
       {
         "attributeID": 70, 
-        "value": 0.43
+        "value": 0.4
       }, 
       {
         "attributeID": 76, 
-        "value": 55000.0
+        "value": 150000.0
       }, 
       {
         "attributeID": 114, 
@@ -567948,11 +567860,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 6000.0
+        "value": 30000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 12.096
+        "value": 200.0
       }, 
       {
         "attributeID": 192, 
@@ -567992,35 +567904,35 @@
       }, 
       {
         "attributeID": 267, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 268, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 269, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 270, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 271, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 272, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 273, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 274, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 479, 
@@ -568039,12 +567951,16 @@
         "value": 0.75
       }, 
       {
+        "attributeID": 508, 
+        "value": 350.0
+      }, 
+      {
         "attributeID": 525, 
         "value": 1.0
       }, 
       {
         "attributeID": 552, 
-        "value": 115.0
+        "value": 240.0
       }, 
       {
         "attributeID": 554, 
@@ -568098,7 +568014,7 @@
       }, 
       {
         "attributeID": 37, 
-        "value": 650.0
+        "value": 1050.0
       }, 
       {
         "attributeID": 51, 
@@ -568106,7 +568022,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 17500.0
+        "value": 40000.0
       }, 
       {
         "attributeID": 55, 
@@ -568118,11 +568034,11 @@
       }, 
       {
         "attributeID": 70, 
-        "value": 0.43
+        "value": 0.4
       }, 
       {
         "attributeID": 76, 
-        "value": 55000.0
+        "value": 150000.0
       }, 
       {
         "attributeID": 97, 
@@ -568146,11 +568062,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 6000.0
+        "value": 30000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 12.096
+        "value": 200.0
       }, 
       {
         "attributeID": 192, 
@@ -568190,35 +568106,35 @@
       }, 
       {
         "attributeID": 267, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 268, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 269, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 270, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 271, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 272, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 273, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 274, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 479, 
@@ -568237,12 +568153,16 @@
         "value": 0.75
       }, 
       {
+        "attributeID": 508, 
+        "value": 350.0
+      }, 
+      {
         "attributeID": 525, 
         "value": 1.0
       }, 
       {
         "attributeID": 552, 
-        "value": 115.0
+        "value": 240.0
       }, 
       {
         "attributeID": 562, 
@@ -568296,7 +568216,7 @@
       }, 
       {
         "attributeID": 37, 
-        "value": 350.0
+        "value": 900.0
       }, 
       {
         "attributeID": 51, 
@@ -568304,7 +568224,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 70000.0
+        "value": 80000.0
       }, 
       {
         "attributeID": 55, 
@@ -568316,7 +568236,7 @@
       }, 
       {
         "attributeID": 70, 
-        "value": 0.1
+        "value": 0.05
       }, 
       {
         "attributeID": 76, 
@@ -568340,11 +568260,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 0.0
+        "value": 60000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 1.0
+        "value": 50.0
       }, 
       {
         "attributeID": 192, 
@@ -568384,35 +568304,35 @@
       }, 
       {
         "attributeID": 267, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 268, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 269, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 270, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 271, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 272, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 273, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 274, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 479, 
@@ -568431,8 +568351,12 @@
         "value": 1.0
       }, 
       {
+        "attributeID": 508, 
+        "value": 150.0
+      }, 
+      {
         "attributeID": 552, 
-        "value": 625.0
+        "value": 400.0
       }, 
       {
         "attributeID": 562, 
@@ -568522,7 +568446,7 @@
       }, 
       {
         "attributeID": 37, 
-        "value": 1250.0
+        "value": 2100.0
       }, 
       {
         "attributeID": 51, 
@@ -568530,7 +568454,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 6300.0
+        "value": 20000.0
       }, 
       {
         "attributeID": 55, 
@@ -568542,11 +568466,11 @@
       }, 
       {
         "attributeID": 70, 
-        "value": 2.26125
+        "value": 0.2
       }, 
       {
         "attributeID": 76, 
-        "value": 80000.0
+        "value": 100000.0
       }, 
       {
         "attributeID": 97, 
@@ -568570,11 +568494,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 1250.0
+        "value": 10000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 385.0
+        "value": 600.0
       }, 
       {
         "attributeID": 192, 
@@ -568610,19 +568534,19 @@
       }, 
       {
         "attributeID": 267, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 268, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 269, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 270, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 481, 
@@ -568637,12 +568561,16 @@
         "value": 0.75
       }, 
       {
+        "attributeID": 508, 
+        "value": 700.0
+      }, 
+      {
         "attributeID": 525, 
         "value": 1.0
       }, 
       {
         "attributeID": 552, 
-        "value": 38.0
+        "value": 80.0
       }, 
       {
         "attributeID": 562, 
@@ -568692,7 +568620,7 @@
       }, 
       {
         "attributeID": 37, 
-        "value": 1250.0
+        "value": 2100.0
       }, 
       {
         "attributeID": 51, 
@@ -568700,7 +568628,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 6300.0
+        "value": 20000.0
       }, 
       {
         "attributeID": 55, 
@@ -568712,11 +568640,11 @@
       }, 
       {
         "attributeID": 70, 
-        "value": 1.9575
+        "value": 0.2
       }, 
       {
         "attributeID": 76, 
-        "value": 31250.0
+        "value": 100000.0
       }, 
       {
         "attributeID": 97, 
@@ -568740,11 +568668,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 1250.0
+        "value": 10000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 385.0
+        "value": 600.0
       }, 
       {
         "attributeID": 192, 
@@ -568780,19 +568708,19 @@
       }, 
       {
         "attributeID": 267, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 268, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 269, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 270, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 481, 
@@ -568807,12 +568735,16 @@
         "value": 0.75
       }, 
       {
+        "attributeID": 508, 
+        "value": 700.0
+      }, 
+      {
         "attributeID": 525, 
         "value": 1.0
       }, 
       {
         "attributeID": 552, 
-        "value": 37.0
+        "value": 80.0
       }, 
       {
         "attributeID": 562, 
@@ -568862,7 +568794,7 @@
       }, 
       {
         "attributeID": 37, 
-        "value": 1100.0
+        "value": 1800.0
       }, 
       {
         "attributeID": 55, 
@@ -568870,11 +568802,11 @@
       }, 
       {
         "attributeID": 70, 
-        "value": 2.39625
+        "value": 0.2
       }, 
       {
         "attributeID": 76, 
-        "value": 45000.0
+        "value": 100000.0
       }, 
       {
         "attributeID": 84, 
@@ -568910,19 +568842,19 @@
       }, 
       {
         "attributeID": 267, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 268, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 269, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 270, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 481, 
@@ -568937,12 +568869,16 @@
         "value": 0.75
       }, 
       {
+        "attributeID": 508, 
+        "value": 600.0
+      }, 
+      {
         "attributeID": 525, 
         "value": 1.0
       }, 
       {
         "attributeID": 552, 
-        "value": 34.0
+        "value": 80.0
       }, 
       {
         "attributeID": 562, 
@@ -568984,7 +568920,7 @@
       }, 
       {
         "attributeID": 37, 
-        "value": 1350.0
+        "value": 2250.0
       }, 
       {
         "attributeID": 51, 
@@ -568992,7 +568928,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 14437.5
+        "value": 20000.0
       }, 
       {
         "attributeID": 55, 
@@ -569004,11 +568940,11 @@
       }, 
       {
         "attributeID": 70, 
-        "value": 1.9575
+        "value": 0.2
       }, 
       {
         "attributeID": 76, 
-        "value": 31250.0
+        "value": 100000.0
       }, 
       {
         "attributeID": 114, 
@@ -569028,11 +568964,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 2500.0
+        "value": 10000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 146.25
+        "value": 600.0
       }, 
       {
         "attributeID": 192, 
@@ -569068,19 +569004,19 @@
       }, 
       {
         "attributeID": 267, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 268, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 269, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 270, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 481, 
@@ -569095,12 +569031,16 @@
         "value": 0.75
       }, 
       {
+        "attributeID": 508, 
+        "value": 750.0
+      }, 
+      {
         "attributeID": 525, 
         "value": 1.0
       }, 
       {
         "attributeID": 552, 
-        "value": 37.0
+        "value": 80.0
       }, 
       {
         "attributeID": 562, 
@@ -569130,7 +569070,7 @@
       }, 
       {
         "attributeID": 37, 
-        "value": 850.0
+        "value": 1350.0
       }, 
       {
         "attributeID": 51, 
@@ -569138,7 +569078,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 20000.0
+        "value": 30000.0
       }, 
       {
         "attributeID": 55, 
@@ -569150,11 +569090,11 @@
       }, 
       {
         "attributeID": 70, 
-        "value": 2.4
+        "value": 0.2
       }, 
       {
         "attributeID": 76, 
-        "value": 50000.0
+        "value": 100000.0
       }, 
       {
         "attributeID": 97, 
@@ -569178,11 +569118,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 5000.0
+        "value": 20000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 169.0
+        "value": 400.0
       }, 
       {
         "attributeID": 192, 
@@ -569218,19 +569158,19 @@
       }, 
       {
         "attributeID": 267, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 268, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 269, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 270, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 481, 
@@ -569245,12 +569185,16 @@
         "value": 0.75
       }, 
       {
+        "attributeID": 508, 
+        "value": 450.0
+      }, 
+      {
         "attributeID": 525, 
         "value": 1.0
       }, 
       {
         "attributeID": 552, 
-        "value": 80.0
+        "value": 120.0
       }, 
       {
         "attributeID": 562, 
@@ -569300,7 +569244,7 @@
       }, 
       {
         "attributeID": 37, 
-        "value": 950.0
+        "value": 1500.0
       }, 
       {
         "attributeID": 51, 
@@ -569308,7 +569252,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 20000.0
+        "value": 30000.0
       }, 
       {
         "attributeID": 55, 
@@ -569320,11 +569264,11 @@
       }, 
       {
         "attributeID": 70, 
-        "value": 1.8
+        "value": 0.2
       }, 
       {
         "attributeID": 76, 
-        "value": 35000.0
+        "value": 100000.0
       }, 
       {
         "attributeID": 114, 
@@ -569344,11 +569288,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 5000.0
+        "value": 20000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 169.0
+        "value": 400.0
       }, 
       {
         "attributeID": 192, 
@@ -569384,19 +569328,19 @@
       }, 
       {
         "attributeID": 267, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 268, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 269, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 270, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 481, 
@@ -569411,12 +569355,16 @@
         "value": 0.75
       }, 
       {
+        "attributeID": 508, 
+        "value": 500.0
+      }, 
+      {
         "attributeID": 525, 
         "value": 1.0
       }, 
       {
         "attributeID": 552, 
-        "value": 70.0
+        "value": 120.0
       }, 
       {
         "attributeID": 562, 
@@ -569446,7 +569394,7 @@
       }, 
       {
         "attributeID": 37, 
-        "value": 750.0
+        "value": 1200.0
       }, 
       {
         "attributeID": 51, 
@@ -569454,7 +569402,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 17500.0
+        "value": 40000.0
       }, 
       {
         "attributeID": 55, 
@@ -569466,11 +569414,11 @@
       }, 
       {
         "attributeID": 70, 
-        "value": 0.43
+        "value": 0.4
       }, 
       {
         "attributeID": 76, 
-        "value": 55000.0
+        "value": 150000.0
       }, 
       {
         "attributeID": 114, 
@@ -569490,11 +569438,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 6000.0
+        "value": 30000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 12.096
+        "value": 200.0
       }, 
       {
         "attributeID": 192, 
@@ -569530,19 +569478,19 @@
       }, 
       {
         "attributeID": 267, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 268, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 269, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 270, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 481, 
@@ -569557,12 +569505,16 @@
         "value": 0.75
       }, 
       {
+        "attributeID": 508, 
+        "value": 400.0
+      }, 
+      {
         "attributeID": 525, 
         "value": 1.0
       }, 
       {
         "attributeID": 552, 
-        "value": 115.0
+        "value": 240.0
       }, 
       {
         "attributeID": 562, 
@@ -569592,7 +569544,7 @@
       }, 
       {
         "attributeID": 37, 
-        "value": 500.0
+        "value": 750.0
       }, 
       {
         "attributeID": 55, 
@@ -569600,11 +569552,11 @@
       }, 
       {
         "attributeID": 70, 
-        "value": 0.378
+        "value": 0.4
       }, 
       {
         "attributeID": 76, 
-        "value": 75000.0
+        "value": 150000.0
       }, 
       {
         "attributeID": 84, 
@@ -569640,19 +569592,19 @@
       }, 
       {
         "attributeID": 267, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 268, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 269, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 270, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 481, 
@@ -569667,12 +569619,16 @@
         "value": 0.75
       }, 
       {
+        "attributeID": 508, 
+        "value": 250.0
+      }, 
+      {
         "attributeID": 525, 
         "value": 1.0
       }, 
       {
         "attributeID": 552, 
-        "value": 90.0
+        "value": 240.0
       }, 
       {
         "attributeID": 562, 
@@ -569718,7 +569674,7 @@
       }, 
       {
         "attributeID": 37, 
-        "value": 650.0
+        "value": 1050.0
       }, 
       {
         "attributeID": 51, 
@@ -569726,7 +569682,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 17500.0
+        "value": 40000.0
       }, 
       {
         "attributeID": 55, 
@@ -569738,11 +569694,11 @@
       }, 
       {
         "attributeID": 70, 
-        "value": 0.378
+        "value": 0.4
       }, 
       {
         "attributeID": 76, 
-        "value": 79375.0
+        "value": 150000.0
       }, 
       {
         "attributeID": 97, 
@@ -569766,11 +569722,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 6000.0
+        "value": 30000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 12.096
+        "value": 200.0
       }, 
       {
         "attributeID": 192, 
@@ -569806,19 +569762,19 @@
       }, 
       {
         "attributeID": 267, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 268, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 269, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 270, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 481, 
@@ -569833,12 +569789,16 @@
         "value": 0.75
       }, 
       {
+        "attributeID": 508, 
+        "value": 350.0
+      }, 
+      {
         "attributeID": 525, 
         "value": 1.0
       }, 
       {
         "attributeID": 552, 
-        "value": 130.0
+        "value": 240.0
       }, 
       {
         "attributeID": 562, 
@@ -569888,7 +569848,7 @@
       }, 
       {
         "attributeID": 37, 
-        "value": 400.0
+        "value": 1050.0
       }, 
       {
         "attributeID": 51, 
@@ -569896,7 +569856,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 70000.0
+        "value": 80000.0
       }, 
       {
         "attributeID": 55, 
@@ -569908,7 +569868,7 @@
       }, 
       {
         "attributeID": 70, 
-        "value": 0.1
+        "value": 0.05
       }, 
       {
         "attributeID": 76, 
@@ -569932,11 +569892,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 0.0
+        "value": 60000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 20.0
+        "value": 50.0
       }, 
       {
         "attributeID": 192, 
@@ -569972,19 +569932,19 @@
       }, 
       {
         "attributeID": 267, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 268, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 269, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 270, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 481, 
@@ -569999,12 +569959,16 @@
         "value": 0.75
       }, 
       {
+        "attributeID": 508, 
+        "value": 175.0
+      }, 
+      {
         "attributeID": 525, 
         "value": 1.0
       }, 
       {
         "attributeID": 552, 
-        "value": 625.0
+        "value": 400.0
       }, 
       {
         "attributeID": 562, 
@@ -570034,7 +569998,7 @@
       }, 
       {
         "attributeID": 37, 
-        "value": 350.0
+        "value": 900.0
       }, 
       {
         "attributeID": 51, 
@@ -570042,7 +570006,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 70000.0
+        "value": 80000.0
       }, 
       {
         "attributeID": 55, 
@@ -570054,7 +570018,7 @@
       }, 
       {
         "attributeID": 70, 
-        "value": 0.1
+        "value": 0.05
       }, 
       {
         "attributeID": 76, 
@@ -570082,11 +570046,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 0.0
+        "value": 60000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 20.0
+        "value": 50.0
       }, 
       {
         "attributeID": 192, 
@@ -570122,19 +570086,19 @@
       }, 
       {
         "attributeID": 267, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 268, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 269, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 270, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 481, 
@@ -570149,12 +570113,16 @@
         "value": 0.75
       }, 
       {
+        "attributeID": 508, 
+        "value": 150.0
+      }, 
+      {
         "attributeID": 525, 
         "value": 1.0
       }, 
       {
         "attributeID": 552, 
-        "value": 625.0
+        "value": 400.0
       }, 
       {
         "attributeID": 562, 
@@ -581713,7 +581681,7 @@
       }, 
       {
         "attributeID": 9, 
-        "value": 6000.0
+        "value": 7500.0
       }, 
       {
         "attributeID": 11, 
@@ -581721,7 +581689,7 @@
       }, 
       {
         "attributeID": 12, 
-        "value": 3.0
+        "value": 2.0
       }, 
       {
         "attributeID": 13, 
@@ -581745,7 +581713,7 @@
       }, 
       {
         "attributeID": 37, 
-        "value": 160.0
+        "value": 170.0
       }, 
       {
         "attributeID": 48, 
@@ -581761,7 +581729,7 @@
       }, 
       {
         "attributeID": 70, 
-        "value": 0.6
+        "value": 0.55
       }, 
       {
         "attributeID": 76, 
@@ -581833,7 +581801,7 @@
       }, 
       {
         "attributeID": 209, 
-        "value": 25.0
+        "value": 15.0
       }, 
       {
         "attributeID": 210, 
@@ -581857,7 +581825,7 @@
       }, 
       {
         "attributeID": 265, 
-        "value": 5000.0
+        "value": 3500.0
       }, 
       {
         "attributeID": 267, 
@@ -582009,15 +581977,15 @@
       }, 
       {
         "attributeID": 1259, 
-        "value": 0.820335356
+        "value": 0.82
       }, 
       {
         "attributeID": 1261, 
-        "value": 0.793700526
+        "value": 0.79
       }, 
       {
         "attributeID": 1262, 
-        "value": 0.5
+        "value": 0.25
       }, 
       {
         "attributeID": 1271, 
@@ -582057,11 +582025,11 @@
       }, 
       {
         "attributeID": 2298, 
-        "value": 100.0
+        "value": 125.0
       }, 
       {
         "attributeID": 2299, 
-        "value": 100.0
+        "value": 125.0
       }, 
       {
         "attributeID": 2574, 
@@ -582247,7 +582215,7 @@
       }, 
       {
         "attributeID": 209, 
-        "value": 16.0
+        "value": 8.0
       }, 
       {
         "attributeID": 210, 
@@ -604229,7 +604197,7 @@
       }, 
       {
         "attributeID": 37, 
-        "value": 350.0
+        "value": 900.0
       }, 
       {
         "attributeID": 51, 
@@ -604237,7 +604205,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 70000.0
+        "value": 80000.0
       }, 
       {
         "attributeID": 55, 
@@ -604249,7 +604217,7 @@
       }, 
       {
         "attributeID": 70, 
-        "value": 0.1
+        "value": 0.05
       }, 
       {
         "attributeID": 76, 
@@ -604273,11 +604241,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 0.0
+        "value": 60000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 1.0
+        "value": 50.0
       }, 
       {
         "attributeID": 192, 
@@ -604317,35 +604285,35 @@
       }, 
       {
         "attributeID": 267, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 268, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 269, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 270, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 271, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 272, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 273, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 274, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 479, 
@@ -604364,8 +604332,12 @@
         "value": 1.0
       }, 
       {
+        "attributeID": 508, 
+        "value": 150.0
+      }, 
+      {
         "attributeID": 552, 
-        "value": 625.0
+        "value": 400.0
       }, 
       {
         "attributeID": 562, 
@@ -604455,7 +604427,7 @@
       }, 
       {
         "attributeID": 37, 
-        "value": 350.0
+        "value": 900.0
       }, 
       {
         "attributeID": 51, 
@@ -604463,7 +604435,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 70000.0
+        "value": 80000.0
       }, 
       {
         "attributeID": 55, 
@@ -604475,7 +604447,7 @@
       }, 
       {
         "attributeID": 70, 
-        "value": 0.1
+        "value": 0.05
       }, 
       {
         "attributeID": 76, 
@@ -604499,11 +604471,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 0.0
+        "value": 60000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 1.0
+        "value": 50.0
       }, 
       {
         "attributeID": 192, 
@@ -604543,35 +604515,35 @@
       }, 
       {
         "attributeID": 267, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 268, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 269, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 270, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 271, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 272, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 273, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 274, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 479, 
@@ -604590,8 +604562,12 @@
         "value": 1.0
       }, 
       {
+        "attributeID": 508, 
+        "value": 150.0
+      }, 
+      {
         "attributeID": 552, 
-        "value": 625.0
+        "value": 400.0
       }, 
       {
         "attributeID": 562, 
@@ -607405,10 +607381,6 @@
         "value": 11313.0
       }, 
       {
-        "attributeID": 1923, 
-        "value": -70.0
-      }, 
-      {
         "attributeID": 2045, 
         "value": 1.0
       }, 
@@ -607456,10 +607428,6 @@
       }, 
       {
         "effectID": 5365, 
-        "isDefault": 0
-      }, 
-      {
-        "effectID": 5560, 
         "isDefault": 0
       }, 
       {
@@ -610321,7 +610289,7 @@
       }, 
       {
         "attributeID": 37, 
-        "value": 1250.0
+        "value": 2100.0
       }, 
       {
         "attributeID": 51, 
@@ -610329,7 +610297,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 6300.0
+        "value": 20000.0
       }, 
       {
         "attributeID": 55, 
@@ -610341,11 +610309,11 @@
       }, 
       {
         "attributeID": 70, 
-        "value": 1.9575
+        "value": 0.2
       }, 
       {
         "attributeID": 76, 
-        "value": 31250.0
+        "value": 100000.0
       }, 
       {
         "attributeID": 114, 
@@ -610365,11 +610333,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 1250.0
+        "value": 10000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 385.0
+        "value": 600.0
       }, 
       {
         "attributeID": 192, 
@@ -610409,35 +610377,35 @@
       }, 
       {
         "attributeID": 267, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 268, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 269, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 270, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 271, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 272, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 273, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 274, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 479, 
@@ -610456,12 +610424,16 @@
         "value": 0.75
       }, 
       {
+        "attributeID": 508, 
+        "value": 700.0
+      }, 
+      {
         "attributeID": 525, 
         "value": 1.0
       }, 
       {
         "attributeID": 552, 
-        "value": 37.0
+        "value": 80.0
       }, 
       {
         "attributeID": 562, 
@@ -610511,7 +610483,7 @@
       }, 
       {
         "attributeID": 37, 
-        "value": 650.0
+        "value": 1050.0
       }, 
       {
         "attributeID": 51, 
@@ -610519,7 +610491,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 17500.0
+        "value": 40000.0
       }, 
       {
         "attributeID": 55, 
@@ -610531,11 +610503,11 @@
       }, 
       {
         "attributeID": 70, 
-        "value": 0.43
+        "value": 0.4
       }, 
       {
         "attributeID": 76, 
-        "value": 55000.0
+        "value": 150000.0
       }, 
       {
         "attributeID": 97, 
@@ -610559,11 +610531,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 6000.0
+        "value": 30000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 12.096
+        "value": 200.0
       }, 
       {
         "attributeID": 192, 
@@ -610603,35 +610575,35 @@
       }, 
       {
         "attributeID": 267, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 268, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 269, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 270, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 271, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 272, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 273, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 274, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 479, 
@@ -610650,12 +610622,16 @@
         "value": 0.75
       }, 
       {
+        "attributeID": 508, 
+        "value": 350.0
+      }, 
+      {
         "attributeID": 525, 
         "value": 1.0
       }, 
       {
         "attributeID": 552, 
-        "value": 115.0
+        "value": 240.0
       }, 
       {
         "attributeID": 562, 
@@ -611858,7 +611834,7 @@
       }, 
       {
         "attributeID": 37, 
-        "value": 350.0
+        "value": 900.0
       }, 
       {
         "attributeID": 51, 
@@ -611866,7 +611842,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 70000.0
+        "value": 80000.0
       }, 
       {
         "attributeID": 55, 
@@ -611878,7 +611854,7 @@
       }, 
       {
         "attributeID": 70, 
-        "value": 0.1
+        "value": 0.05
       }, 
       {
         "attributeID": 76, 
@@ -611902,11 +611878,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 0.0
+        "value": 60000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 1.0
+        "value": 50.0
       }, 
       {
         "attributeID": 192, 
@@ -611946,35 +611922,35 @@
       }, 
       {
         "attributeID": 267, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 268, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 269, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 270, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 271, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 272, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 273, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 274, 
-        "value": 0.6525
+        "value": 0.7
       }, 
       {
         "attributeID": 479, 
@@ -611993,8 +611969,12 @@
         "value": 1.0
       }, 
       {
+        "attributeID": 508, 
+        "value": 150.0
+      }, 
+      {
         "attributeID": 552, 
-        "value": 625.0
+        "value": 400.0
       }, 
       {
         "attributeID": 554, 
@@ -615516,5 +615496,137 @@
       }
     ], 
     "dogmaEffects": []
+  }, 
+  "89689": {
+    "dogmaAttributes": [
+      {
+        "attributeID": 180, 
+        "value": 165.0
+      }, 
+      {
+        "attributeID": 181, 
+        "value": 166.0
+      }, 
+      {
+        "attributeID": 182, 
+        "value": 3392.0
+      }, 
+      {
+        "attributeID": 183, 
+        "value": 33078.0
+      }, 
+      {
+        "attributeID": 184, 
+        "value": 3394.0
+      }, 
+      {
+        "attributeID": 275, 
+        "value": 5.0
+      }, 
+      {
+        "attributeID": 277, 
+        "value": 5.0
+      }, 
+      {
+        "attributeID": 278, 
+        "value": 4.0
+      }, 
+      {
+        "attributeID": 279, 
+        "value": 5.0
+      }, 
+      {
+        "attributeID": 280, 
+        "value": 0.0
+      }, 
+      {
+        "attributeID": 1047, 
+        "value": 1.0
+      }, 
+      {
+        "attributeID": 1856, 
+        "value": -2.0
+      }
+    ], 
+    "dogmaEffects": [
+      {
+        "effectID": 132, 
+        "isDefault": 1
+      }, 
+      {
+        "effectID": 5200, 
+        "isDefault": 0
+      }, 
+      {
+        "effectID": 5201, 
+        "isDefault": 0
+      }
+    ]
+  }, 
+  "89717": {
+    "dogmaAttributes": [
+      {
+        "attributeID": 9, 
+        "value": 40.0
+      }, 
+      {
+        "attributeID": 30, 
+        "value": 1.0
+      }, 
+      {
+        "attributeID": 50, 
+        "value": 27.0
+      }, 
+      {
+        "attributeID": 182, 
+        "value": 3318.0
+      }, 
+      {
+        "attributeID": 183, 
+        "value": 3436.0
+      }, 
+      {
+        "attributeID": 184, 
+        "value": 9955.0
+      }, 
+      {
+        "attributeID": 277, 
+        "value": 1.0
+      }, 
+      {
+        "attributeID": 278, 
+        "value": 1.0
+      }, 
+      {
+        "attributeID": 279, 
+        "value": 5.0
+      }, 
+      {
+        "attributeID": 422, 
+        "value": 1.0
+      }, 
+      {
+        "attributeID": 633, 
+        "value": 0.0
+      }, 
+      {
+        "attributeID": 5958, 
+        "value": 10.0
+      }
+    ], 
+    "dogmaEffects": [
+      {
+        "effectID": 11, 
+        "isDefault": 0
+      }, 
+      {
+        "effectID": 16, 
+        "isDefault": 0
+      }, 
+      {
+        "effectID": 12572, 
+        "isDefault": 0
+      }
+    ]
   }
 }

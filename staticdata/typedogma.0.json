@@ -15156,7 +15156,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 12000.0
+        "value": 10800.0
       }, 
       {
         "attributeID": 56, 
@@ -15184,11 +15184,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 6000.0
+        "value": 5400.0
       }, 
       {
         "attributeID": 160, 
-        "value": 12.0
+        "value": 10.8
       }, 
       {
         "attributeID": 182, 
@@ -15582,7 +15582,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 24000.0
+        "value": 21600.0
       }, 
       {
         "attributeID": 56, 
@@ -15610,11 +15610,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 12000.0
+        "value": 10800.0
       }, 
       {
         "attributeID": 160, 
-        "value": 6.56
+        "value": 5.904
       }, 
       {
         "attributeID": 182, 
@@ -15866,7 +15866,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 24000.0
+        "value": 21600.0
       }, 
       {
         "attributeID": 56, 
@@ -15894,11 +15894,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 12000.0
+        "value": 10800.0
       }, 
       {
         "attributeID": 160, 
-        "value": 2.1131
+        "value": 1.90179
       }, 
       {
         "attributeID": 182, 
@@ -16150,7 +16150,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 48000.0
+        "value": 43200.0
       }, 
       {
         "attributeID": 56, 
@@ -16178,11 +16178,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 24000.0
+        "value": 21600.0
       }, 
       {
         "attributeID": 160, 
-        "value": 1.1622
+        "value": 1.04598
       }, 
       {
         "attributeID": 182, 
@@ -36174,7 +36174,7 @@
       }, 
       {
         "attributeID": 492, 
-        "value": 7.5
+        "value": 5.0
       }, 
       {
         "attributeID": 524, 
@@ -36194,7 +36194,7 @@
       }, 
       {
         "attributeID": 585, 
-        "value": 7.5
+        "value": 10.0
       }, 
       {
         "attributeID": 600, 
@@ -36315,6 +36315,10 @@
       {
         "attributeID": 5796, 
         "value": 2147483647000.0
+      }, 
+      {
+        "attributeID": 5960, 
+        "value": -10.0
       }
     ], 
     "dogmaEffects": [
@@ -36323,11 +36327,15 @@
         "isDefault": 0
       }, 
       {
-        "effectID": 5431, 
+        "effectID": 8377, 
         "isDefault": 0
       }, 
       {
-        "effectID": 8377, 
+        "effectID": 11424, 
+        "isDefault": 0
+      }, 
+      {
+        "effectID": 12573, 
         "isDefault": 0
       }
     ]
@@ -45911,6 +45919,10 @@
       {
         "attributeID": 2711, 
         "value": 1228.0
+      }, 
+      {
+        "attributeID": 3236, 
+        "value": 0.0
       }
     ], 
     "dogmaEffects": []
@@ -108193,7 +108205,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 28800.0
+        "value": 25920.0
       }, 
       {
         "attributeID": 56, 
@@ -108221,11 +108233,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 12000.0
+        "value": 10800.0
       }, 
       {
         "attributeID": 160, 
-        "value": 6.56
+        "value": 5.904
       }, 
       {
         "attributeID": 182, 
@@ -108540,7 +108552,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 57600.0
+        "value": 51840.0
       }, 
       {
         "attributeID": 56, 
@@ -108568,11 +108580,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 24000.0
+        "value": 21600.0
       }, 
       {
         "attributeID": 160, 
-        "value": 1.1622
+        "value": 1.04598
       }, 
       {
         "attributeID": 182, 
@@ -109234,7 +109246,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 14400.0
+        "value": 12960.0
       }, 
       {
         "attributeID": 56, 
@@ -109262,11 +109274,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 6000.0
+        "value": 5400.0
       }, 
       {
         "attributeID": 160, 
-        "value": 12.0
+        "value": 10.8
       }, 
       {
         "attributeID": 182, 
@@ -109581,7 +109593,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 28800.0
+        "value": 25920.0
       }, 
       {
         "attributeID": 56, 
@@ -109609,11 +109621,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 12000.0
+        "value": 10800.0
       }, 
       {
         "attributeID": 160, 
-        "value": 2.1131
+        "value": 1.90179
       }, 
       {
         "attributeID": 182, 
@@ -118794,6 +118806,10 @@
       {
         "attributeID": 280, 
         "value": 0.0
+      }, 
+      {
+        "attributeID": 1047, 
+        "value": 0.0
       }
     ], 
     "dogmaEffects": [
@@ -118807,6 +118823,10 @@
       }, 
       {
         "effectID": 734, 
+        "isDefault": 0
+      }, 
+      {
+        "effectID": 12574, 
         "isDefault": 0
       }
     ]
@@ -121278,6 +121298,14 @@
       {
         "attributeID": 280, 
         "value": 0.0
+      }, 
+      {
+        "attributeID": 1047, 
+        "value": 0.0
+      }, 
+      {
+        "attributeID": 1982, 
+        "value": -1.0
       }
     ], 
     "dogmaEffects": [
@@ -161801,7 +161829,7 @@
       }, 
       {
         "attributeID": 37, 
-        "value": 220.0
+        "value": 235.0
       }, 
       {
         "attributeID": 48, 
@@ -162184,7 +162212,7 @@
       }, 
       {
         "attributeID": 37, 
-        "value": 225.0
+        "value": 250.0
       }, 
       {
         "attributeID": 48, 
@@ -162200,7 +162228,7 @@
       }, 
       {
         "attributeID": 70, 
-        "value": 0.475
+        "value": 0.54
       }, 
       {
         "attributeID": 76, 
@@ -162388,7 +162416,7 @@
       }, 
       {
         "attributeID": 749, 
-        "value": 5.0
+        "value": 7.5
       }, 
       {
         "attributeID": 1132, 
@@ -197447,7 +197475,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 14400.0
+        "value": 12960.0
       }, 
       {
         "attributeID": 56, 
@@ -197475,11 +197503,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 6000.0
+        "value": 5400.0
       }, 
       {
         "attributeID": 160, 
-        "value": 12.0
+        "value": 10.8
       }, 
       {
         "attributeID": 182, 
@@ -197589,7 +197617,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 13200.0
+        "value": 11880.0
       }, 
       {
         "attributeID": 56, 
@@ -197617,11 +197645,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 6000.0
+        "value": 5400.0
       }, 
       {
         "attributeID": 160, 
-        "value": 12.0
+        "value": 10.8
       }, 
       {
         "attributeID": 182, 
@@ -197731,7 +197759,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 12600.0
+        "value": 11340.0
       }, 
       {
         "attributeID": 56, 
@@ -197759,11 +197787,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 6000.0
+        "value": 5400.0
       }, 
       {
         "attributeID": 160, 
-        "value": 12.0
+        "value": 10.8
       }, 
       {
         "attributeID": 182, 
@@ -197873,7 +197901,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 13800.0
+        "value": 12420.0
       }, 
       {
         "attributeID": 56, 
@@ -197901,11 +197929,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 6000.0
+        "value": 5400.0
       }, 
       {
         "attributeID": 160, 
-        "value": 12.0
+        "value": 10.8
       }, 
       {
         "attributeID": 182, 
@@ -198015,7 +198043,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 28800.0
+        "value": 25920.0
       }, 
       {
         "attributeID": 56, 
@@ -198043,11 +198071,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 12000.0
+        "value": 10800.0
       }, 
       {
         "attributeID": 160, 
-        "value": 6.56
+        "value": 5.904
       }, 
       {
         "attributeID": 182, 
@@ -198157,7 +198185,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 26400.0
+        "value": 23760.0
       }, 
       {
         "attributeID": 56, 
@@ -198185,11 +198213,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 12000.0
+        "value": 10800.0
       }, 
       {
         "attributeID": 160, 
-        "value": 6.56
+        "value": 5.904
       }, 
       {
         "attributeID": 182, 
@@ -198299,7 +198327,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 25200.0
+        "value": 22680.0
       }, 
       {
         "attributeID": 56, 
@@ -198327,11 +198355,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 12000.0
+        "value": 10800.0
       }, 
       {
         "attributeID": 160, 
-        "value": 6.56
+        "value": 5.904
       }, 
       {
         "attributeID": 182, 
@@ -198441,7 +198469,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 27600.0
+        "value": 24840.0
       }, 
       {
         "attributeID": 56, 
@@ -198469,11 +198497,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 12000.0
+        "value": 10800.0
       }, 
       {
         "attributeID": 160, 
-        "value": 6.56
+        "value": 5.904
       }, 
       {
         "attributeID": 182, 
@@ -198583,7 +198611,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 28800.0
+        "value": 25920.0
       }, 
       {
         "attributeID": 56, 
@@ -198611,11 +198639,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 12000.0
+        "value": 10800.0
       }, 
       {
         "attributeID": 160, 
-        "value": 2.1131
+        "value": 1.90179
       }, 
       {
         "attributeID": 182, 
@@ -198725,7 +198753,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 26400.0
+        "value": 23760.0
       }, 
       {
         "attributeID": 56, 
@@ -198753,11 +198781,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 12000.0
+        "value": 10800.0
       }, 
       {
         "attributeID": 160, 
-        "value": 2.1131
+        "value": 1.90179
       }, 
       {
         "attributeID": 182, 
@@ -198867,7 +198895,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 25200.0
+        "value": 22680.0
       }, 
       {
         "attributeID": 56, 
@@ -198895,11 +198923,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 12000.0
+        "value": 10800.0
       }, 
       {
         "attributeID": 160, 
-        "value": 2.1131
+        "value": 1.90179
       }, 
       {
         "attributeID": 182, 
@@ -199009,7 +199037,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 27600.0
+        "value": 24840.0
       }, 
       {
         "attributeID": 56, 
@@ -199037,11 +199065,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 12000.0
+        "value": 10800.0
       }, 
       {
         "attributeID": 160, 
-        "value": 2.1131
+        "value": 1.90179
       }, 
       {
         "attributeID": 182, 
@@ -199151,7 +199179,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 57600.0
+        "value": 51840.0
       }, 
       {
         "attributeID": 56, 
@@ -199179,11 +199207,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 24000.0
+        "value": 21600.0
       }, 
       {
         "attributeID": 160, 
-        "value": 1.1622
+        "value": 1.04598
       }, 
       {
         "attributeID": 182, 
@@ -199293,7 +199321,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 52800.0
+        "value": 47520.0
       }, 
       {
         "attributeID": 56, 
@@ -199321,11 +199349,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 24000.0
+        "value": 21600.0
       }, 
       {
         "attributeID": 160, 
-        "value": 1.1622
+        "value": 1.04598
       }, 
       {
         "attributeID": 182, 
@@ -199435,7 +199463,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 50400.0
+        "value": 45360.0
       }, 
       {
         "attributeID": 56, 
@@ -199463,11 +199491,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 24000.0
+        "value": 21600.0
       }, 
       {
         "attributeID": 160, 
-        "value": 1.1622
+        "value": 1.04598
       }, 
       {
         "attributeID": 182, 
@@ -199577,7 +199605,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 55200.0
+        "value": 49680.0
       }, 
       {
         "attributeID": 56, 
@@ -199605,11 +199633,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 24000.0
+        "value": 21600.0
       }, 
       {
         "attributeID": 160, 
-        "value": 1.1622
+        "value": 1.04598
       }, 
       {
         "attributeID": 182, 
@@ -279188,7 +279216,7 @@
       }, 
       {
         "attributeID": 1271, 
-        "value": 125.0
+        "value": 500.0
       }, 
       {
         "attributeID": 1281, 
@@ -351479,7 +351507,7 @@
       }, 
       {
         "attributeID": 656, 
-        "value": -5.0
+        "value": 7.5
       }, 
       {
         "attributeID": 692, 
@@ -351588,10 +351616,6 @@
         "isDefault": 0
       }, 
       {
-        "effectID": 907, 
-        "isDefault": 0
-      }, 
-      {
         "effectID": 1058, 
         "isDefault": 0
       }, 
@@ -351601,6 +351625,10 @@
       }, 
       {
         "effectID": 4902, 
+        "isDefault": 0
+      }, 
+      {
+        "effectID": 5956, 
         "isDefault": 0
       }
     ]
@@ -354687,7 +354715,7 @@
       }, 
       {
         "attributeID": 552, 
-        "value": 150.0
+        "value": 120.0
       }, 
       {
         "attributeID": 564, 
@@ -368028,7 +368056,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 18000.0
+        "value": 16200.0
       }, 
       {
         "attributeID": 56, 
@@ -368056,11 +368084,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 10000.0
+        "value": 9000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 8.0
+        "value": 7.2
       }, 
       {
         "attributeID": 182, 
@@ -368179,7 +368207,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 21600.0
+        "value": 19440.0
       }, 
       {
         "attributeID": 56, 
@@ -368207,11 +368235,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 10000.0
+        "value": 9000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 8.0
+        "value": 7.2
       }, 
       {
         "attributeID": 182, 
@@ -368346,7 +368374,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 36000.0
+        "value": 32400.0
       }, 
       {
         "attributeID": 56, 
@@ -368374,11 +368402,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 20000.0
+        "value": 18000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 1.4092
+        "value": 1.26828
       }, 
       {
         "attributeID": 182, 
@@ -368497,7 +368525,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 43200.0
+        "value": 38880.0
       }, 
       {
         "attributeID": 56, 
@@ -368525,11 +368553,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 20000.0
+        "value": 18000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 1.4092
+        "value": 1.26828
       }, 
       {
         "attributeID": 182, 
@@ -465343,7 +465371,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 18000.0
+        "value": 16200.0
       }, 
       {
         "attributeID": 56, 
@@ -465371,11 +465399,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 10000.0
+        "value": 9000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 8.0
+        "value": 7.2
       }, 
       {
         "attributeID": 182, 
@@ -465493,7 +465521,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 23400.0
+        "value": 21060.0
       }, 
       {
         "attributeID": 56, 
@@ -465521,11 +465549,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 10000.0
+        "value": 9000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 8.0
+        "value": 7.2
       }, 
       {
         "attributeID": 182, 
@@ -465643,7 +465671,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 28800.0
+        "value": 25920.0
       }, 
       {
         "attributeID": 56, 
@@ -465671,11 +465699,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 12000.0
+        "value": 10800.0
       }, 
       {
         "attributeID": 160, 
-        "value": 6.56
+        "value": 5.904
       }, 
       {
         "attributeID": 182, 
@@ -465793,7 +465821,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 31200.0
+        "value": 28080.0
       }, 
       {
         "attributeID": 56, 
@@ -465821,11 +465849,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 12000.0
+        "value": 10800.0
       }, 
       {
         "attributeID": 160, 
-        "value": 6.56
+        "value": 5.904
       }, 
       {
         "attributeID": 182, 
@@ -465943,7 +465971,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 43200.0
+        "value": 38880.0
       }, 
       {
         "attributeID": 56, 
@@ -465971,11 +465999,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 20000.0
+        "value": 18000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 1.4092
+        "value": 1.26828
       }, 
       {
         "attributeID": 182, 
@@ -466093,7 +466121,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 46800.0
+        "value": 42120.0
       }, 
       {
         "attributeID": 56, 
@@ -466121,11 +466149,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 20000.0
+        "value": 18000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 1.4092
+        "value": 1.26828
       }, 
       {
         "attributeID": 182, 
@@ -466243,7 +466271,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 57600.0
+        "value": 51840.0
       }, 
       {
         "attributeID": 56, 
@@ -466271,11 +466299,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 24000.0
+        "value": 21600.0
       }, 
       {
         "attributeID": 160, 
-        "value": 1.1622
+        "value": 1.04598
       }, 
       {
         "attributeID": 182, 
@@ -466393,7 +466421,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 62400.0
+        "value": 56160.0
       }, 
       {
         "attributeID": 56, 
@@ -466421,11 +466449,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 24000.0
+        "value": 21600.0
       }, 
       {
         "attributeID": 160, 
-        "value": 1.1622
+        "value": 1.04598
       }, 
       {
         "attributeID": 182, 
@@ -466543,7 +466571,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 14400.0
+        "value": 12960.0
       }, 
       {
         "attributeID": 56, 
@@ -466571,11 +466599,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 6000.0
+        "value": 5400.0
       }, 
       {
         "attributeID": 160, 
-        "value": 12.0
+        "value": 10.8
       }, 
       {
         "attributeID": 182, 
@@ -466693,7 +466721,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 15600.0
+        "value": 14040.0
       }, 
       {
         "attributeID": 56, 
@@ -466721,11 +466749,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 6000.0
+        "value": 5400.0
       }, 
       {
         "attributeID": 160, 
-        "value": 12.0
+        "value": 10.8
       }, 
       {
         "attributeID": 182, 
@@ -466843,7 +466871,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 28800.0
+        "value": 25920.0
       }, 
       {
         "attributeID": 56, 
@@ -466871,11 +466899,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 12000.0
+        "value": 10800.0
       }, 
       {
         "attributeID": 160, 
-        "value": 2.1131
+        "value": 1.90179
       }, 
       {
         "attributeID": 182, 
@@ -466993,7 +467021,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 31200.0
+        "value": 28080.0
       }, 
       {
         "attributeID": 56, 
@@ -467021,11 +467049,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 12000.0
+        "value": 10800.0
       }, 
       {
         "attributeID": 160, 
-        "value": 2.1131
+        "value": 1.90179
       }, 
       {
         "attributeID": 182, 
@@ -492623,7 +492651,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 18900.0
+        "value": 17010.0
       }, 
       {
         "attributeID": 56, 
@@ -492651,11 +492679,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 10000.0
+        "value": 9000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 8.0
+        "value": 7.2
       }, 
       {
         "attributeID": 182, 
@@ -492765,7 +492793,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 19800.0
+        "value": 17820.0
       }, 
       {
         "attributeID": 56, 
@@ -492793,11 +492821,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 10000.0
+        "value": 9000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 8.0
+        "value": 7.2
       }, 
       {
         "attributeID": 182, 
@@ -492907,7 +492935,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 20700.0
+        "value": 18630.0
       }, 
       {
         "attributeID": 56, 
@@ -492935,11 +492963,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 10000.0
+        "value": 9000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 8.0
+        "value": 7.2
       }, 
       {
         "attributeID": 182, 
@@ -493049,7 +493077,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 21600.0
+        "value": 19440.0
       }, 
       {
         "attributeID": 56, 
@@ -493077,11 +493105,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 10000.0
+        "value": 9000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 8.0
+        "value": 7.2
       }, 
       {
         "attributeID": 182, 
@@ -493191,7 +493219,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 37800.0
+        "value": 34020.0
       }, 
       {
         "attributeID": 56, 
@@ -493219,11 +493247,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 20000.0
+        "value": 18000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 1.4092
+        "value": 1.26828
       }, 
       {
         "attributeID": 182, 
@@ -493333,7 +493361,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 39600.0
+        "value": 35640.0
       }, 
       {
         "attributeID": 56, 
@@ -493361,11 +493389,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 20000.0
+        "value": 18000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 1.4092
+        "value": 1.26828
       }, 
       {
         "attributeID": 182, 
@@ -493475,7 +493503,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 41400.0
+        "value": 37260.0
       }, 
       {
         "attributeID": 56, 
@@ -493503,11 +493531,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 20000.0
+        "value": 18000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 1.4092
+        "value": 1.26828
       }, 
       {
         "attributeID": 182, 
@@ -493617,7 +493645,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 43200.0
+        "value": 38880.0
       }, 
       {
         "attributeID": 56, 
@@ -493645,11 +493673,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 20000.0
+        "value": 18000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 1.4092
+        "value": 1.26828
       }, 
       {
         "attributeID": 182, 
@@ -500958,7 +500986,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 43200.0
+        "value": 38880.0
       }, 
       {
         "attributeID": 56, 
@@ -500986,11 +501014,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 20000.0
+        "value": 18000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 1.4092
+        "value": 1.26828
       }, 
       {
         "attributeID": 182, 
@@ -501108,7 +501136,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 43200.0
+        "value": 38880.0
       }, 
       {
         "attributeID": 56, 
@@ -501136,11 +501164,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 20000.0
+        "value": 18000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 1.4092
+        "value": 1.26828
       }, 
       {
         "attributeID": 182, 
@@ -501258,7 +501286,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 46800.0
+        "value": 42120.0
       }, 
       {
         "attributeID": 56, 
@@ -501286,11 +501314,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 20000.0
+        "value": 18000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 1.4092
+        "value": 1.26828
       }, 
       {
         "attributeID": 182, 
@@ -501408,7 +501436,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 49140.0
+        "value": 44226.0
       }, 
       {
         "attributeID": 56, 
@@ -501436,11 +501464,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 20000.0
+        "value": 18000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 1.4092
+        "value": 1.26828
       }, 
       {
         "attributeID": 182, 
@@ -501558,7 +501586,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 51480.0
+        "value": 46332.0
       }, 
       {
         "attributeID": 56, 
@@ -501586,11 +501614,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 20000.0
+        "value": 18000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 1.4092
+        "value": 1.26828
       }, 
       {
         "attributeID": 182, 
@@ -501708,7 +501736,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 57600.0
+        "value": 51840.0
       }, 
       {
         "attributeID": 56, 
@@ -501736,11 +501764,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 24000.0
+        "value": 21600.0
       }, 
       {
         "attributeID": 160, 
-        "value": 1.1622
+        "value": 1.04598
       }, 
       {
         "attributeID": 182, 
@@ -501858,7 +501886,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 57600.0
+        "value": 51840.0
       }, 
       {
         "attributeID": 56, 
@@ -501886,11 +501914,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 24000.0
+        "value": 21600.0
       }, 
       {
         "attributeID": 160, 
-        "value": 1.1622
+        "value": 1.04598
       }, 
       {
         "attributeID": 182, 
@@ -502008,7 +502036,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 62400.0
+        "value": 56160.0
       }, 
       {
         "attributeID": 56, 
@@ -502036,11 +502064,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 24000.0
+        "value": 21600.0
       }, 
       {
         "attributeID": 160, 
-        "value": 1.1622
+        "value": 1.04598
       }, 
       {
         "attributeID": 182, 
@@ -502158,7 +502186,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 65520.0
+        "value": 58968.0
       }, 
       {
         "attributeID": 56, 
@@ -502186,11 +502214,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 24000.0
+        "value": 21600.0
       }, 
       {
         "attributeID": 160, 
-        "value": 1.1622
+        "value": 1.04598
       }, 
       {
         "attributeID": 182, 
@@ -502308,7 +502336,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 68640.0
+        "value": 61776.0
       }, 
       {
         "attributeID": 56, 
@@ -502336,11 +502364,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 24000.0
+        "value": 21600.0
       }, 
       {
         "attributeID": 160, 
-        "value": 1.1622
+        "value": 1.04598
       }, 
       {
         "attributeID": 182, 
@@ -502458,7 +502486,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 28800.0
+        "value": 25920.0
       }, 
       {
         "attributeID": 56, 
@@ -502486,11 +502514,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 12000.0
+        "value": 10800.0
       }, 
       {
         "attributeID": 160, 
-        "value": 2.1131
+        "value": 1.90179
       }, 
       {
         "attributeID": 182, 
@@ -502608,7 +502636,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 28800.0
+        "value": 25920.0
       }, 
       {
         "attributeID": 56, 
@@ -502636,11 +502664,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 12000.0
+        "value": 10800.0
       }, 
       {
         "attributeID": 160, 
-        "value": 2.1131
+        "value": 1.90179
       }, 
       {
         "attributeID": 182, 
@@ -502758,7 +502786,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 31200.0
+        "value": 28080.0
       }, 
       {
         "attributeID": 56, 
@@ -502786,11 +502814,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 12000.0
+        "value": 10800.0
       }, 
       {
         "attributeID": 160, 
-        "value": 2.1131
+        "value": 1.90179
       }, 
       {
         "attributeID": 182, 
@@ -502908,7 +502936,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 32760.0
+        "value": 29484.0
       }, 
       {
         "attributeID": 56, 
@@ -502936,11 +502964,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 12000.0
+        "value": 10800.0
       }, 
       {
         "attributeID": 160, 
-        "value": 2.1131
+        "value": 1.90179
       }, 
       {
         "attributeID": 182, 
@@ -503058,7 +503086,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 34320.0
+        "value": 30888.0
       }, 
       {
         "attributeID": 56, 
@@ -503086,11 +503114,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 12000.0
+        "value": 10800.0
       }, 
       {
         "attributeID": 160, 
-        "value": 2.1131
+        "value": 1.90179
       }, 
       {
         "attributeID": 182, 
@@ -571013,7 +571041,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 31200.0
+        "value": 28080.0
       }, 
       {
         "attributeID": 56, 
@@ -571041,11 +571069,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 12000.0
+        "value": 10800.0
       }, 
       {
         "attributeID": 160, 
-        "value": 2.1131
+        "value": 1.90179
       }, 
       {
         "attributeID": 182, 
@@ -571163,7 +571191,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 15600.0
+        "value": 14040.0
       }, 
       {
         "attributeID": 56, 
@@ -571191,11 +571219,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 6000.0
+        "value": 5400.0
       }, 
       {
         "attributeID": 160, 
-        "value": 12.0
+        "value": 10.8
       }, 
       {
         "attributeID": 182, 
@@ -571463,7 +571491,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 62400.0
+        "value": 56160.0
       }, 
       {
         "attributeID": 56, 
@@ -571491,11 +571519,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 24000.0
+        "value": 21600.0
       }, 
       {
         "attributeID": 160, 
-        "value": 1.1622
+        "value": 1.04598
       }, 
       {
         "attributeID": 182, 
@@ -571613,7 +571641,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 46800.0
+        "value": 42120.0
       }, 
       {
         "attributeID": 56, 
@@ -571641,11 +571669,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 20000.0
+        "value": 18000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 1.4092
+        "value": 1.26828
       }, 
       {
         "attributeID": 182, 
@@ -571772,7 +571800,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 31200.0
+        "value": 28080.0
       }, 
       {
         "attributeID": 56, 
@@ -571800,11 +571828,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 12000.0
+        "value": 10800.0
       }, 
       {
         "attributeID": 160, 
-        "value": 6.56
+        "value": 5.904
       }, 
       {
         "attributeID": 182, 
@@ -571922,7 +571950,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 23400.0
+        "value": 21060.0
       }, 
       {
         "attributeID": 56, 
@@ -571950,11 +571978,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 10000.0
+        "value": 9000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 8.0
+        "value": 7.2
       }, 
       {
         "attributeID": 182, 
@@ -573735,7 +573763,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 28800.0
+        "value": 25920.0
       }, 
       {
         "attributeID": 56, 
@@ -573763,11 +573791,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 12000.0
+        "value": 10800.0
       }, 
       {
         "attributeID": 160, 
-        "value": 2.1131
+        "value": 1.90179
       }, 
       {
         "attributeID": 182, 
@@ -573885,7 +573913,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 14400.0
+        "value": 12960.0
       }, 
       {
         "attributeID": 56, 
@@ -573913,11 +573941,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 6000.0
+        "value": 5400.0
       }, 
       {
         "attributeID": 160, 
-        "value": 12.0
+        "value": 10.8
       }, 
       {
         "attributeID": 182, 
@@ -574185,7 +574213,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 57600.0
+        "value": 51840.0
       }, 
       {
         "attributeID": 56, 
@@ -574213,11 +574241,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 24000.0
+        "value": 21600.0
       }, 
       {
         "attributeID": 160, 
-        "value": 1.1622
+        "value": 1.04598
       }, 
       {
         "attributeID": 182, 
@@ -574335,7 +574363,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 43200.0
+        "value": 38880.0
       }, 
       {
         "attributeID": 56, 
@@ -574363,11 +574391,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 20000.0
+        "value": 18000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 1.4092
+        "value": 1.26828
       }, 
       {
         "attributeID": 182, 
@@ -574494,7 +574522,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 28800.0
+        "value": 25920.0
       }, 
       {
         "attributeID": 56, 
@@ -574522,11 +574550,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 12000.0
+        "value": 10800.0
       }, 
       {
         "attributeID": 160, 
-        "value": 6.56
+        "value": 5.904
       }, 
       {
         "attributeID": 182, 
@@ -574644,7 +574672,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 18000.0
+        "value": 16200.0
       }, 
       {
         "attributeID": 56, 
@@ -574672,11 +574700,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 10000.0
+        "value": 9000.0
       }, 
       {
         "attributeID": 160, 
-        "value": 8.0
+        "value": 7.2
       }, 
       {
         "attributeID": 182, 
@@ -782905,6 +782933,10 @@
       {
         "attributeID": 2711, 
         "value": 1228.0
+      }, 
+      {
+        "attributeID": 3236, 
+        "value": 0.0
       }
     ], 
     "dogmaEffects": []
@@ -782938,6 +782970,10 @@
       {
         "attributeID": 2711, 
         "value": 1228.0
+      }, 
+      {
+        "attributeID": 3236, 
+        "value": 0.0
       }
     ], 
     "dogmaEffects": []
@@ -783648,6 +783684,10 @@
         "value": 17940.0
       }, 
       {
+        "attributeID": 183, 
+        "value": 3410.0
+      }, 
+      {
         "attributeID": 188, 
         "value": 0.0
       }, 
@@ -783722,6 +783762,10 @@
       {
         "attributeID": 277, 
         "value": 1.0
+      }, 
+      {
+        "attributeID": 278, 
+        "value": 3.0
       }, 
       {
         "attributeID": 283, 
@@ -808758,7 +808802,7 @@
       }, 
       {
         "attributeID": 585, 
-        "value": 7.5
+        "value": 10.0
       }, 
       {
         "attributeID": 600, 
@@ -808883,6 +808927,10 @@
       {
         "attributeID": 5796, 
         "value": 2147483647000.0
+      }, 
+      {
+        "attributeID": 5960, 
+        "value": -10.0
       }
     ], 
     "dogmaEffects": [
@@ -808891,11 +808939,15 @@
         "isDefault": 0
       }, 
       {
-        "effectID": 5431, 
+        "effectID": 8377, 
         "isDefault": 0
       }, 
       {
-        "effectID": 8377, 
+        "effectID": 11424, 
+        "isDefault": 0
+      }, 
+      {
+        "effectID": 12573, 
         "isDefault": 0
       }
     ]
@@ -808949,7 +809001,7 @@
       }, 
       {
         "attributeID": 37, 
-        "value": 130.0
+        "value": 135.0
       }, 
       {
         "attributeID": 48, 
@@ -809133,7 +809185,7 @@
       }, 
       {
         "attributeID": 561, 
-        "value": 7.5
+        "value": 10.0
       }, 
       {
         "attributeID": 564, 
@@ -809260,6 +809312,10 @@
         "value": 0.05
       }, 
       {
+        "attributeID": 5240, 
+        "value": -15.0
+      }, 
+      {
         "attributeID": 5796, 
         "value": 2147483647000.0
       }
@@ -809275,6 +809331,10 @@
       }, 
       {
         "effectID": 8377, 
+        "isDefault": 0
+      }, 
+      {
+        "effectID": 12579, 
         "isDefault": 0
       }
     ]
@@ -896483,11 +896543,11 @@
       }, 
       {
         "attributeID": 12, 
-        "value": 6.0
+        "value": 5.0
       }, 
       {
         "attributeID": 13, 
-        "value": 6.0
+        "value": 7.0
       }, 
       {
         "attributeID": 14, 
@@ -941830,7 +941890,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 24000.0
+        "value": 21600.0
       }, 
       {
         "attributeID": 56, 
@@ -941858,11 +941918,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 12000.0
+        "value": 10800.0
       }, 
       {
         "attributeID": 160, 
-        "value": 6.56
+        "value": 5.904
       }, 
       {
         "attributeID": 182, 
@@ -941989,7 +942049,7 @@
       }, 
       {
         "attributeID": 54, 
-        "value": 48000.0
+        "value": 43200.0
       }, 
       {
         "attributeID": 56, 
@@ -942017,11 +942077,11 @@
       }, 
       {
         "attributeID": 158, 
-        "value": 24000.0
+        "value": 21600.0
       }, 
       {
         "attributeID": 160, 
-        "value": 1.1622
+        "value": 1.04598
       }, 
       {
         "attributeID": 182, 
@@ -1062317,6 +1062377,10 @@
         "value": 7.5
       }, 
       {
+        "attributeID": 2627, 
+        "value": 1.0
+      }, 
+      {
         "attributeID": 3020, 
         "value": 1.0
       }, 
@@ -1062387,15 +1062451,19 @@
         "isDefault": 0
       }, 
       {
-        "effectID": 8153, 
-        "isDefault": 0
-      }, 
-      {
         "effectID": 8154, 
         "isDefault": 0
       }, 
       {
         "effectID": 8377, 
+        "isDefault": 0
+      }, 
+      {
+        "effectID": 12568, 
+        "isDefault": 0
+      }, 
+      {
+        "effectID": 12569, 
         "isDefault": 0
       }
     ]

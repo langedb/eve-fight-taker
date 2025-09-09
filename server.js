@@ -573,7 +573,7 @@ app.get('/api/character/:characterId/deaths', async (req, res) => {
     log.error('Error getting character deaths:', error);
 
     if (error.response?.status === 404) {
-      return res.status(404).json({ 
+      return res.status(404).json({
         error: 'Character not found or has no recent deaths',
         suggestion: 'Verify the character name is spelled correctly and has recent PvP activity.'
       });
@@ -624,7 +624,7 @@ app.get('/api/killmail/:killmailId/:killmailHash', async (req, res) => {
     log.error('Error loading killmail:', error);
 
     if (error.response?.status === 404) {
-      return res.status(404).json({ 
+      return res.status(404).json({
         error: 'Killmail not found',
         suggestion: 'The killmail may have been deleted or is not available from the ESI API.'
       });
