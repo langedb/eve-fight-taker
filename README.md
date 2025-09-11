@@ -124,7 +124,7 @@ The system performs comprehensive combat analysis using verified EVE Online mech
 
 - **All-V Skill Bonuses**: Complete skill system with level V in all skills including specialization skills
 - **Weapon Specialization**: T2 weapon bonuses (Heavy Missile Specialization, Small Pulse Laser Specialization, etc.)
-- **Hull Bonuses**: Ship-specific bonuses (Caldari Cruiser missile rate of fire, etc.)
+- **Dynamic Hull Bonuses**: Automatic ship bonus processing using EVE's dogmaEffects data for all ship types
 - **T3 Strategic Cruiser System**: Hull bonuses and subsystem effects for Loki, Tengu, Proteus, and Legion
 - **Advanced Weapon Systems**: Fighter squadrons, breacher pods, HAW weapons, doomsday devices
 - **Rig Bonuses**: Complete rig system including velocity, range, damage, and tank bonuses
@@ -140,6 +140,7 @@ The system performs comprehensive combat analysis using verified EVE Online mech
 - **PyFA Integration**: Uses PyFA's exported EVE static data for 100% offline operation
 - **Complete Item Database**: 50,243+ items with full attribute data
 - **Dogma Attributes**: Weapon damage, cycle times, bonuses, and ship statistics
+- **DogmaEffects Processing**: 50,243+ effects for automatic ship hull bonus calculations
 - **No ESI Dependency**: All calculations work offline using static data
 
 ### Google Gemini AI
@@ -174,6 +175,7 @@ eve-fight-taker/
 ├── staticdata/                  # PyFA-compatible EVE data
 │   ├── types.*.json             # Item definitions
 │   ├── dogmaattributes.0.json   # Attribute definitions
+│   ├── dogmaeffects.0.json      # Effect definitions for ship bonuses
 │   ├── typedogma.*.json         # Item-attribute mappings
 │   └── groups.0.json            # Item group classifications
 ├── test/                        # Comprehensive test suite (244 tests)
@@ -188,13 +190,15 @@ The fit calculation engine is fully compatible with [PyFA](https://github.com/py
 ### Core Systems
 - **ModifiedAttributeStore**: Advanced attribute modification with PyFA-compatible stacking penalties
 - **FitSimulator**: Complete skill bonus application system with all-V assumptions  
+- **Dynamic Hull Bonus Engine**: Generic dogmaEffects processing for all ship types automatically
 - **Weapon Systems**: Support for turrets, missiles, drones, fighters, and exotic weapons
 - **T3 Strategic Cruiser Engine**: Full hull and subsystem bonus calculations
 - **Rig Processing**: Complete rig bonus system with velocity, range, and tank bonuses
 
 ## Performance Metrics
 
-- **Static Data**: 50,243 EVE items loaded with fast name-based lookup
+- **Static Data**: 50,243 EVE items + 50,243+ dogmaEffects loaded with fast lookup
+- **Dynamic Hull Bonuses**: Generic processing system works with any ship type automatically
 - **Calculation Speed**: Real-time ship statistics with complex bonus stacking
 - **Memory Efficient**: Optimized attribute storage and caching system
 

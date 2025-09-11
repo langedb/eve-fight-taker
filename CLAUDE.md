@@ -38,9 +38,10 @@ LOG_LEVEL=<error|warn|info|debug>
 ## Core Components
 
 ### Static Data (`lib/static-data.js`)
-- PyFA JSON files in `./staticdata/`: types, groups, typedogma, dogmaattributes
+- PyFA JSON files in `./staticdata/`: types, groups, typedogma, dogmaattributes, dogmaeffects
 - Fast item lookup without ESI dependency
-- Complete dogma attributes for calculations
+- Complete dogma attributes and effects for calculations
+- 50,243+ dogmaEffects for dynamic ship bonus processing
 
 ### EFT Parsing (`lib/fit-calculator.js`)
 - **Format**: `[ShipType, FitName]` header, section-based parsing
@@ -55,6 +56,7 @@ LOG_LEVEL=<error|warn|info|debug>
 - **Drone**: Drones (25% damage), Combat Drone Operation (25% damage)
 - **T3 Cruiser**: Strategic Cruiser Operation (25% weapon damage), subsystem bonuses
 - **Modules**: Ballistic Control Systems (10% per module, stacking penalties)
+- **Ship Hull Bonuses**: Dynamic processing from dogmaEffects data for all ship types
 
 **Calculations:** DPS, volley damage, EHP, speed, agility, signature radius, weapon performance
 
@@ -106,7 +108,8 @@ LOG_LEVEL=<error|warn|info|debug>
 
 ## Recent Major Enhancements
 
-- **Static Data Migration**: ESI to PyFA static data
+- **Dynamic Hull Bonus System**: Complete replacement of hardcoded ship bonuses with generic dogmaEffects processing
+- **Static Data Migration**: ESI to PyFA static data with 50,243+ dogmaEffects
 - **All-V Skill System**: Comprehensive verified bonuses (~40 → 284 DPS improvement)
 - **PyFA Compatibility**: Attribute calculation matching PyFA's algorithms  
 - **Advanced Weapons**: Fighters, breacher pods, HAW, doomsday restrictions, T3 cruisers
@@ -125,6 +128,7 @@ LOG_LEVEL=<error|warn|info|debug>
 - **Verified Mechanics**: All bonuses based on actual EVE mechanics
 - **Unique Modules**: Each module gets unique key to prevent bonus cross-contamination
 - **Single Application**: Bonuses calculated once per fit, applied once per weapon
+- **Dynamic Hull Bonuses**: Generic system processes any ship type automatically
 - **Comprehensive Testing**: 244+ tests covering all systems and edge cases
 - **Range Enforcement**: AI prevented from impossible EWAR recommendations
 - **5-Drone Limit**: AI enforces EVE's fundamental drone limitations
@@ -132,17 +136,27 @@ LOG_LEVEL=<error|warn|info|debug>
 ## Performance
 
 - **DPS Accuracy**: 609% improvement (40 → 284 DPS) with skill bonus fixes
+- **Dynamic Hull System**: Processes 50,243+ dogmaEffects for all ship bonuses automatically
 - **Advanced Weapons**: Fighter DPS (Nyx: 0 → 2,392.5 DPS), T3 support  
 - **Test Coverage**: 244+ tests with 100% pass rate
-- **Static Data**: 50,243 types with fast lookup
+- **Static Data**: 50,243 types with fast lookup and dogmaEffects processing
 - **Range Analysis**: Complete weapon/EWAR range extraction
 - **AI Enhancement**: Prevents impossible tactics, accurate tactical recommendations
 - **Bug Fixes**: EHP calculations, stacking penalties, drone deployment limits
 
+## Dynamic Hull Bonus System
+
+**DogmaEffects Processing**: Loads 50,243+ effects from dogmaeffects.0.json  
+**Modifier Functions**: LocationGroupModifier, OwnerRequiredSkillModifier, LocationRequiredSkillModifier, ItemModifier, LocationModifier  
+**Attribute-Based Filtering**: Automatic weapon type detection (missile, projectile, hybrid, energy, drone)  
+**Dynamic Storage**: Bonuses calculated once per fit, applied with proper stacking  
+**Universal Compatibility**: Works with any ship type automatically through EVE's dogma data  
+**Performance**: Replaces hardcoded logic with future-proof generic system
+
 ## T3 Strategic Cruiser Implementation
 
 **Detection**: `isT3StrategicCruiser()` checks for loki/tengu/proteus/legion  
-**Hull Bonuses**: 25% weapon damage (Strategic Cruiser Operation V) per hull type  
+**Hull Bonuses**: Now processed through dynamic dogmaEffects system  
 **Weapon Classification**: Group IDs for projectile/hybrid/energy/missile weapons  
 **Subsystems**: Launcher Efficiency Configuration, Covert Reconfiguration bonuses  
 **Testing**: Unit tests, integration tests, stacking penalty verification

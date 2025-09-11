@@ -1,7 +1,7 @@
 {
   "name": "eve-fight-taker",
-  "version": "2.2.0",
-  "description": "EVE Online ship combat analysis tool using static data and AI-powered tactical recommendations with professional logging system",
+  "version": "2.3.0",
+  "description": "EVE Online ship combat analysis tool using dynamic dogma effects processing, static data, and AI-powered tactical recommendations with professional logging system",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -44,6 +44,8 @@
     "dps-calculation",
     "pyfa",
     "static-data",
+    "dogma-effects",
+    "hull-bonuses",
     "winston",
     "logging"
   ],
