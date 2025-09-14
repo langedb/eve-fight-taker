@@ -270,18 +270,18 @@ Medium Trimark Armor Pump I`;
       expect(statsWithRigs.ehp.armor).to.be.greaterThan(statsWithoutRigs.ehp.armor);
     });
 
-    it('should apply damage bonuses from Burst Aerator rigs', async function() {
-      const eftWithRigs = `[Rupture, Damage Rig Test]
+    it('should apply hull HP bonuses from Transverse Bulkhead rigs', async function() {
+      const eftWithRigs = `[Rupture, Hull Rig Test]
 425mm AutoCannon II,Republic Fleet Fusion M
 
 1MN Monopropellant Enduring Afterburner
 
 [Empty low slot]
 
-Medium Energy Burst Aerator I
-Medium Energy Burst Aerator I`;
+Medium Transverse Bulkhead I
+Medium Transverse Bulkhead I`;
 
-      const eftWithoutRigs = `[Rupture, No Damage Rigs Test]
+      const eftWithoutRigs = `[Rupture, No Hull Rigs Test]
 425mm AutoCannon II,Republic Fleet Fusion M
 
 1MN Monopropellant Enduring Afterburner
@@ -294,8 +294,8 @@ Medium Energy Burst Aerator I`;
       const statsWithRigs = await fitCalculator.calculateFitStats(parsedWithRigs);
       const statsWithoutRigs = await fitCalculator.calculateFitStats(parsedWithoutRigs);
 
-      // DPS should be higher with damage rigs
-      expect(statsWithRigs.dps.total).to.be.greaterThan(statsWithoutRigs.dps.total);
+      // Hull HP should be higher with hull rigs
+      expect(statsWithRigs.ehp.hull).to.be.greaterThan(statsWithoutRigs.ehp.hull);
     });
   });
 
