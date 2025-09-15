@@ -2121,7 +2121,7 @@ class EVEFightTaker {
                         <div class="fleet-name">${scenario.enemy_fleet_name}</div>
                     </div>
                     <div class="scenario-actions">
-                        <button class="btn btn-small btn-primary" onclick="app.analyzeScenario(${scenario.id}, event)">
+                        <button class="btn btn-small btn-primary" onclick="app.analyzeScenario(${scenario.id}, event)" title="Click to analyze (Shift+Click for fresh analysis)">
                             <i class="fas fa-chart-line"></i> Analyze
                         </button>
                         <button class="btn btn-small btn-secondary" onclick="app.editScenario(${scenario.id})">
@@ -2158,7 +2158,7 @@ class EVEFightTaker {
             }
 
             const data = await response.json();
-            this.showFleetAnalysisResults(data.analysis);
+            this.showFleetAnalysisResults(data.analysis, data.cached, scenarioId);
         } catch (error) {
             console.error('Error analyzing scenario:', error);
             this.showError('Failed to analyze scenario: ' + error.message);
@@ -2167,9 +2167,10 @@ class EVEFightTaker {
         }
     }
 
-    showFleetAnalysisResults(analysis) {
+    showFleetAnalysisResults(analysis, cached = false, scenarioId = null) {
         console.log('=== showFleetAnalysisResults called ===');
         console.log('Analysis object:', analysis);
+        console.log('Cached:', cached);
 
         // Handle different response structures
         const analysisData = analysis.analysis || analysis;
@@ -2182,6 +2183,18 @@ class EVEFightTaker {
         const tactics = analysisData.recommendations?.tactics || analysisData.tactics || [];
         const summary = analysisData.summary || 'Analysis completed successfully.';
 
+        // Cache indicator and fresh analysis button
+        const cacheIndicator = cached ? `
+            <div style="background: #ff6b35; color: white; padding: 10px; border-radius: 5px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+                <span>📋 Showing cached analysis results</span>
+                ${scenarioId ? `<button onclick="app.forceAnalysis(${scenarioId})" style="background: #00d4ff; color: #1a2332; border: none; padding: 5px 15px; border-radius: 3px; cursor: pointer; font-weight: bold;">Force Fresh Analysis</button>` : ''}
+            </div>
+        ` : `
+            <div style="background: #28a745; color: white; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
+                <span>🚀 Fresh AI analysis results</span>
+            </div>
+        `;
+
         const resultsHtml = `
             <div class="modal" id="analysis-results-modal" style="display: block; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8);">
                 <div class="modal-content" style="background-color: #1a2332; margin: 5% auto; padding: 20px; border: 2px solid #00d4ff; border-radius: 10px; width: 90%; max-width: 1000px; color: white; max-height: 80vh; overflow-y: auto;">
@@ -2189,6 +2202,7 @@ class EVEFightTaker {
                         <h3 style="color: #00d4ff; margin: 0;">🚀 Fleet Battle Analysis</h3>
                         <span class="close" onclick="app.closeAnalysisModal()" style="color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
                     </div>
+                    ${cacheIndicator}
                     <div class="analysis-results">
                         <div class="win-chance" style="text-align: center; margin-bottom: 20px; padding: 20px; background: #2a4a6b; border-radius: 8px;">
                             <div class="win-percentage" style="font-size: 3em; font-weight: bold; color: #00ff88;">${winChance}${typeof winChance === 'number' ? '%' : ''}</div>
@@ -2299,6 +2313,11 @@ class EVEFightTaker {
         if (modal) {
             modal.remove();
         }
+    }
+
+    async forceAnalysis(scenarioId) {
+        this.closeAnalysisModal();
+        await this.analyzeScenario(scenarioId, { shiftKey: true });
     }
 
     async deleteScenario(scenarioId) {
@@ -2898,7 +2917,7 @@ class EVEFightTaker {
 
             const data = await response.json();
             this.closeFleetVsFleetModal();
-            this.showFleetAnalysisResults(data.analysis);
+            this.showFleetAnalysisResults(data.analysis, false);
         } catch (error) {
             console.error('Error analyzing fleets:', error);
             this.showError('Failed to analyze fleets: ' + error.message);

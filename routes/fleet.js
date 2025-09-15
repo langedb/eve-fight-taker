@@ -460,8 +460,8 @@ router.post('/analyze/:scenarioId', requireAuth, async (req, res) => {
       notes: scenario.scenario_notes
     });
 
-    // Cache the result
-    await fleetManager.setCachedAnalysis(combinedHash, analysis, 24);
+    // Cache the result for 1 hour
+    await fleetManager.setCachedAnalysis(combinedHash, analysis, 1);
 
     res.json({ analysis, cached: false });
   } catch (error) {
