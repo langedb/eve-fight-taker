@@ -1,11 +1,13 @@
 # EVE Fight Taker
 
-A comprehensive EVE Online ship combat analysis tool that uses static data, advanced fit simulation, and Google Gemini AI to provide precise tactical combat recommendations.
+A comprehensive EVE Online fleet management and ship combat analysis tool that uses static data, advanced fit simulation, and Google Gemini AI to provide precise tactical combat recommendations with professional-grade fleet operations.
 
 ## Features
 
+- **Fleet Management System**: Create, manage, and analyze fleet compositions with role assignments and battle scenarios
+- **Enhanced Fitting Cards**: Professional zKillboard-style UI with module icons, ship stats, and detailed visualization
 - **Dual Ship Analysis**: Compare your ship against target ships with detailed combat predictions
-- **EFT Fit Parsing**: Full support for EVE Fitting Tool (EFT) format parsing with cargo and implant sections
+- **EFT Fit Parsing**: Full support for EVE Fitting Tool (EFT) format parsing with robust slot placement and cargo sections
 - **Static Data Engine**: Uses PyFA's static data for 100% offline operation with complete EVE item database
 - **All-V Skill Calculations**: Comprehensive skill bonus system assuming level V in all skills
 - **Advanced Weapon Systems**: Full support for fighters, breacher pods, HAW weapons, and doomsday devices
@@ -14,6 +16,7 @@ A comprehensive EVE Online ship combat analysis tool that uses static data, adva
 - **Comprehensive Rig System**: Support for all rig types including velocity, range, and tank bonuses
 - **AI-Powered Tactical Analysis**: Detailed combat recommendations using Google Gemini 2.5 Flash
 - **Range Analysis**: Weapon range calculations with kiting vs brawling strategy recommendations
+- **EVE SSO Authentication**: Secure character-based authentication with session management
 
 ## Prerequisites
 

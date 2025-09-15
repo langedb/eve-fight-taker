@@ -9,6 +9,7 @@ const { CacheManager } = require('./lib/cache-manager');
 const { FitCalculator } = require('./lib/fit-calculator');
 const { AIAnalyzer } = require('./lib/ai-analyzer');
 const { ZKillboardParser } = require('./lib/zkillboard-parser');
+const { dbManager } = require('./lib/database');
 
 // Load environment variables
 require('dotenv').config();
@@ -43,11 +44,15 @@ const fitCalculator = new FitCalculator();
 const aiAnalyzer = new AIAnalyzer(process.env.GOOGLE_API_KEY);
 const zkillboardParser = new ZKillboardParser();
 
-// Initialize static data
+// Initialize static data and database
 (async () => {
   log.info('Initializing static data...');
   await fitCalculator.ensureStaticData(); // Ensure staticData is initialized
   log.info('Static data loaded successfully');
+
+  log.info('Initializing database...');
+  await dbManager.initialize();
+  log.info('Database initialized successfully');
 })();
 
 // Routes
@@ -84,6 +89,9 @@ app.get('/callback', async (req, res) => {
     res.redirect('/?error=auth_failed');
   }
 });
+
+// Fleet management routes
+app.use('/api/fleet', require('./routes/fleet'));
 
 // API Routes
 app.get('/api/character/ship', async (req, res) => {
@@ -632,6 +640,33 @@ app.get('/api/killmail/:killmailId/:killmailHash', async (req, res) => {
 
     res.status(500).json({ error: 'Failed to load killmail data' });
   }
+});
+
+// Auth status endpoint
+app.get('/api/auth/status', (req, res) => {
+  if (req.session.character) {
+    res.json({
+      authenticated: true,
+      character: req.session.character
+    });
+  } else {
+    res.json({ authenticated: false });
+  }
+});
+
+// Placeholder icon for failed module images
+app.get('/api/placeholder-icon', (req, res) => {
+  // Return a simple SVG placeholder
+  const svg = `
+    <svg width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+      <rect width="32" height="32" fill="#333" rx="4"/>
+      <rect width="24" height="24" x="4" y="4" fill="#555" rx="2"/>
+      <circle cx="16" cy="16" r="6" fill="#777"/>
+    </svg>
+  `;
+  res.setHeader('Content-Type', 'image/svg+xml');
+  res.setHeader('Cache-Control', 'public, max-age=86400'); // Cache for 24 hours
+  res.send(svg);
 });
 
 app.post('/api/logout', (req, res) => {

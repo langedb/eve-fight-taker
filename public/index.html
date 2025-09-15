@@ -6,12 +6,17 @@
     <title>EVE Fight Taker - Combat Analysis Tool</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="fitting.css">
 </head>
 <body>
     <header class="header">
         <div class="container">
             <h1><i class="fas fa-rocket"></i> EVE Fight Taker</h1>
             <nav class="nav">
+                <div class="nav-tabs">
+                    <button class="nav-tab active" data-tab="combat">Ship Combat</button>
+                    <button class="nav-tab" data-tab="fleet">Fleet Manager</button>
+                </div>
                 <div id="auth-section">
                     <button id="login-btn" class="btn btn-primary">
                         <i class="fas fa-sign-in-alt"></i> Login with EVE SSO
@@ -27,12 +32,14 @@
 
     <main class="main">
         <div class="container">
-            <section class="intro">
-                <h2>Ship Combat Analysis</h2>
-                <p>Analyze your ship's combat effectiveness against enemy fits using AI-powered tactical recommendations.</p>
-            </section>
+            <!-- Ship Combat Tab -->
+            <div id="combat-tab" class="tab-content active">
+                <section class="intro">
+                    <h2>Ship Combat Analysis</h2>
+                    <p>Analyze your ship's combat effectiveness against enemy fits using AI-powered tactical recommendations.</p>
+                </section>
 
-            <div class="analysis-grid">
+                <div class="analysis-grid">
                 <div class="card">
                     <h3><i class="fas fa-ship"></i> Your Ship</h3>
                     <div id="your-ship-section">
@@ -79,6 +86,9 @@ Right-click your ship in-game → Copy → Copy Fitting" rows="15" class="eft-te
                 <div class="swap-container">
                     <button id="swap-fits-btn" class="btn btn-swap" title="Swap Your Ship ↔ Target Ship">
                         <i class="fas fa-exchange-alt"></i>
+                    </button>
+                    <button id="fleet-vs-fleet-btn" class="btn btn-primary" title="Analyze Fleet vs Fleet">
+                        <i class="fas fa-users"></i> Fleet vs Fleet
                     </button>
                 </div>
 
@@ -219,6 +229,141 @@ Hobgoblin II x5" rows="12" class="eft-textarea"></textarea>
                         <div class="summary-section">
                             <h4><i class="fas fa-lightbulb"></i> Summary</h4>
                             <p id="analysis-summary"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fleet Manager Tab -->
+            <div id="fleet-tab" class="tab-content">
+                <section class="intro">
+                    <h2>Fleet Manager</h2>
+                    <p>Create and manage fleet compositions for tactical analysis.</p>
+                </section>
+
+                <!-- Authentication required message -->
+                <div id="fleet-auth-required" class="auth-required-notice" style="display: none;">
+                    <div class="notice-card">
+                        <i class="fas fa-lock fa-2x"></i>
+                        <h3>Authentication Required</h3>
+                        <p>Please log in with EVE SSO to access fleet management features.</p>
+                        <button id="fleet-login-btn" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt"></i> Login with EVE SSO
+                        </button>
+                    </div>
+                </div>
+
+                <div class="fleet-manager" id="fleet-manager-content" style="display: none;">
+                    <div class="fleet-tabs">
+                        <button class="fleet-tab-btn active" data-section="fittings">My Fittings</button>
+                        <button class="fleet-tab-btn" data-section="fleets">My Fleets</button>
+                        <button class="fleet-tab-btn" data-section="battles">Battle Scenarios</button>
+                    </div>
+
+                    <!-- Fittings Section -->
+                    <div id="fittings-section" class="fleet-section active">
+                        <div class="section-header">
+                            <h3>My Saved Fittings</h3>
+                            <button id="save-fitting-btn" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Save Current Fit
+                            </button>
+                        </div>
+
+                        <div class="fittings-grid">
+                            <div class="add-fitting-card">
+                                <h4>Save New Fitting</h4>
+                                <input type="text" id="fitting-name" placeholder="Fitting name">
+                                <textarea id="fitting-eft" placeholder="Paste EFT format here..."></textarea>
+                                <button id="add-fitting-btn" class="btn btn-primary">Save Fitting</button>
+                            </div>
+                            <div id="fittings-list"></div>
+                        </div>
+                    </div>
+
+                    <!-- Fleets Section -->
+                    <div id="fleets-section" class="fleet-section" style="display: none;">
+                        <div class="section-header">
+                            <h3>My Fleet Compositions</h3>
+                            <button id="create-fleet-btn" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Create Fleet
+                            </button>
+                        </div>
+
+                        <div class="fleets-grid">
+                            <div id="fleets-list"></div>
+                        </div>
+
+                        <!-- Fleet Builder Modal -->
+                        <div id="fleet-builder-modal" class="modal" style="display: none;">
+                            <div class="modal-content fleet-builder-content">
+                                <div class="modal-header">
+                                    <h3 id="fleet-builder-title">Build Fleet Composition</h3>
+                                    <span class="close" onclick="app.closeFleetBuilder()">&times;</span>
+                                </div>
+
+                                <div class="fleet-builder">
+                                    <div class="fleet-builder-sidebar">
+                                        <h4>Available Fittings</h4>
+                                        <div class="fittings-search">
+                                            <input type="text" id="fleet-fittings-search" placeholder="Search fittings...">
+                                        </div>
+                                        <div id="available-fittings" class="available-fittings"></div>
+                                    </div>
+
+                                    <div class="fleet-composition-area">
+                                        <div class="fleet-info">
+                                            <input type="text" id="fleet-builder-name" placeholder="Fleet Name" class="fleet-name-input">
+                                            <textarea id="fleet-builder-description" placeholder="Fleet Description (optional)" class="fleet-description-input"></textarea>
+                                        </div>
+
+                                        <div class="fleet-stats-summary">
+                                            <div class="stat-box">
+                                                <div class="stat-value" id="fleet-total-ships">0</div>
+                                                <div class="stat-label">Ships</div>
+                                            </div>
+                                            <div class="stat-box">
+                                                <div class="stat-value" id="fleet-total-dps">0</div>
+                                                <div class="stat-label">Total DPS</div>
+                                            </div>
+                                            <div class="stat-box">
+                                                <div class="stat-value" id="fleet-total-ehp">0</div>
+                                                <div class="stat-label">Total EHP</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="fleet-ships-area">
+                                            <h4>Fleet Composition</h4>
+                                            <div id="fleet-ships-list" class="fleet-ships-list">
+                                                <div class="empty-fleet">
+                                                    <i class="fas fa-plus-circle"></i>
+                                                    <p>Drag fittings here to build your fleet</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="fleet-builder-actions">
+                                            <button class="btn btn-secondary" onclick="app.closeFleetBuilder()">Cancel</button>
+                                            <button class="btn btn-primary" id="save-fleet-btn" onclick="app.saveFleetComposition()">
+                                                <i class="fas fa-save"></i> Save Fleet
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Battle Scenarios Section -->
+                    <div id="battles-section" class="fleet-section" style="display: none;">
+                        <div class="section-header">
+                            <h3>Battle Scenarios</h3>
+                            <button id="create-scenario-btn" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Create Scenario
+                            </button>
+                        </div>
+
+                        <div class="scenarios-grid">
+                            <div id="scenarios-list"></div>
                         </div>
                     </div>
                 </div>

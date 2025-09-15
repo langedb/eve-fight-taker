@@ -23,7 +23,9 @@ Node.js/Express application analyzing EVE Online ship combat using static PyFA d
 - **CacheManager** - Disk caching with hourly cleanup
 - **StaticData** - PyFA static data loader
 - **FitCalculator** - EFT parsing with all-V skill bonuses
-- **AIAnalyzer** - Gemini 2.5 Flash combat analysis
+- **AIAnalyzer** - Gemini 2.5 Flash combat analysis (ship vs ship + fleet vs fleet)
+- **FleetManager** - Fleet composition, scenarios, database management
+- **FleetAnalyzer** - Fleet vs fleet battle analysis with AI integration
 - **Logger** - Winston logging with rotation
 
 ## Environment
@@ -71,9 +73,8 @@ LOG_LEVEL=<error|warn|info|debug>
 ### AI Analysis (`lib/ai-analyzer.js`)
 
 **Gemini 2.5 Flash** with detailed prompts including:
-- Complete fit details, weapon/ammo data, damage types
-- All-V skill bonus stats, range analysis, drone control ranges
-- 5-drone active limit enforcement, tactical deployment strategies
+- **Ship vs Ship**: Complete fit details, weapon/ammo data, damage types, all-V skill bonus stats, range analysis, drone control ranges, 5-drone active limit enforcement, tactical deployment strategies
+- **Fleet vs Fleet**: Fleet composition analysis, role breakdown, range analysis, mobility assessment, tactical recommendations
 
 **Response:** JSON with winChance, timeToKill, advantages/disadvantages, ammo/module recommendations, range tactics, summary
 
@@ -155,13 +156,48 @@ LOG_LEVEL=<error|warn|info|debug>
 
 ## T3 Strategic Cruiser Implementation
 
-**Detection**: `isT3StrategicCruiser()` checks for loki/tengu/proteus/legion  
-**Hull Bonuses**: Now processed through dynamic dogmaEffects system  
-**Weapon Classification**: Group IDs for projectile/hybrid/energy/missile weapons  
-**Subsystems**: Launcher Efficiency Configuration, Covert Reconfiguration bonuses  
+**Detection**: `isT3StrategicCruiser()` checks for loki/tengu/proteus/legion
+**Hull Bonuses**: Now processed through dynamic dogmaEffects system
+**Weapon Classification**: Group IDs for projectile/hybrid/energy/missile weapons
+**Subsystems**: Launcher Efficiency Configuration, Covert Reconfiguration bonuses
 **Testing**: Unit tests, integration tests, stacking penalty verification
+
+## Fleet Management System (v2.4.0)
+
+**Enhanced Fitting Cards**: zKillboard-style professional UI with module icons, stats display, and ship renders
+**Fleet Operations**: Create, manage, and analyze fleet compositions with role assignments
+**Battle Scenarios**: Save and compare fleet vs fleet matchups with cached analysis
+**Authentication**: EVE SSO integration for secure character-based fleet management
+**Database**: SQLite-based storage for fittings, fleets, and scenario data with automatic cleanup
+
+## EFT Parsing Engine
+
+**Format Support**: Official EVE Fitting Tool format with header `[ShipType, FitName]`
+**Slot Progression**: Low → Med → High → Rig → Subsystem → Drones → Cargo (per EFT spec)
+**hasModulesInCurrentSlot Fix**: Prevents premature slot advancement on empty lines
+**Module Enrichment**: Automatic icon_id and type_id lookup from static data
+**Error Handling**: Robust parsing with detailed error messages and fallbacks
+**Testing**: 6 comprehensive unit tests covering edge cases and slot placement
+
+## Enhanced User Interface
+
+**Professional Styling**: EVE Online-themed dark UI with neon accents and smooth animations
+**Responsive Design**: CSS Grid and Flexbox layouts with mobile compatibility
+**Module Visualization**: Icon-based fitting display with tooltip information
+**Real-time Updates**: Async loading with loading spinners and error states
+**Image Fallbacks**: Placeholder system for failed module icon loads
+
+## Recent v2.4.0 Enhancements
+
+- **EFT Parsing Fix**: Resolved critical slot misalignment bug affecting Cormorant and other ships
+- **Enhanced Fitting Cards**: Complete redesign with professional zKillboard-style appearance
+- **Fleet Management**: Full CRUD operations for fleets, fittings, and battle scenarios
+- **Module Icons**: Dynamic icon loading with EVE image API integration
+- **CSS Modernization**: Fixed syntax issues, removed debug borders, improved browser compatibility
+- **Unit Testing**: Added 6 comprehensive tests for EFT parsing edge cases
+- **Code Quality**: ESLint and Stylelint compliance with auto-fixes applied
 
 ## API Documentation
 - zKillboard: https://github.com/zKillboard/zKillboard/wiki
-- ESI: https://github.com/esi/esi-docs  
+- ESI: https://github.com/esi/esi-docs
 - EFT Format: https://developers.eveonline.com/docs/guides/fitting/

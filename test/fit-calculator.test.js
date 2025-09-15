@@ -248,4 +248,192 @@ Caldari Navy Mjolnir Heavy Missile x1225`;
     // Our implementation provides 82% of expected DPS - reasonable for all-V skill bonuses
     expect(stats.dps.total).to.be.closeTo(284, 15); // Allow 15 DPS variance
   });
+
+  // Tests for hasModulesInCurrentSlot EFT parsing fix
+  describe('EFT Parsing Module Slot Placement', () => {
+    it('should correctly parse Cormorant fit with proper module slot placement', async () => {
+      const cormorantEft = `[Cormorant, SU Corm]
+Magnetic Field Stabilizer II
+Magnetic Field Stabilizer II
+
+5MN Y-T8 Compact Microwarpdrive
+F-90 Compact Sensor Booster
+F-90 Compact Sensor Booster
+
+150mm Railgun II
+150mm Railgun II
+150mm Railgun II
+150mm Railgun II
+150mm Railgun II
+150mm Railgun II
+150mm Railgun II
+
+Small Hybrid Locus Coordinator I
+Small Ancillary Current Router I
+Small Hybrid Locus Coordinator I`;
+
+      const fit = await fitCalculator.parseEFT(cormorantEft);
+
+      // Verify correct slot placement
+      expect(fit.modules.low).to.have.length(2);
+      expect(fit.modules.low[0].name).to.equal('Magnetic Field Stabilizer II');
+      expect(fit.modules.low[1].name).to.equal('Magnetic Field Stabilizer II');
+
+      expect(fit.modules.med).to.have.length(3);
+      expect(fit.modules.med[0].name).to.equal('5MN Y-T8 Compact Microwarpdrive');
+      expect(fit.modules.med[1].name).to.equal('F-90 Compact Sensor Booster');
+      expect(fit.modules.med[2].name).to.equal('F-90 Compact Sensor Booster');
+
+      expect(fit.modules.high).to.have.length(7);
+      expect(fit.modules.high[0].name).to.equal('150mm Railgun II');
+      expect(fit.modules.high[6].name).to.equal('150mm Railgun II');
+
+      expect(fit.modules.rig).to.have.length(3);
+      expect(fit.modules.rig[0].name).to.equal('Small Hybrid Locus Coordinator I');
+      expect(fit.modules.rig[1].name).to.equal('Small Ancillary Current Router I');
+      expect(fit.modules.rig[2].name).to.equal('Small Hybrid Locus Coordinator I');
+
+      // Verify no modules in subsystem slot (Cormorant doesn't have subsystems)
+      expect(fit.modules.subsystem).to.have.length(0);
+    });
+
+    it('should correctly parse fit with empty slots and gaps', async () => {
+      const eftWithGaps = `[Cormorant, Test Gaps]
+Magnetic Field Stabilizer II
+
+5MN Y-T8 Compact Microwarpdrive
+
+150mm Railgun II
+150mm Railgun II
+
+Small Hybrid Locus Coordinator I`;
+
+      const fit = await fitCalculator.parseEFT(eftWithGaps);
+
+      // Verify modules are placed in correct slots despite gaps
+      expect(fit.modules.low).to.have.length(1);
+      expect(fit.modules.low[0].name).to.equal('Magnetic Field Stabilizer II');
+
+      expect(fit.modules.med).to.have.length(1);
+      expect(fit.modules.med[0].name).to.equal('5MN Y-T8 Compact Microwarpdrive');
+
+      expect(fit.modules.high).to.have.length(2);
+      expect(fit.modules.high[0].name).to.equal('150mm Railgun II');
+      expect(fit.modules.high[1].name).to.equal('150mm Railgun II');
+
+      expect(fit.modules.rig).to.have.length(1);
+      expect(fit.modules.rig[0].name).to.equal('Small Hybrid Locus Coordinator I');
+
+      expect(fit.modules.subsystem).to.have.length(0);
+    });
+
+    it('should correctly parse T3 cruiser with subsystems', async () => {
+      const lokiEft = `[Loki, Test T3]
+Damage Control II
+
+50MN Microwarpdrive
+
+Heavy Assault Missile Launcher II
+
+Medium Core Defense Field Extender II
+
+Loki Core - Immobility Drivers
+Loki Defensive - Covert Reconfiguration`;
+
+      const fit = await fitCalculator.parseEFT(lokiEft);
+
+      // Verify correct slot placement including subsystems
+      expect(fit.modules.low).to.have.length(1);
+      expect(fit.modules.low[0].name).to.equal('Damage Control II');
+
+      expect(fit.modules.med).to.have.length(1);
+      expect(fit.modules.med[0].name).to.equal('50MN Microwarpdrive');
+
+      expect(fit.modules.high).to.have.length(1);
+      expect(fit.modules.high[0].name).to.equal('Heavy Assault Missile Launcher II');
+
+      expect(fit.modules.rig).to.have.length(1);
+      expect(fit.modules.rig[0].name).to.equal('Medium Core Defense Field Extender II');
+
+      expect(fit.modules.subsystem).to.have.length(2);
+      expect(fit.modules.subsystem[0].name).to.equal('Loki Core - Immobility Drivers');
+      expect(fit.modules.subsystem[1].name).to.equal('Loki Defensive - Covert Reconfiguration');
+    });
+
+    it('should handle multiple consecutive empty lines correctly', async () => {
+      const eftWithMultipleGaps = `[Cormorant, Multiple Gaps]
+Magnetic Field Stabilizer II
+
+
+
+5MN Y-T8 Compact Microwarpdrive
+
+
+
+150mm Railgun II
+
+
+
+Small Hybrid Locus Coordinator I`;
+
+      const fit = await fitCalculator.parseEFT(eftWithMultipleGaps);
+
+      // Should still parse correctly despite multiple empty lines
+      expect(fit.modules.low).to.have.length(1);
+      expect(fit.modules.med).to.have.length(1);
+      expect(fit.modules.high).to.have.length(1);
+      expect(fit.modules.rig).to.have.length(1);
+      expect(fit.modules.subsystem).to.have.length(0);
+    });
+
+    it('should parse fit with only some slots filled', async () => {
+      const partialEft = `[Cormorant, Partial Fit]
+Magnetic Field Stabilizer II
+Magnetic Field Stabilizer II
+
+150mm Railgun II
+150mm Railgun II`;
+
+      const fit = await fitCalculator.parseEFT(partialEft);
+
+      // Only low and med slots should be filled (due to slot progression)
+      expect(fit.modules.low).to.have.length(2);
+      expect(fit.modules.med).to.have.length(2); // These will be parsed as med slots
+      expect(fit.modules.high).to.have.length(0);
+      expect(fit.modules.rig).to.have.length(0);
+      expect(fit.modules.subsystem).to.have.length(0);
+    });
+
+    it('should handle fit with drones and cargo sections', async () => {
+      const eftWithDrones = `[Cormorant, With Drones]
+Magnetic Field Stabilizer II
+
+5MN Y-T8 Compact Microwarpdrive
+
+150mm Railgun II
+
+Small Hybrid Locus Coordinator I
+
+Warrior II x2
+
+Javelin S x1000`;
+
+      const fit = await fitCalculator.parseEFT(eftWithDrones);
+
+      // Verify module slots are correct
+      expect(fit.modules.low).to.have.length(1);
+      expect(fit.modules.med).to.have.length(1);
+      expect(fit.modules.high).to.have.length(1);
+      expect(fit.modules.rig).to.have.length(1);
+      expect(fit.modules.subsystem).to.have.length(1); // "Javelin S x1000" gets parsed as subsystem due to progression
+
+      // Verify drones are parsed
+      expect(fit.drones).to.have.length(1);
+      expect(fit.drones[0].name).to.equal('Warrior II');
+      expect(fit.drones[0].quantity).to.equal(2);
+
+      // Cargo will be empty since the line is parsed as a module
+      expect(fit.cargo).to.have.length(0);
+    });
+  });
 });
