@@ -1832,3 +1832,243 @@ body {
     font-weight: bold;
     text-align: center;
 }
+
+/* ========== FLEET VIEW MODAL ========== */
+
+#fleet-view-modal {
+    z-index: 1100;
+}
+
+.fleet-view-body {
+    padding: 0;
+}
+
+.fleet-overview {
+    background: linear-gradient(135deg, #1a2332 0%, #243447 100%);
+    padding: 2rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+}
+
+.fleet-meta {
+    margin-bottom: 2rem;
+}
+
+.fleet-meta h4 {
+    font-size: 1.8rem;
+    color: #00d4ff;
+    margin-bottom: 0.5rem;
+}
+
+.fleet-meta p {
+    color: #b0b0b0;
+    font-style: italic;
+}
+
+.fleet-stats-dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.stat-card {
+    background: rgba(0, 212, 255, 0.1);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 8px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    border-color: rgba(0, 212, 255, 0.6);
+    background: rgba(0, 212, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+.stat-icon {
+    font-size: 2rem;
+    color: #00d4ff;
+    opacity: 0.8;
+}
+
+.stat-info {
+    flex: 1;
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #ffffff;
+    line-height: 1.2;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #b0b0b0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.fleet-composition-section {
+    margin-bottom: 2rem;
+}
+
+.fleet-composition-section h4 {
+    color: #00d4ff;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid rgba(0, 212, 255, 0.3);
+}
+
+.fleet-composition-list {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.composition-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.composition-item:hover {
+    background: rgba(0, 212, 255, 0.1);
+    border-color: rgba(0, 212, 255, 0.3);
+}
+
+.composition-ship {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+}
+
+.ship-quantity {
+    background: #ff6b35;
+    color: #ffffff;
+    padding: 0.3rem 0.7rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    min-width: 40px;
+    text-align: center;
+}
+
+.ship-info {
+    flex: 1;
+}
+
+.ship-name {
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 0.2rem;
+}
+
+.ship-type {
+    color: #b0b0b0;
+    font-size: 0.9rem;
+}
+
+.ship-role {
+    background: rgba(0, 212, 255, 0.2);
+    color: #00d4ff;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.fleet-breakdown-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.role-breakdown h5,
+.class-breakdown h5 {
+    color: #00d4ff;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(0, 212, 255, 0.3);
+}
+
+.breakdown-grid {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.breakdown-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    padding: 0.7rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.breakdown-label {
+    color: #e0e0e0;
+    text-transform: capitalize;
+}
+
+.breakdown-count {
+    background: rgba(0, 212, 255, 0.2);
+    color: #00d4ff;
+    padding: 0.2rem 0.6rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.fleet-actions-section {
+    text-align: center;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.fleet-actions-section .btn {
+    margin: 0 0.5rem;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .fleet-stats-dashboard {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .fleet-breakdown-section {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .stat-card {
+        padding: 1rem;
+    }
+
+    .stat-value {
+        font-size: 1.4rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .fleet-stats-dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .composition-ship {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+}

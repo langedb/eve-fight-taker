@@ -367,6 +367,91 @@ Hobgoblin II x5" rows="12" class="eft-textarea"></textarea>
                         </div>
                     </div>
                 </div>
+
+                <!-- Fleet View Modal -->
+                <div id="fleet-view-modal" class="modal">
+                    <div class="modal-content fleet-view-content">
+                        <div class="modal-header">
+                            <h3 id="fleet-view-title">Fleet Details</h3>
+                            <span class="close" onclick="app.closeFleetView()">&times;</span>
+                        </div>
+
+                        <div class="fleet-view-body">
+                            <div class="fleet-overview">
+                                <div class="fleet-meta">
+                                    <h4 id="fleet-view-name">Fleet Name</h4>
+                                    <p id="fleet-view-description">Fleet description</p>
+                                </div>
+
+                                <div class="fleet-stats-dashboard">
+                                    <div class="stat-card">
+                                        <div class="stat-icon"><i class="fas fa-rocket"></i></div>
+                                        <div class="stat-info">
+                                            <div class="stat-value" id="fleet-view-ships">0</div>
+                                            <div class="stat-label">Total Ships</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="stat-card">
+                                        <div class="stat-icon"><i class="fas fa-crosshairs"></i></div>
+                                        <div class="stat-info">
+                                            <div class="stat-value" id="fleet-view-dps">0</div>
+                                            <div class="stat-label">Total DPS</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="stat-card">
+                                        <div class="stat-icon"><i class="fas fa-shield-alt"></i></div>
+                                        <div class="stat-info">
+                                            <div class="stat-value" id="fleet-view-ehp">0</div>
+                                            <div class="stat-label">Total EHP</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="stat-card">
+                                        <div class="stat-icon"><i class="fas fa-list"></i></div>
+                                        <div class="stat-info">
+                                            <div class="stat-value" id="fleet-view-types">0</div>
+                                            <div class="stat-label">Ship Types</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="fleet-composition-section">
+                                <h4><i class="fas fa-users"></i> Fleet Composition</h4>
+                                <div id="fleet-composition-list" class="fleet-composition-list">
+                                    <!-- Fleet ships will be populated here -->
+                                </div>
+                            </div>
+
+                            <div class="fleet-breakdown-section">
+                                <div class="role-breakdown">
+                                    <h5><i class="fas fa-user-tag"></i> Role Breakdown</h5>
+                                    <div id="fleet-role-breakdown" class="breakdown-grid">
+                                        <!-- Role breakdown will be populated here -->
+                                    </div>
+                                </div>
+
+                                <div class="class-breakdown">
+                                    <h5><i class="fas fa-ship"></i> Ship Classes</h5>
+                                    <div id="fleet-class-breakdown" class="breakdown-grid">
+                                        <!-- Ship class breakdown will be populated here -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="fleet-actions-section">
+                                <button class="btn btn-primary" onclick="app.editFleetFromView()">
+                                    <i class="fas fa-edit"></i> Edit Fleet
+                                </button>
+                                <button class="btn btn-secondary" onclick="app.closeFleetView()">
+                                    <i class="fas fa-times"></i> Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </main>

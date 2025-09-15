@@ -2646,22 +2646,99 @@ class EVEFightTaker {
             const composition = data.composition || [];
             const stats = data.stats || {};
 
-            let compositionText = 'Fleet Composition:\n\n';
-            if (composition.length === 0) {
-                compositionText += 'No ships in this fleet yet.\n\nClick "Edit" to add ships.';
-            } else {
-                composition.forEach(ship => {
-                    compositionText += `• ${ship.quantity}x ${ship.fitting_name} (${ship.ship_name}) - ${ship.role}\n`;
-                });
-                compositionText += `\nTotal Ships: ${stats.total_ships || 0}\n`;
-                compositionText += `Total DPS: ${stats.total_dps || 0}\n`;
-                compositionText += `Total EHP: ${stats.total_ehp || 0}`;
-            }
+            // Store current fleet ID for editing
+            this.currentViewingFleetId = fleetId;
 
-            alert(`Fleet: ${fleet.name}\n\n${fleet.description || 'No description'}\n\n${compositionText}`);
+            // Create working fleet modal
+            const workingModal = document.createElement('div');
+            workingModal.id = 'working-fleet-modal';
+            workingModal.innerHTML = `
+                <div style="
+                    background: linear-gradient(135deg, #0c1821 0%, #1a2332 50%, #243447 100%);
+                    border: 2px solid #00d4ff;
+                    border-radius: 12px;
+                    padding: 2rem;
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    z-index: 99999;
+                    max-width: 900px;
+                    max-height: 90vh;
+                    overflow-y: auto;
+                    color: white;
+                ">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid rgba(0, 212, 255, 0.3); padding-bottom: 1rem;">
+                        <h3 style="color: #00d4ff; margin: 0;">${fleet.name}</h3>
+                        <span onclick="app.closeFleetView()" style="cursor: pointer; font-size: 1.5rem; color: #00d4ff;">&times;</span>
+                    </div>
+
+                    <div style="margin-bottom: 2rem;">
+                        <p style="color: #b0b0b0; margin-bottom: 2rem;">${fleet.description || 'No description provided'}</p>
+
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                            <div style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 8px; padding: 1rem; text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: bold; color: #ffffff;">${stats.total_ships || 0}</div>
+                                <div style="font-size: 0.9rem; color: #b0b0b0;">Total Ships</div>
+                            </div>
+                            <div style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 8px; padding: 1rem; text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: bold; color: #ffffff;">${(stats.total_dps || 0).toLocaleString()}</div>
+                                <div style="font-size: 0.9rem; color: #b0b0b0;">Total DPS</div>
+                            </div>
+                            <div style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 8px; padding: 1rem; text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: bold; color: #ffffff;">${(stats.total_ehp || 0).toLocaleString()}</div>
+                                <div style="font-size: 0.9rem; color: #b0b0b0;">Total EHP</div>
+                            </div>
+                            <div style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 8px; padding: 1rem; text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: bold; color: #ffffff;">${stats.ship_types || 0}</div>
+                                <div style="font-size: 0.9rem; color: #b0b0b0;">Ship Types</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 style="color: #00d4ff; margin-bottom: 1rem;">Fleet Composition</h4>
+                        <div style="max-height: 300px; overflow-y: auto;">
+                            ${composition.length === 0 ?
+                                '<p style="color: #b0b0b0; text-align: center; padding: 2rem;">No ships in this fleet yet. Click Edit to add ships.</p>' :
+                                composition.map(ship => `
+                                    <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 6px; padding: 1rem; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+                                        <div style="display: flex; align-items: center; gap: 1rem;">
+                                            <div style="background: #ff6b35; color: white; padding: 0.3rem 0.7rem; border-radius: 15px; font-size: 0.8rem; font-weight: bold; min-width: 40px; text-align: center;">${ship.quantity}</div>
+                                            <div>
+                                                <div style="font-weight: bold; color: white; margin-bottom: 0.2rem;">${ship.fitting_name}</div>
+                                                <div style="color: #b0b0b0; font-size: 0.9rem;">${ship.ship_name}</div>
+                                            </div>
+                                        </div>
+                                        <div style="background: rgba(0, 212, 255, 0.2); color: #00d4ff; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.8rem; text-transform: uppercase;">${ship.role}</div>
+                                    </div>
+                                `).join('')
+                            }
+                        </div>
+                    </div>
+                </div>
+            `;
+            workingModal.style.cssText = 'position: fixed !important; top: 0 !important; left: 0 !important; width: 100% !important; height: 100% !important; background: rgba(0, 0, 0, 0.8) !important; z-index: 99999 !important; display: block !important;';
+            document.body.appendChild(workingModal);
         } catch (error) {
             console.error('Error viewing fleet:', error);
             this.showError('Failed to load fleet details: ' + error.message);
+        }
+    }
+
+
+    closeFleetView() {
+        const modal = document.getElementById('working-fleet-modal');
+        if (modal) {
+            modal.remove();
+        }
+        this.currentViewingFleetId = null;
+    }
+
+    editFleetFromView() {
+        if (this.currentViewingFleetId) {
+            this.closeFleetView();
+            this.editFleet(this.currentViewingFleetId);
         }
     }
 
