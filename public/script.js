@@ -683,17 +683,20 @@ class EVEFightTaker {
 
     markdownToHtml(text) {
         if (!text) return '';
-        
+
         // Convert common Markdown patterns to HTML
         return text
             // Bold text: **text** or __text__
             .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
             .replace(/__(.*?)__/g, '<strong>$1</strong>')
-            // Italic text: *text* or _text_
-            .replace(/\*(.*?)\*/g, '<em>$1</em>')
-            .replace(/_(.*?)_/g, '<em>$1</em>')
+            // Italic text: *text* or _text_ (but avoid conflicts with list items)
+            .replace(/\*([^*\n]+)\*/g, '<em>$1</em>')
+            .replace(/_([^_\n]+)_/g, '<em>$1</em>')
             // Code: `code`
             .replace(/`(.*?)`/g, '<code>$1</code>')
+            // Bullet points: • or - at start of line
+            .replace(/^[•\-]\s+(.+)$/gm, '• $1')
+            .replace(/\n[•\-]\s+(.+)/g, '<br>• $1')
             // Line breaks
             .replace(/\n/g, '<br>')
             // Links: [text](url)
@@ -2218,7 +2221,7 @@ class EVEFightTaker {
                         <div class="analysis-section" style="margin-bottom: 20px;">
                             <h4 style="color: #00ff88; border-bottom: 1px solid #00ff88; padding-bottom: 5px;">✅ Your Advantages</h4>
                             <ul class="analysis-list" style="list-style: none; padding-left: 0;">
-                                ${advantages.map(adv => `<li style="padding: 8px 0; border-left: 3px solid #00ff88; padding-left: 15px; margin: 5px 0;">• ${adv}</li>`).join('')}
+                                ${advantages.map(adv => `<li style="padding: 8px 0; border-left: 3px solid #00ff88; padding-left: 15px; margin: 5px 0;">${this.markdownToHtml(adv)}</li>`).join('')}
                             </ul>
                         </div>
                         ` : ''}
@@ -2227,7 +2230,7 @@ class EVEFightTaker {
                         <div class="analysis-section" style="margin-bottom: 20px;">
                             <h4 style="color: #ff6b6b; border-bottom: 1px solid #ff6b6b; padding-bottom: 5px;">⚠️ Your Disadvantages</h4>
                             <ul class="analysis-list" style="list-style: none; padding-left: 0;">
-                                ${disadvantages.map(dis => `<li style="padding: 8px 0; border-left: 3px solid #ff6b6b; padding-left: 15px; margin: 5px 0;">• ${dis}</li>`).join('')}
+                                ${disadvantages.map(dis => `<li style="padding: 8px 0; border-left: 3px solid #ff6b6b; padding-left: 15px; margin: 5px 0;">${this.markdownToHtml(dis)}</li>`).join('')}
                             </ul>
                         </div>
                         ` : ''}
@@ -2236,14 +2239,14 @@ class EVEFightTaker {
                         <div class="analysis-section" style="margin-bottom: 20px;">
                             <h4 style="color: #ffd700; border-bottom: 1px solid #ffd700; padding-bottom: 5px;">🎯 Tactical Recommendations</h4>
                             <ul class="analysis-list" style="list-style: none; padding-left: 0;">
-                                ${tactics.map(tac => `<li style="padding: 8px 0; border-left: 3px solid #ffd700; padding-left: 15px; margin: 5px 0;">• ${tac}</li>`).join('')}
+                                ${tactics.map(tac => `<li style="padding: 8px 0; border-left: 3px solid #ffd700; padding-left: 15px; margin: 5px 0;">${this.markdownToHtml(tac)}</li>`).join('')}
                             </ul>
                         </div>
                         ` : ''}
 
                         <div class="analysis-section" style="margin-bottom: 20px;">
                             <h4 style="color: #00d4ff; border-bottom: 1px solid #00d4ff; padding-bottom: 5px;">📋 Summary</h4>
-                            <p style="padding: 15px; background: #2a4a6b; border-radius: 8px; line-height: 1.6;">${summary}</p>
+                            <p style="padding: 15px; background: #2a4a6b; border-radius: 8px; line-height: 1.6;">${this.markdownToHtml(summary)}</p>
                         </div>
 
                         <div style="text-align: center; margin-top: 30px;">
