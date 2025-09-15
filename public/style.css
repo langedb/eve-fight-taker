@@ -2094,3 +2094,102 @@ body {
         gap: 0.5rem;
     }
 }
+
+/* Enhanced Fleet Fitting Input Styles */
+.fitting-input-section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.fitting-input-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.fitting-input-controls .btn {
+    flex: 1;
+    min-width: 150px;
+}
+
+#stored-fittings-container {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 10px;
+}
+
+#stored-fittings-container h5 {
+    color: #00d4ff;
+    margin-bottom: 10px;
+    font-size: 1rem;
+}
+
+.fitting-info {
+    background: rgba(0, 212, 255, 0.1);
+    border: 1px solid #00d4ff;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+}
+
+.fitting-info h5 {
+    color: #00d4ff;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+}
+
+.fitting-save-section {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.fitting-save-section input {
+    flex: 1;
+    min-width: 200px;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    color: #e0e0e0;
+    font-size: 0.9rem;
+}
+
+.fitting-save-section input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.fitting-save-section .btn {
+    min-width: 150px;
+}
+
+.mt-2 {
+    margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+    .fitting-input-controls {
+        flex-direction: column;
+    }
+
+    .fitting-input-controls .btn {
+        min-width: auto;
+    }
+
+    .fitting-save-section {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .fitting-save-section input,
+    .fitting-save-section .btn {
+        min-width: auto;
+    }
+}

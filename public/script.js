@@ -209,6 +209,31 @@ class EVEFightTaker {
             });
         }
 
+        // Enhanced fitting input handlers
+        const parseFittingEftBtn = container.querySelector('#parse-fitting-eft');
+        if (parseFittingEftBtn) {
+            parseFittingEftBtn.addEventListener('click', () => {
+                console.log('Parse fitting EFT button clicked');
+                this.parseFittingInput();
+            });
+        }
+
+        const loadStoredFittingsBtn = container.querySelector('#load-stored-fittings-btn');
+        if (loadStoredFittingsBtn) {
+            loadStoredFittingsBtn.addEventListener('click', () => {
+                console.log('Load stored fittings button clicked');
+                this.loadStoredFittingsForFleet();
+            });
+        }
+
+        const loadSelectedStoredFittingBtn = container.querySelector('#load-selected-stored-fitting-btn');
+        if (loadSelectedStoredFittingBtn) {
+            loadSelectedStoredFittingBtn.addEventListener('click', () => {
+                console.log('Load selected stored fitting button clicked');
+                this.loadSelectedStoredFitting();
+            });
+        }
+
         // Fleet management
         const createFleetBtn = container.querySelector('#create-fleet-btn');
         if (createFleetBtn) {
@@ -1441,24 +1466,22 @@ class EVEFightTaker {
     async saveFitting() {
         console.log('=== saveFitting called ===');
 
-        // Try to find the elements in both original and cloned locations
-        let nameField = document.getElementById('fitting-name');
-        let eftField = document.getElementById('fitting-eft');
-
-        // If not found in original, try in the temp area
-        if (!nameField || !nameField.value) {
-            const tempArea = document.getElementById('temp-fleet-area');
-            if (tempArea) {
-                nameField = tempArea.querySelector('#fitting-name') || tempArea.querySelector('input[placeholder="Fitting name"]');
-                eftField = tempArea.querySelector('#fitting-eft') || tempArea.querySelector('textarea[placeholder*="EFT"]');
-            }
+        // Check if we have parsed fitting data
+        if (!this.currentParsedFit) {
+            this.showError('Please load a fitting first using "Load Fitting" button');
+            return;
         }
 
-        console.log('Name field found:', !!nameField, nameField ? nameField.value : 'no value');
-        console.log('EFT field found:', !!eftField, eftField ? eftField.value.length : 'no value');
+        const nameField = document.getElementById('fitting-name');
+        const eftField = document.getElementById('fitting-eft');
 
-        const name = nameField ? nameField.value.trim() : '';
-        const eftFormat = eftField ? eftField.value.trim() : '';
+        if (!nameField || !eftField) {
+            this.showError('Required form fields not found');
+            return;
+        }
+
+        const name = nameField.value.trim() || this.currentParsedFit.fitName || this.currentParsedFit.shipName;
+        const eftFormat = eftField.value.trim();
 
         if (!name || !eftFormat) {
             this.showError('Please provide both fitting name and EFT format');
@@ -1466,20 +1489,8 @@ class EVEFightTaker {
         }
 
         try {
-            // Parse EFT to get ship info
-            const lines = eftFormat.split('\n').filter(line => line.trim());
-            if (lines.length === 0) {
-                throw new Error('Invalid EFT format');
-            }
-
-            // Extract ship name from first line [ShipType, FitName]
-            const firstLine = lines[0];
-            const match = firstLine.match(/^\[(.*?),\s*(.*?)\]$/);
-            if (!match) {
-                throw new Error('Invalid EFT format - missing ship header');
-            }
-
-            const shipName = match[1].trim();
+            const shipName = this.currentParsedFit.shipName;
+            const shipTypeId = this.currentParsedFit.shipTypeId || 1;
 
             const response = await fetch('/api/fleet/fittings', {
                 method: 'POST',
@@ -1500,6 +1511,17 @@ class EVEFightTaker {
             // Clear form and reload fittings
             if (nameField) nameField.value = '';
             if (eftField) eftField.value = '';
+
+            // Hide parsed fitting info and reset state
+            const parsedFittingInfo = document.getElementById('parsed-fitting-info');
+            if (parsedFittingInfo) parsedFittingInfo.style.display = 'none';
+
+            const storedFittingsContainer = document.getElementById('stored-fittings-container');
+            if (storedFittingsContainer) storedFittingsContainer.style.display = 'none';
+
+            this.currentParsedFit = null;
+            this.selectedStoredFittingIndex = null;
+
             this.showSuccess('Fitting saved successfully');
             await this.loadFittings();
         } catch (error) {
@@ -1546,6 +1568,274 @@ class EVEFightTaker {
         } catch (error) {
             console.error('Error saving current fit:', error);
             this.showError('Failed to save current fit: ' + error.message);
+        }
+    }
+
+    // Enhanced fitting input methods
+    async parseFittingInput() {
+        console.log('=== parseFittingInput called ===');
+
+        const eftField = document.getElementById('fitting-eft');
+        if (!eftField || !eftField.value.trim()) {
+            this.showError('Please enter an EFT fitting or zKillboard URL');
+            return;
+        }
+
+        const input = eftField.value.trim();
+        this.showLoading('Parsing fitting...');
+
+        try {
+            let response;
+
+            // Check if input is a zKillboard URL
+            if (this.isZKillboardURL(input)) {
+                response = await fetch('/api/parse-zkill', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ zkillUrl: input })
+                });
+            } else {
+                response = await fetch('/api/parse-eft', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ eftFormat: input })
+                });
+            }
+
+            if (!response.ok) {
+                throw new Error('Failed to parse fitting');
+            }
+
+            const fitData = await response.json();
+            this.displayParsedFitting(fitData);
+        } catch (error) {
+            console.error('Error parsing fitting:', error);
+            this.showError('Failed to parse fit data. Please check the format and try again.');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    displayParsedFitting(fitData) {
+        console.log('=== displayParsedFitting called ===', fitData);
+
+        const parsedFittingInfo = document.getElementById('parsed-fitting-info');
+        const parsedFittingName = document.getElementById('parsed-fitting-name');
+        const parsedFittingStats = document.getElementById('parsed-fitting-stats');
+
+        if (!parsedFittingInfo || !parsedFittingName || !parsedFittingStats) return;
+
+        // Store the parsed fit data
+        this.currentParsedFit = fitData;
+
+        // Update display
+        parsedFittingName.textContent = fitData.shipName || 'Unknown Ship';
+        parsedFittingStats.innerHTML = this.generateStatsHTML(fitData.stats || {});
+
+        // Show the parsed fitting info
+        parsedFittingInfo.style.display = 'block';
+
+        // Set default fitting name
+        const fittingNameInput = document.getElementById('fitting-name');
+        if (fittingNameInput && !fittingNameInput.value) {
+            fittingNameInput.value = fitData.fitName || fitData.shipName || '';
+        }
+    }
+
+    async loadStoredFittingsForFleet() {
+        console.log('=== loadStoredFittingsForFleet called ===');
+
+        if (!this.isAuthenticated) {
+            this.showWarning('Please log in with EVE SSO to load stored fittings.');
+            return;
+        }
+
+        this.showLoading('Loading stored fittings...');
+
+        try {
+            const response = await fetch('/api/fittings');
+            if (!response.ok) {
+                throw new Error('Failed to fetch stored fittings');
+            }
+
+            const data = await response.json();
+            await this.displayStoredFittingsForFleet(data.fittings || []);
+        } catch (error) {
+            console.error('Error loading stored fittings:', error);
+            this.showError('Failed to load stored fittings. Please ensure you are logged in and have granted the necessary ESI scope.');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    async displayStoredFittingsForFleet(fittings) {
+        this.storedFittingsForFleet = fittings;
+        this.selectedStoredFittingIndex = null;
+
+        const storedFittingsContainer = document.getElementById('stored-fittings-container');
+        const dropdown = document.getElementById('stored-fittings-dropdown-content');
+
+        if (!storedFittingsContainer || !dropdown) return;
+
+        if (fittings.length === 0) {
+            storedFittingsContainer.style.display = 'none';
+            this.showWarning('No stored fittings found. Save some fittings first!');
+            return;
+        }
+
+        // Group fittings by ship type
+        const groupedFittings = {};
+        fittings.forEach((fitting, index) => {
+            const shipName = fitting.ship_name || 'Unknown Ship';
+            if (!groupedFittings[shipName]) {
+                groupedFittings[shipName] = [];
+            }
+            groupedFittings[shipName].push({ ...fitting, originalIndex: index });
+        });
+
+        // Generate dropdown content
+        let dropdownHTML = '';
+        Object.keys(groupedFittings).sort().forEach(shipName => {
+            dropdownHTML += `<div class="dropdown-group">
+                <div class="dropdown-group-header">${shipName}</div>`;
+
+            groupedFittings[shipName].forEach(fitting => {
+                dropdownHTML += `
+                    <div class="dropdown-option" data-index="${fitting.originalIndex}">
+                        <div class="fitting-option-name">${fitting.name}</div>
+                        <div class="fitting-option-ship">${fitting.ship_name}</div>
+                    </div>`;
+            });
+
+            dropdownHTML += '</div>';
+        });
+
+        dropdown.innerHTML = dropdownHTML;
+
+        // Add click handlers
+        dropdown.querySelectorAll('.dropdown-option').forEach(option => {
+            option.addEventListener('click', () => {
+                const index = parseInt(option.getAttribute('data-index'));
+                this.selectStoredFitting(index);
+            });
+        });
+
+        // Setup search functionality
+        this.setupStoredFittingsSearch();
+
+        // Show container
+        storedFittingsContainer.style.display = 'block';
+    }
+
+    setupStoredFittingsSearch() {
+        const searchInput = document.getElementById('stored-fittings-search');
+        const dropdownList = document.getElementById('stored-fittings-dropdown-list');
+        const dropdownArrow = document.getElementById('stored-dropdown-arrow');
+
+        if (!searchInput || !dropdownList || !dropdownArrow) return;
+
+        // Toggle dropdown
+        const toggleDropdown = () => {
+            const isVisible = dropdownList.style.display === 'block';
+            dropdownList.style.display = isVisible ? 'none' : 'block';
+            dropdownArrow.style.transform = isVisible ? 'rotate(0deg)' : 'rotate(180deg)';
+        };
+
+        dropdownArrow.addEventListener('click', toggleDropdown);
+        searchInput.addEventListener('focus', () => {
+            dropdownList.style.display = 'block';
+            dropdownArrow.style.transform = 'rotate(180deg)';
+        });
+
+        // Search functionality
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.toLowerCase();
+            const options = dropdownList.querySelectorAll('.dropdown-option');
+
+            options.forEach(option => {
+                const name = option.querySelector('.fitting-option-name').textContent.toLowerCase();
+                const ship = option.querySelector('.fitting-option-ship').textContent.toLowerCase();
+                const matches = name.includes(query) || ship.includes(query);
+                option.style.display = matches ? 'block' : 'none';
+            });
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.advanced-dropdown-container')) {
+                dropdownList.style.display = 'none';
+                dropdownArrow.style.transform = 'rotate(0deg)';
+            }
+        });
+    }
+
+    selectStoredFitting(index) {
+        this.selectedStoredFittingIndex = index;
+        const fitting = this.storedFittingsForFleet[index];
+
+        if (!fitting) return;
+
+        // Update search input to show selected fitting
+        const searchInput = document.getElementById('stored-fittings-search');
+        const loadButton = document.getElementById('load-selected-stored-fitting-btn');
+
+        if (searchInput) {
+            searchInput.value = `${fitting.name} (${fitting.ship_name})`;
+        }
+
+        if (loadButton) {
+            loadButton.disabled = false;
+        }
+
+        // Close dropdown
+        const dropdownList = document.getElementById('stored-fittings-dropdown-list');
+        const dropdownArrow = document.getElementById('stored-dropdown-arrow');
+        if (dropdownList) dropdownList.style.display = 'none';
+        if (dropdownArrow) dropdownArrow.style.transform = 'rotate(0deg)';
+    }
+
+    async loadSelectedStoredFitting() {
+        if (this.selectedStoredFittingIndex === null || !this.storedFittingsForFleet) {
+            this.showError('No fitting selected');
+            return;
+        }
+
+        const selectedFitting = this.storedFittingsForFleet[this.selectedStoredFittingIndex];
+        if (!selectedFitting) {
+            this.showError('Failed to load selected fitting. Please try again.');
+            return;
+        }
+
+        this.showLoading('Loading fitting...');
+
+        try {
+            // Convert ESI fitting to EFT format
+            const response = await fetch('/api/convert-esi-to-eft', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ esiFitting: selectedFitting })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to convert ESI fitting to EFT');
+            }
+
+            const fitData = await response.json();
+
+            // Populate the EFT textarea
+            const eftField = document.getElementById('fitting-eft');
+            if (eftField) {
+                eftField.value = selectedFitting.eft_format || '';
+            }
+
+            // Parse and display the fitting
+            await this.parseFittingInput();
+
+        } catch (error) {
+            console.error('Error loading selected fitting:', error);
+            this.showError('Failed to load selected fitting. ' + error.message);
+        } finally {
+            this.hideLoading();
         }
     }
 

@@ -271,10 +271,57 @@ Hobgoblin II x5" rows="12" class="eft-textarea"></textarea>
 
                         <div class="fittings-grid">
                             <div class="add-fitting-card">
-                                <h4>Save New Fitting</h4>
-                                <input type="text" id="fitting-name" placeholder="Fitting name">
-                                <textarea id="fitting-eft" placeholder="Paste EFT format here..."></textarea>
-                                <button id="add-fitting-btn" class="btn btn-primary">Save Fitting</button>
+                                <h4>Add New Fitting</h4>
+                                <div class="fitting-input-section">
+                                    <textarea id="fitting-eft" placeholder="Paste your EFT fit or zKillboard URL here...
+
+EFT Example:
+[Ishtar, Your Ishtar Fit]
+Medium Remote Capacitor Transmitter II
+...
+
+zKillboard Example:
+https://zkillboard.com/kill/123456789/
+
+Right-click your ship in-game → Copy → Copy Fitting" rows="8" class="eft-textarea"></textarea>
+
+                                    <div class="fitting-input-controls">
+                                        <button id="parse-fitting-eft" class="btn btn-primary">
+                                            <i class="fas fa-upload"></i> Load Fitting
+                                        </button>
+                                        <button id="load-stored-fittings-btn" class="btn btn-secondary">
+                                            <i class="fas fa-download"></i> Load Stored Fittings
+                                        </button>
+                                    </div>
+
+                                    <div id="stored-fittings-container" style="display: none;">
+                                        <h5>Stored Fittings:</h5>
+                                        <div class="advanced-dropdown-container">
+                                            <div class="search-input-container">
+                                                <input type="text" id="stored-fittings-search" class="search-input" placeholder="Type to search fittings..." autocomplete="off">
+                                                <i class="fas fa-search search-icon"></i>
+                                                <i class="fas fa-chevron-down dropdown-arrow" id="stored-dropdown-arrow"></i>
+                                            </div>
+                                            <div class="dropdown-list" id="stored-fittings-dropdown-list" style="display: none;">
+                                                <div class="dropdown-content" id="stored-fittings-dropdown-content">
+                                                    <!-- Grouped options will be populated here -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button id="load-selected-stored-fitting-btn" class="btn btn-primary mt-2" disabled>Load Selected Fitting</button>
+                                    </div>
+
+                                    <div id="parsed-fitting-info" class="fitting-info" style="display: none;">
+                                        <h5 id="parsed-fitting-name"></h5>
+                                        <div id="parsed-fitting-stats" class="stats-grid"></div>
+                                        <div class="fitting-save-section">
+                                            <input type="text" id="fitting-name" placeholder="Custom fitting name (optional)">
+                                            <button id="add-fitting-btn" class="btn btn-primary">
+                                                <i class="fas fa-save"></i> Save to My Fittings
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div id="fittings-list"></div>
                         </div>
