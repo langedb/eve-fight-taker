@@ -296,18 +296,40 @@ body {
     font-weight: 700;
 }
 
+/* Loading overlay styles */
+.loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+}
+
+.loading-content {
+    text-align: center;
+    color: #00d4ff;
+}
+
 .loading-content i {
     font-size: 3rem;
     margin-bottom: 1rem;
+    color: #00d4ff;
+}
+
+.loading-content p {
+    font-size: 1.2rem;
+    color: #00d4ff;
+    margin: 0;
 }
 
 .header h1 i {
     margin-right: 0.5rem;
     color: #ff6b35;
-}
-
-.loading-content p {
-    font-size: 1.2rem;
 }
 
 /* Death Analysis Section */

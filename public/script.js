@@ -700,8 +700,15 @@ class EVEFightTaker {
             .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
     }
 
-    showLoading() {
-        document.getElementById('loading').style.display = 'flex';
+    showLoading(message = 'Analyzing combat scenario...') {
+        const loadingElement = document.getElementById('loading');
+        const loadingText = loadingElement.querySelector('.loading-content p');
+
+        if (loadingText) {
+            loadingText.textContent = message;
+        }
+
+        loadingElement.style.display = 'flex';
     }
 
     hideLoading() {
