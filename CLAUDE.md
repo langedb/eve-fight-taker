@@ -49,6 +49,8 @@ LOG_LEVEL=<error|warn|info|debug>
 - **Format**: `[ShipType, FitName]` header, section-based parsing
 - **Sections**: High/Med/Low/Rig/Subsystem → Drones → Cargo
 - **ESI Conversion**: Handles string/numeric slot flags, proper ordering
+- **Subsystem Validation**: Category-based validation (category_id 32) ensures only T3 cruiser subsystems are classified correctly
+- **Smart Cargo Handling**: Non-subsystem items automatically redirected to cargo section with quantity support
 
 ### Ship Statistics (`lib/fit-simulator.js`)
 
@@ -112,11 +114,13 @@ LOG_LEVEL=<error|warn|info|debug>
 - **Dynamic Hull Bonus System**: Complete replacement of hardcoded ship bonuses with generic dogmaEffects processing
 - **Static Data Migration**: ESI to PyFA static data with 50,243+ dogmaEffects
 - **All-V Skill System**: Comprehensive verified bonuses (~40 → 284 DPS improvement)
-- **PyFA Compatibility**: Attribute calculation matching PyFA's algorithms  
+- **PyFA Compatibility**: Attribute calculation matching PyFA's algorithms
 - **Advanced Weapons**: Fighters, breacher pods, HAW, doomsday restrictions, T3 cruisers
 - **Range Analysis**: Weapon ranges, EWAR limits, kiting/brawling tactics
 - **AI Enhancement**: Gemini 2.5 Flash with tactical prompts, 5-drone limit enforcement
-- **Bug Fixes**: EHP calculations, stacking penalties, skill bonus over-application
+- **Subsystem Classification Fix**: Resolved bug where non-T3 ships incorrectly showed mid-slot modules as subsystems
+- **Enhanced EFT Parsing**: Smart section switching and improved cargo handling for items without quantities
+- **Bug Fixes**: EHP calculations, stacking penalties, skill bonus over-application, subsystem misclassification
 - **Test Coverage**: 244+ comprehensive tests, weapon systems validation
 - **Character Search**: Death analysis with ship-only filtering
 - **Ammo/Module Systems**: Auto-selection, compatibility matrices, cargo analysis

@@ -7,7 +7,7 @@ A comprehensive EVE Online fleet management and ship combat analysis tool that u
 - **Fleet Management System**: Create, manage, and analyze fleet compositions with role assignments and battle scenarios
 - **Enhanced Fitting Cards**: Professional zKillboard-style UI with module icons, ship stats, and detailed visualization
 - **Dual Ship Analysis**: Compare your ship against target ships with detailed combat predictions
-- **EFT Fit Parsing**: Full support for EVE Fitting Tool (EFT) format parsing with robust slot placement and cargo sections
+- **Enhanced EFT Parsing**: Full EVE Fitting Tool format support with intelligent subsystem validation and smart cargo handling
 - **Static Data Engine**: Uses PyFA's static data for 100% offline operation with complete EVE item database
 - **All-V Skill Calculations**: Comprehensive skill bonus system assuming level V in all skills
 - **Advanced Weapon Systems**: Full support for fighters, breacher pods, HAW weapons, and doomsday devices
@@ -129,6 +129,7 @@ The system performs comprehensive combat analysis using verified EVE Online mech
 - **Weapon Specialization**: T2 weapon bonuses (Heavy Missile Specialization, Small Pulse Laser Specialization, etc.)
 - **Dynamic Hull Bonuses**: Automatic ship bonus processing using EVE's dogmaEffects data for all ship types
 - **T3 Strategic Cruiser System**: Hull bonuses and subsystem effects for Loki, Tengu, Proteus, and Legion
+- **Intelligent Subsystem Classification**: Category-based validation ensures only T3 cruiser subsystems are properly classified
 - **Advanced Weapon Systems**: Fighter squadrons, breacher pods, HAW weapons, doomsday devices
 - **Rig Bonuses**: Complete rig system including velocity, range, damage, and tank bonuses
 - **Stacking Penalties**: PyFA-compatible stacking penalty calculations
