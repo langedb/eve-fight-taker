@@ -425,15 +425,17 @@ Javelin S x1000`;
       expect(fit.modules.med).to.have.length(1);
       expect(fit.modules.high).to.have.length(1);
       expect(fit.modules.rig).to.have.length(1);
-      expect(fit.modules.subsystem).to.have.length(1); // "Javelin S x1000" gets parsed as subsystem due to progression
+      expect(fit.modules.subsystem).to.have.length(0); // No subsystems on Cormorant
 
       // Verify drones are parsed
       expect(fit.drones).to.have.length(1);
       expect(fit.drones[0].name).to.equal('Warrior II');
       expect(fit.drones[0].quantity).to.equal(2);
 
-      // Cargo will be empty since the line is parsed as a module
-      expect(fit.cargo).to.have.length(0);
+      // Cargo should contain the ammo that was previously misclassified as subsystem
+      expect(fit.cargo).to.have.length(1);
+      expect(fit.cargo[0].name).to.equal('Javelin S');
+      expect(fit.cargo[0].quantity).to.equal(1000);
     });
   });
 });
