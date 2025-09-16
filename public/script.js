@@ -1645,6 +1645,25 @@ class EVEFightTaker {
     async loadStoredFittingsForFleet() {
         console.log('=== loadStoredFittingsForFleet called ===');
 
+        // Ensure fleet management tab is visible
+        const fleetTab = document.querySelector('a[href="#fleet-manager"]');
+        const tabContent = document.getElementById('fleet-manager');
+        if (fleetTab && tabContent) {
+            console.log('Activating fleet management tab...');
+
+            // Remove active from all tabs and content
+            document.querySelectorAll('.nav-tabs .nav-link').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-content .tab-pane').forEach(content => {
+                content.classList.remove('active', 'show');
+            });
+
+            // Activate fleet management tab
+            fleetTab.classList.add('active');
+            tabContent.classList.add('active', 'show');
+        }
+
         if (!this.isAuthenticated) {
             this.showWarning('Please log in with EVE SSO to load stored fittings.');
             return;
@@ -1659,7 +1678,7 @@ class EVEFightTaker {
             }
 
             const data = await response.json();
-            await this.displayStoredFittingsForFleet(data.fittings || []);
+            await this.displayStoredFittingsForFleet(data || []);
         } catch (error) {
             console.error('Error loading stored fittings:', error);
             this.showError('Failed to load stored fittings. Please ensure you are logged in and have granted the necessary ESI scope.');
@@ -1669,13 +1688,36 @@ class EVEFightTaker {
     }
 
     async displayStoredFittingsForFleet(fittings) {
+        console.log('=== displayStoredFittingsForFleet called with', fittings.length, 'fittings ===');
+
         this.storedFittingsForFleet = fittings;
         this.selectedStoredFittingIndex = null;
 
-        const storedFittingsContainer = document.getElementById('stored-fittings-container');
-        const dropdown = document.getElementById('stored-fittings-dropdown-content');
+        // Try to find elements in the temporary fleet area first, then fallback to original
+        let storedFittingsContainer = document.querySelector('#temp-fleet-area #stored-fittings-container');
+        let dropdown = document.querySelector('#temp-fleet-area #stored-fittings-dropdown-content');
+        let dropdownList = document.querySelector('#temp-fleet-area #stored-fittings-dropdown-list');
 
-        if (!storedFittingsContainer || !dropdown) return;
+        // Fallback to original elements if not found in temp area
+        if (!storedFittingsContainer) {
+            storedFittingsContainer = document.getElementById('stored-fittings-container');
+        }
+        if (!dropdown) {
+            dropdown = document.getElementById('stored-fittings-dropdown-content');
+        }
+        if (!dropdownList) {
+            dropdownList = document.getElementById('stored-fittings-dropdown-list');
+        }
+
+        console.log('DOM elements found:');
+        console.log('- storedFittingsContainer:', !!storedFittingsContainer, storedFittingsContainer);
+        console.log('- dropdown:', !!dropdown, dropdown);
+        console.log('- dropdownList:', !!dropdownList, dropdownList);
+
+        if (!storedFittingsContainer || !dropdown) {
+            console.error('Missing DOM elements:', { storedFittingsContainer, dropdown });
+            return;
+        }
 
         if (fittings.length === 0) {
             storedFittingsContainer.style.display = 'none';
@@ -1686,11 +1728,24 @@ class EVEFightTaker {
         // Group fittings by ship type
         const groupedFittings = {};
         fittings.forEach((fitting, index) => {
-            const shipName = fitting.ship_name || 'Unknown Ship';
+            // ESI fittings have ship_type_id, not ship_name
+            // We need to look up the ship name from static data
+            let shipName = fitting.ship_name || 'Unknown Ship';
+            if (fitting.ship_type_id && !fitting.ship_name) {
+                // Try to get ship name from static data if available
+                const staticData = window.staticData;
+                if (staticData && staticData.types && staticData.types[fitting.ship_type_id]) {
+                    shipName = staticData.types[fitting.ship_type_id].name;
+                } else {
+                    shipName = `Ship Type ${fitting.ship_type_id}`;
+                }
+            }
+
+
             if (!groupedFittings[shipName]) {
                 groupedFittings[shipName] = [];
             }
-            groupedFittings[shipName].push({ ...fitting, originalIndex: index });
+            groupedFittings[shipName].push({ ...fitting, originalIndex: index, ship_name: shipName });
         });
 
         // Generate dropdown content
@@ -1711,6 +1766,7 @@ class EVEFightTaker {
         });
 
         dropdown.innerHTML = dropdownHTML;
+        console.log('HTML set, dropdown now has', dropdown.children.length, 'child elements');
 
         // Add click handlers
         dropdown.querySelectorAll('.dropdown-option').forEach(option => {
@@ -1723,14 +1779,68 @@ class EVEFightTaker {
         // Setup search functionality
         this.setupStoredFittingsSearch();
 
+        // Show the dropdown list (it starts hidden by default)
+        if (dropdownList) {
+            console.log('Setting dropdownList display to block, current:', dropdownList.style.display);
+            dropdownList.style.display = 'block';
+            console.log('DropdownList now:', dropdownList.style.display, 'visible:', dropdownList.offsetHeight > 0);
+        }
+
+        // Ensure fleet manager is visible (parent container)
+        const fleetManager = document.querySelector('.fleet-manager');
+        if (fleetManager && fleetManager.style.display === 'none') {
+            console.log('Fleet manager was hidden, showing it');
+            fleetManager.style.display = 'block';
+        }
+
         // Show container
+        console.log('About to show container');
+        console.log('Container current display:', storedFittingsContainer.style.display);
         storedFittingsContainer.style.display = 'block';
+        console.log('Container display after setting:', storedFittingsContainer.style.display);
+        console.log('Container dimensions:', storedFittingsContainer.offsetWidth, 'x', storedFittingsContainer.offsetHeight);
+        console.log('Dropdown dimensions:', dropdown.offsetWidth, 'x', dropdown.offsetHeight);
+        if (dropdownList) {
+            console.log('DropdownList dimensions:', dropdownList.offsetWidth, 'x', dropdownList.offsetHeight);
+        }
+
+        // Check parent elements for hidden states
+        let parent = storedFittingsContainer.parentElement;
+        let level = 1;
+        while (parent && level <= 8) {
+            const computedStyle = window.getComputedStyle(parent);
+            console.log(`Parent level ${level}:`, parent.tagName, parent.className || parent.id,
+                       'display:', computedStyle.display,
+                       'visibility:', computedStyle.visibility,
+                       'position:', computedStyle.position,
+                       'dimensions:', parent.offsetWidth, 'x', parent.offsetHeight);
+            parent = parent.parentElement;
+            level++;
+        }
+
+        // Ensure Fleet Manager tab is properly activated
+        if (this.currentTab !== 'fleet') {
+            console.log('Switching to fleet tab');
+            this.switchTab('fleet');
+        }
+
+        // Additional check: ensure fleet manager content is visible
+        const fleetManagerContent = document.getElementById('fleet-manager-content');
+        if (fleetManagerContent) {
+            fleetManagerContent.style.display = 'block';
+        }
     }
 
     setupStoredFittingsSearch() {
-        const searchInput = document.getElementById('stored-fittings-search');
-        const dropdownList = document.getElementById('stored-fittings-dropdown-list');
-        const dropdownArrow = document.getElementById('stored-dropdown-arrow');
+        // Try to find elements in the temporary fleet area first, then fallback to original
+        let searchInput = document.querySelector('#temp-fleet-area #stored-fittings-search');
+        let dropdownList = document.querySelector('#temp-fleet-area #stored-fittings-dropdown-list');
+        let dropdownArrow = document.querySelector('#temp-fleet-area #stored-dropdown-arrow');
+
+        // Fallback to original elements if not found in temp area
+        if (!searchInput) searchInput = document.getElementById('stored-fittings-search');
+        if (!dropdownList) dropdownList = document.getElementById('stored-fittings-dropdown-list');
+        if (!dropdownArrow) dropdownArrow = document.getElementById('stored-dropdown-arrow');
 
         if (!searchInput || !dropdownList || !dropdownArrow) return;
 
