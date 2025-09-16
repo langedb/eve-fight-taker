@@ -140,3 +140,11 @@ test-integration-cache-*/
 # Log files
 logs/
 *.log
+
+# SQLite database files
+*.db
+*.db-shm
+*.db-wal
+data/*.db
+data/*.db-shm
+data/*.db-wal

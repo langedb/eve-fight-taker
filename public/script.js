@@ -1,12 +1,22 @@
 class EVEFightTaker {
     constructor() {
+        console.log('EVEFightTaker loaded - version with fleet fixes');
         this.currentShipStats = null;
         this.currentShipFit = null;
         this.targetShipStats = null;
         this.targetShipFit = null;
         this.isAuthenticated = false;
         this.notificationId = 0;
-        
+
+        // Fleet management state
+        this.currentTab = 'combat';
+        this.currentFleetSection = 'fittings';
+        this.fittings = [];
+        this.fleets = [];
+        this.scenarios = [];
+        this.currentFleetComposition = [];
+        this.editingFleetId = null;
+
         this.initializeEventListeners();
         this.checkAuthStatus();
     }
@@ -146,23 +156,168 @@ class EVEFightTaker {
         document.getElementById('swap-fits-btn').addEventListener('click', () => {
             this.swapFits();
         });
+
+        // Fleet management event listeners
+        this.initializeFleetEventListeners();
     }
 
-    checkAuthStatus() {
+    initializeFleetEventListeners() {
+        // Tab switching
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                this.switchTab(e.target.dataset.tab);
+            });
+        });
+
+        // Fleet login button
+        const fleetLoginBtn = document.getElementById('fleet-login-btn');
+        if (fleetLoginBtn) {
+            fleetLoginBtn.addEventListener('click', () => {
+                this.login();
+            });
+        }
+
+        // Attach fleet-specific listeners
+        this.attachFleetEventListeners(document);
+    }
+
+    attachFleetEventListeners(container) {
+        console.log('Attaching fleet event listeners to:', container);
+
+        // Fleet section switching
+        container.querySelectorAll('.fleet-tab-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                console.log('Fleet tab clicked:', e.target.dataset.section);
+                this.switchFleetSection(e.target.dataset.section);
+            });
+        });
+
+        // Fittings management
+        const addFittingBtn = container.querySelector('#add-fitting-btn');
+        if (addFittingBtn) {
+            addFittingBtn.addEventListener('click', () => {
+                console.log('Add fitting button clicked');
+                this.saveFitting();
+            });
+        }
+
+        const saveFittingBtn = container.querySelector('#save-fitting-btn');
+        if (saveFittingBtn) {
+            saveFittingBtn.addEventListener('click', () => {
+                console.log('Save current fit button clicked');
+                this.saveCurrentFit();
+            });
+        }
+
+        // Enhanced fitting input handlers
+        const parseFittingEftBtn = container.querySelector('#parse-fitting-eft');
+        if (parseFittingEftBtn) {
+            parseFittingEftBtn.addEventListener('click', () => {
+                console.log('Parse fitting EFT button clicked');
+                this.parseFittingInput();
+            });
+        }
+
+        const loadStoredFittingsBtn = container.querySelector('#load-stored-fittings-btn');
+        if (loadStoredFittingsBtn) {
+            loadStoredFittingsBtn.addEventListener('click', () => {
+                console.log('Load stored fittings button clicked');
+                this.loadStoredFittingsForFleet();
+            });
+        }
+
+        const loadSelectedStoredFittingBtn = container.querySelector('#load-selected-stored-fitting-btn');
+        if (loadSelectedStoredFittingBtn) {
+            loadSelectedStoredFittingBtn.addEventListener('click', () => {
+                console.log('Load selected stored fitting button clicked');
+                this.loadSelectedStoredFitting();
+            });
+        }
+
+        // Fleet management
+        const createFleetBtn = container.querySelector('#create-fleet-btn');
+        if (createFleetBtn) {
+            createFleetBtn.addEventListener('click', () => {
+                console.log('Create fleet button clicked');
+                this.createFleet();
+            });
+        }
+
+        // Battle scenarios
+        const createScenarioBtn = container.querySelector('#create-scenario-btn');
+        if (createScenarioBtn) {
+            createScenarioBtn.addEventListener('click', () => {
+                console.log('Create scenario button clicked');
+                this.createBattleScenario();
+            });
+        }
+
+        // Fleet vs Fleet button
+        const fleetVsFleetBtn = container.querySelector('#fleet-vs-fleet-btn');
+        if (fleetVsFleetBtn) {
+            fleetVsFleetBtn.addEventListener('click', () => {
+                console.log('Fleet vs fleet button clicked');
+                this.showFleetVsFleetModal();
+            });
+        }
+    }
+
+    async checkAuthStatus() {
         const urlParams = new URLSearchParams(window.location.search);
-        
+
         if (urlParams.get('authenticated') === 'true') {
             this.showAuthenticated();
         } else if (urlParams.get('error') === 'auth_failed') {
             this.showError('Authentication failed. Please try again.');
+        } else {
+            // Check if user is already authenticated
+            try {
+                const response = await fetch('/api/auth/status');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.authenticated) {
+                        this.isAuthenticated = true;
+                        document.getElementById('character-name').textContent = data.character.name;
+                        document.getElementById('login-btn').style.display = 'none';
+                        document.getElementById('user-info').style.display = 'flex';
+
+                        // Update fleet tab if currently viewing it
+                        if (this.currentTab === 'fleet') {
+                            this.updateFleetTabAuth();
+                            this.loadFleetData();
+                        }
+                    }
+                }
+            } catch (error) {
+                console.log('Not authenticated or auth check failed:', error);
+            }
         }
     }
 
-    showAuthenticated() {
+    async showAuthenticated() {
         this.isAuthenticated = true;
         document.getElementById('login-btn').style.display = 'none';
         document.getElementById('user-info').style.display = 'flex';
-        
+
+        // Get character information
+        try {
+            const response = await fetch('/api/auth/status');
+            if (response.ok) {
+                const data = await response.json();
+                if (data.authenticated && data.character) {
+                    document.getElementById('character-name').textContent = data.character.name;
+                }
+            }
+        } catch (error) {
+            console.error('Failed to get character info:', error);
+        }
+
+        // Update fleet tab if currently viewing it
+        if (this.currentTab === 'fleet') {
+            this.updateFleetTabAuth();
+            this.loadFleetData();
+        }
+
         // Clear URL parameters
         window.history.replaceState({}, document.title, window.location.pathname);
     }
@@ -553,25 +708,35 @@ class EVEFightTaker {
 
     markdownToHtml(text) {
         if (!text) return '';
-        
+
         // Convert common Markdown patterns to HTML
         return text
             // Bold text: **text** or __text__
             .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
             .replace(/__(.*?)__/g, '<strong>$1</strong>')
-            // Italic text: *text* or _text_
-            .replace(/\*(.*?)\*/g, '<em>$1</em>')
-            .replace(/_(.*?)_/g, '<em>$1</em>')
+            // Italic text: *text* or _text_ (but avoid conflicts with list items)
+            .replace(/\*([^*\n]+)\*/g, '<em>$1</em>')
+            .replace(/_([^_\n]+)_/g, '<em>$1</em>')
             // Code: `code`
             .replace(/`(.*?)`/g, '<code>$1</code>')
+            // Bullet points: • or - at start of line
+            .replace(/^[•\-]\s+(.+)$/gm, '• $1')
+            .replace(/\n[•\-]\s+(.+)/g, '<br>• $1')
             // Line breaks
             .replace(/\n/g, '<br>')
             // Links: [text](url)
             .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
     }
 
-    showLoading() {
-        document.getElementById('loading').style.display = 'flex';
+    showLoading(message = 'Analyzing combat scenario...') {
+        const loadingElement = document.getElementById('loading');
+        const loadingText = loadingElement.querySelector('.loading-content p');
+
+        if (loadingText) {
+            loadingText.textContent = message;
+        }
+
+        loadingElement.style.display = 'flex';
     }
 
     hideLoading() {
@@ -1077,9 +1242,1985 @@ class EVEFightTaker {
             this.hideLoading();
         }
     }
+
+    renderFittingDetails(fittingId, button) {
+        const eftFormat = decodeURIComponent(button.getAttribute('data-eft'));
+        const detailsContainer = document.getElementById(`fitting-details-${fittingId}`);
+        if (!detailsContainer) return;
+
+        detailsContainer.innerHTML = '<div class="loading-spinner"></div>';
+
+        fetch('/api/fleet/fittings/parse', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ eftFormat })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                throw new Error(data.error);
+            }
+            const { parsedFit } = data;
+
+            let html = '<div class="fitting-layout">';
+            html += `<div class="ship-icon"><img src="https://images.evetech.net/types/${parsedFit.shipTypeId}/render?size=64" width="64" height="64" /></div>`;
+
+            html += '<div class="slots high-slots">';
+            html += parsedFit.modules.high.map(module => this.generateSlotHTML(module)).join('');
+            html += '</div>';
+
+            html += '<div class="slots med-slots">';
+            html += parsedFit.modules.med.map(module => this.generateSlotHTML(module)).join('');
+            html += '</div>';
+
+            html += '<div class="slots low-slots">';
+            html += parsedFit.modules.low.map(module => this.generateSlotHTML(module)).join('');
+            html += '</div>';
+
+            html += '<div class="slots rig-slots">';
+            html += parsedFit.modules.rig.map(module => this.generateSlotHTML(module)).join('');
+            html += '</div>';
+
+            html += '<div class="slots subsystem-slots">';
+            html += parsedFit.modules.subsystem.map(module => this.generateSlotHTML(module)).join('');
+            html += '</div>';
+
+            html += '</div>'; // end fitting-layout
+
+            detailsContainer.innerHTML = html;
+        })
+        .catch(error => {
+            console.error('Error rendering fitting details:', error);
+            detailsContainer.innerHTML = '<p class="text-danger">Failed to load fitting details.</p>';
+        });
+    }
+
+    generateSlotHTML(module) {
+        const iconUrl = module.icon_id ? `https://images.evetech.net/icons/${module.icon_id}.png` : 'https://via.placeholder.com/32';
+        return `<div class="slot" title="${module.name}"><img src="${iconUrl}" /></div>`;
+    }
+
+    // ========== FLEET MANAGEMENT METHODS ==========
+
+    switchTab(tabName) {
+        // Hide all tab contents
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+        });
+
+        // Remove active class from all nav tabs
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+
+        // Show selected tab content
+        document.getElementById(`${tabName}-tab`).classList.add('active');
+        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+
+        this.currentTab = tabName;
+
+        // Handle fleet tab authentication
+        if (tabName === 'fleet') {
+            this.updateFleetTabAuth();
+            if (this.isAuthenticated) {
+                this.loadFleetData();
+            }
+        }
+    }
+
+    updateFleetTabAuth() {
+        const authRequired = document.getElementById('fleet-auth-required');
+        const fleetContent = document.getElementById('fleet-manager-content');
+
+        if (this.isAuthenticated) {
+            if (authRequired) authRequired.style.display = 'none';
+            if (fleetContent) {
+                // TEMPORARY WORKAROUND: Move fleet content to a working area
+                console.log('WORKAROUND: Moving fleet content to main content area');
+
+                // Find the main container that we know works
+                const mainContainer = document.querySelector('.main .container');
+                if (mainContainer) {
+                    // Create a temporary fleet display area
+                    let tempFleetArea = document.getElementById('temp-fleet-area');
+                    if (!tempFleetArea) {
+                        tempFleetArea = document.createElement('div');
+                        tempFleetArea.id = 'temp-fleet-area';
+                        tempFleetArea.style.cssText = `
+                            background: rgba(0, 20, 40, 0.95);
+                            border: 2px solid #00d4ff;
+                            border-radius: 10px;
+                            padding: 20px;
+                            margin: 20px 0;
+                            min-height: 400px;
+                        `;
+
+                        // Clone the fleet content and put it in the working area
+                        const fleetContentClone = fleetContent.cloneNode(true);
+                        fleetContentClone.style.cssText = 'display: block !important; visibility: visible !important;';
+
+                        tempFleetArea.innerHTML = `
+                            <h2 style="color: #00d4ff; margin-bottom: 20px;">🚀 Fleet Manager (Temporary Display)</h2>
+                        `;
+                        tempFleetArea.appendChild(fleetContentClone);
+
+                        mainContainer.appendChild(tempFleetArea);
+
+                        // Re-attach event listeners to the cloned elements
+                        this.attachFleetEventListeners(tempFleetArea);
+
+                    }
+                }
+
+                // Hide the original broken content
+                fleetContent.style.display = 'none';
+            }
+        } else {
+            if (authRequired) authRequired.style.display = 'block';
+            if (fleetContent) fleetContent.style.display = 'none';
+        }
+    }
+
+    switchFleetSection(sectionName) {
+        console.log('=== switchFleetSection called ===', sectionName);
+
+        // Work on both original and temp area elements
+        const containers = [document, document.getElementById('temp-fleet-area')].filter(c => c);
+
+        containers.forEach(container => {
+            // Hide all fleet sections
+            container.querySelectorAll('.fleet-section').forEach(section => {
+                section.classList.remove('active');
+                section.style.display = 'none';
+            });
+
+            // Remove active class from all fleet tab buttons
+            container.querySelectorAll('.fleet-tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected section
+            const targetSection = container.querySelector(`#${sectionName}-section`);
+            const targetBtn = container.querySelector(`[data-section="${sectionName}"]`);
+
+            if (targetSection) {
+                targetSection.classList.add('active');
+                targetSection.style.display = 'block';
+            }
+            if (targetBtn) {
+                targetBtn.classList.add('active');
+            }
+        });
+
+        this.currentFleetSection = sectionName;
+
+        // Load section-specific data
+        switch (sectionName) {
+            case 'fittings':
+                this.loadFittings();
+                break;
+            case 'fleets':
+                this.loadFleets();
+                break;
+            case 'battles':
+                this.loadBattleScenarios();
+                break;
+        }
+    }
+
+    async loadFleetData() {
+        if (!this.isAuthenticated) return;
+
+        console.log('=== Loading fleet data ===');
+        try {
+            // Load all fleet-related data
+            await Promise.all([
+                this.loadFittings(),
+                this.loadFleets(),
+                this.loadBattleScenarios()
+            ]);
+            console.log('Fleet data loaded successfully');
+        } catch (error) {
+            console.error('Error loading fleet data:', error);
+            this.showError('Failed to load fleet data: ' + error.message);
+        }
+    }
+
+    // ========== FITTINGS MANAGEMENT ==========
+
+    async loadFittings() {
+        try {
+            const response = await fetch('/api/fleet/fittings');
+            if (!response.ok) throw new Error('Failed to load fittings');
+
+            const data = await response.json();
+            this.fittings = data.fittings;
+            console.log('Loaded fittings:', this.fittings.length, 'fittings');
+            this.renderFittings();
+        } catch (error) {
+            console.error('Error loading fittings:', error);
+            this.showError('Failed to load fittings: ' + error.message);
+        }
+    }
+
+    async saveFitting() {
+        console.log('=== saveFitting called ===');
+
+        // Check if we have parsed fitting data
+        if (!this.currentParsedFit) {
+            this.showError('Please load a fitting first using "Load Fitting" button');
+            return;
+        }
+
+        const nameField = document.getElementById('fitting-name');
+        const eftField = document.getElementById('fitting-eft');
+
+        if (!nameField || !eftField) {
+            this.showError('Required form fields not found');
+            return;
+        }
+
+        const name = nameField.value.trim() || this.currentParsedFit.fitName || this.currentParsedFit.shipName;
+        const eftFormat = eftField.value.trim();
+
+        if (!name || !eftFormat) {
+            this.showError('Please provide both fitting name and EFT format');
+            return;
+        }
+
+        try {
+            const shipName = this.currentParsedFit.shipName;
+            const shipTypeId = this.currentParsedFit.shipTypeId || 1;
+
+            const response = await fetch('/api/fleet/fittings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name,
+                    shipTypeId: 1, // Placeholder - will be resolved on server
+                    shipName,
+                    eftFormat
+                })
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Failed to save fitting');
+            }
+
+            // Clear form and reload fittings
+            if (nameField) nameField.value = '';
+            if (eftField) eftField.value = '';
+
+            // Hide parsed fitting info and reset state
+            const parsedFittingInfo = document.getElementById('parsed-fitting-info');
+            if (parsedFittingInfo) parsedFittingInfo.style.display = 'none';
+
+            const storedFittingsContainer = document.getElementById('stored-fittings-container');
+            if (storedFittingsContainer) storedFittingsContainer.style.display = 'none';
+
+            this.currentParsedFit = null;
+            this.selectedStoredFittingIndex = null;
+
+            this.showSuccess('Fitting saved successfully');
+            await this.loadFittings();
+        } catch (error) {
+            console.error('Error saving fitting:', error);
+            this.showError('Failed to save fitting: ' + error.message);
+        }
+    }
+
+    async saveCurrentFit() {
+        if (!this.currentShipFit) {
+            this.showError('No current ship fit to save');
+            return;
+        }
+
+        const name = prompt('Enter fitting name:');
+        if (!name) return;
+
+        // Use the current ship's EFT format
+        const eftFormat = document.getElementById('your-eft-input').value.trim();
+        if (!eftFormat) {
+            this.showError('No EFT format available to save');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/fleet/fittings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name,
+                    shipTypeId: this.currentShipFit.shipTypeId || 0,
+                    shipName: this.currentShipFit.shipName || 'Unknown Ship',
+                    eftFormat
+                })
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Failed to save fitting');
+            }
+
+            this.showSuccess('Current fit saved successfully');
+            await this.loadFittings();
+        } catch (error) {
+            console.error('Error saving current fit:', error);
+            this.showError('Failed to save current fit: ' + error.message);
+        }
+    }
+
+    // Enhanced fitting input methods
+    async parseFittingInput() {
+        console.log('=== parseFittingInput called ===');
+
+        const eftField = document.getElementById('fitting-eft');
+        if (!eftField || !eftField.value.trim()) {
+            this.showError('Please enter an EFT fitting or zKillboard URL');
+            return;
+        }
+
+        const input = eftField.value.trim();
+        this.showLoading('Parsing fitting...');
+
+        try {
+            let response;
+
+            // Check if input is a zKillboard URL
+            if (this.isZKillboardURL(input)) {
+                response = await fetch('/api/parse-zkill', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ zkillUrl: input })
+                });
+            } else {
+                response = await fetch('/api/parse-eft', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ eftFormat: input })
+                });
+            }
+
+            if (!response.ok) {
+                throw new Error('Failed to parse fitting');
+            }
+
+            const fitData = await response.json();
+            this.displayParsedFitting(fitData);
+        } catch (error) {
+            console.error('Error parsing fitting:', error);
+            this.showError('Failed to parse fit data. Please check the format and try again.');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    displayParsedFitting(fitData) {
+        console.log('=== displayParsedFitting called ===', fitData);
+
+        const parsedFittingInfo = document.getElementById('parsed-fitting-info');
+        const parsedFittingName = document.getElementById('parsed-fitting-name');
+        const parsedFittingStats = document.getElementById('parsed-fitting-stats');
+
+        if (!parsedFittingInfo || !parsedFittingName || !parsedFittingStats) return;
+
+        // Store the parsed fit data
+        this.currentParsedFit = fitData;
+
+        // Update display
+        parsedFittingName.textContent = fitData.shipName || 'Unknown Ship';
+        parsedFittingStats.innerHTML = this.generateStatsHTML(fitData.stats || {});
+
+        // Show the parsed fitting info
+        parsedFittingInfo.style.display = 'block';
+
+        // Set default fitting name
+        const fittingNameInput = document.getElementById('fitting-name');
+        if (fittingNameInput && !fittingNameInput.value) {
+            fittingNameInput.value = fitData.fitName || fitData.shipName || '';
+        }
+    }
+
+    async loadStoredFittingsForFleet() {
+        console.log('=== loadStoredFittingsForFleet called ===');
+
+        if (!this.isAuthenticated) {
+            this.showWarning('Please log in with EVE SSO to load stored fittings.');
+            return;
+        }
+
+        this.showLoading('Loading stored fittings...');
+
+        try {
+            const response = await fetch('/api/fittings');
+            if (!response.ok) {
+                throw new Error('Failed to fetch stored fittings');
+            }
+
+            const data = await response.json();
+            await this.displayStoredFittingsForFleet(data.fittings || []);
+        } catch (error) {
+            console.error('Error loading stored fittings:', error);
+            this.showError('Failed to load stored fittings. Please ensure you are logged in and have granted the necessary ESI scope.');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    async displayStoredFittingsForFleet(fittings) {
+        this.storedFittingsForFleet = fittings;
+        this.selectedStoredFittingIndex = null;
+
+        const storedFittingsContainer = document.getElementById('stored-fittings-container');
+        const dropdown = document.getElementById('stored-fittings-dropdown-content');
+
+        if (!storedFittingsContainer || !dropdown) return;
+
+        if (fittings.length === 0) {
+            storedFittingsContainer.style.display = 'none';
+            this.showWarning('No stored fittings found. Save some fittings first!');
+            return;
+        }
+
+        // Group fittings by ship type
+        const groupedFittings = {};
+        fittings.forEach((fitting, index) => {
+            const shipName = fitting.ship_name || 'Unknown Ship';
+            if (!groupedFittings[shipName]) {
+                groupedFittings[shipName] = [];
+            }
+            groupedFittings[shipName].push({ ...fitting, originalIndex: index });
+        });
+
+        // Generate dropdown content
+        let dropdownHTML = '';
+        Object.keys(groupedFittings).sort().forEach(shipName => {
+            dropdownHTML += `<div class="dropdown-group">
+                <div class="dropdown-group-header">${shipName}</div>`;
+
+            groupedFittings[shipName].forEach(fitting => {
+                dropdownHTML += `
+                    <div class="dropdown-option" data-index="${fitting.originalIndex}">
+                        <div class="fitting-option-name">${fitting.name}</div>
+                        <div class="fitting-option-ship">${fitting.ship_name}</div>
+                    </div>`;
+            });
+
+            dropdownHTML += '</div>';
+        });
+
+        dropdown.innerHTML = dropdownHTML;
+
+        // Add click handlers
+        dropdown.querySelectorAll('.dropdown-option').forEach(option => {
+            option.addEventListener('click', () => {
+                const index = parseInt(option.getAttribute('data-index'));
+                this.selectStoredFitting(index);
+            });
+        });
+
+        // Setup search functionality
+        this.setupStoredFittingsSearch();
+
+        // Show container
+        storedFittingsContainer.style.display = 'block';
+    }
+
+    setupStoredFittingsSearch() {
+        const searchInput = document.getElementById('stored-fittings-search');
+        const dropdownList = document.getElementById('stored-fittings-dropdown-list');
+        const dropdownArrow = document.getElementById('stored-dropdown-arrow');
+
+        if (!searchInput || !dropdownList || !dropdownArrow) return;
+
+        // Toggle dropdown
+        const toggleDropdown = () => {
+            const isVisible = dropdownList.style.display === 'block';
+            dropdownList.style.display = isVisible ? 'none' : 'block';
+            dropdownArrow.style.transform = isVisible ? 'rotate(0deg)' : 'rotate(180deg)';
+        };
+
+        dropdownArrow.addEventListener('click', toggleDropdown);
+        searchInput.addEventListener('focus', () => {
+            dropdownList.style.display = 'block';
+            dropdownArrow.style.transform = 'rotate(180deg)';
+        });
+
+        // Search functionality
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.toLowerCase();
+            const options = dropdownList.querySelectorAll('.dropdown-option');
+
+            options.forEach(option => {
+                const name = option.querySelector('.fitting-option-name').textContent.toLowerCase();
+                const ship = option.querySelector('.fitting-option-ship').textContent.toLowerCase();
+                const matches = name.includes(query) || ship.includes(query);
+                option.style.display = matches ? 'block' : 'none';
+            });
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.advanced-dropdown-container')) {
+                dropdownList.style.display = 'none';
+                dropdownArrow.style.transform = 'rotate(0deg)';
+            }
+        });
+    }
+
+    selectStoredFitting(index) {
+        this.selectedStoredFittingIndex = index;
+        const fitting = this.storedFittingsForFleet[index];
+
+        if (!fitting) return;
+
+        // Update search input to show selected fitting
+        const searchInput = document.getElementById('stored-fittings-search');
+        const loadButton = document.getElementById('load-selected-stored-fitting-btn');
+
+        if (searchInput) {
+            searchInput.value = `${fitting.name} (${fitting.ship_name})`;
+        }
+
+        if (loadButton) {
+            loadButton.disabled = false;
+        }
+
+        // Close dropdown
+        const dropdownList = document.getElementById('stored-fittings-dropdown-list');
+        const dropdownArrow = document.getElementById('stored-dropdown-arrow');
+        if (dropdownList) dropdownList.style.display = 'none';
+        if (dropdownArrow) dropdownArrow.style.transform = 'rotate(0deg)';
+    }
+
+    async loadSelectedStoredFitting() {
+        if (this.selectedStoredFittingIndex === null || !this.storedFittingsForFleet) {
+            this.showError('No fitting selected');
+            return;
+        }
+
+        const selectedFitting = this.storedFittingsForFleet[this.selectedStoredFittingIndex];
+        if (!selectedFitting) {
+            this.showError('Failed to load selected fitting. Please try again.');
+            return;
+        }
+
+        this.showLoading('Loading fitting...');
+
+        try {
+            // Convert ESI fitting to EFT format
+            const response = await fetch('/api/convert-esi-to-eft', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ esiFitting: selectedFitting })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to convert ESI fitting to EFT');
+            }
+
+            const fitData = await response.json();
+
+            // Populate the EFT textarea
+            const eftField = document.getElementById('fitting-eft');
+            if (eftField) {
+                eftField.value = selectedFitting.eft_format || '';
+            }
+
+            // Parse and display the fitting
+            await this.parseFittingInput();
+
+        } catch (error) {
+            console.error('Error loading selected fitting:', error);
+            this.showError('Failed to load selected fitting. ' + error.message);
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    async renderFittings() {
+        console.log('=== renderFittings called ===');
+
+        // Find all fittings-list elements (original and cloned)
+        const fittingsLists = document.querySelectorAll('#fittings-list');
+        console.log('fittings-list elements found:', fittingsLists.length);
+        if (fittingsLists.length === 0) return;
+
+        console.log('Number of fittings to render:', this.fittings.length);
+
+        if (this.fittings.length === 0) {
+            const content = '<p style="color: white; background: green; padding: 20px; border: 2px solid white; font-size: 16px; font-weight: bold;">✅ Your fitting was saved successfully! Try refreshing if you don\'t see it.</p>';
+            fittingsLists.forEach(list => {
+                list.innerHTML = content;
+            });
+            return;
+        }
+
+        // Create enhanced fitting cards with stats
+        const enhancedCards = await Promise.all(this.fittings.map(async (fitting) => {
+            let stats = null;
+            let parsedFit = null;
+
+            try {
+                // Parse the fit to get stats and modules using fleet endpoint for better module enrichment
+                console.log(`CALLING /api/fleet/fittings/parse for ${fitting.name}`);
+                const response = await fetch('/api/fleet/fittings/parse', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ eftFormat: fitting.eft_format })
+                });
+
+                console.log(`Response status for ${fitting.name}: ${response.status}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    parsedFit = data.parsedFit;
+                    console.log(`Parsed fit for ${fitting.name}:`, parsedFit);
+                    console.log(`FIXED PARSING - Modules breakdown for ${fitting.name}:`, {
+                        low: parsedFit.modules?.low?.map(m => m.name) || [],
+                        med: parsedFit.modules?.med?.map(m => m.name) || [],
+                        high: parsedFit.modules?.high?.map(m => m.name) || [],
+                        rig: parsedFit.modules?.rig?.map(m => m.name) || [],
+                        subsystem: parsedFit.modules?.subsystem?.map(m => m.name) || []
+                    });
+
+                    // Force debug: Log the exact module assignments
+                    if (fitting.name === 'SU Corm') {
+                        console.log('DEBUG SU CORM MODULES:');
+                        console.log('Low modules:', parsedFit.modules?.low || []);
+                        console.log('Med modules:', parsedFit.modules?.med || []);
+                        console.log('High modules:', parsedFit.modules?.high || []);
+                        console.log('Rig modules:', parsedFit.modules?.rig || []);
+                        console.log('Subsystem modules:', parsedFit.modules?.subsystem || []);
+                    }
+
+                    // Get stats using the standard parse endpoint
+                    const statsResponse = await fetch('/api/parse-eft', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ eftText: fitting.eft_format })
+                    });
+
+                    if (statsResponse.ok) {
+                        const statsData = await statsResponse.json();
+                        stats = statsData.stats;
+                    }
+                }
+            } catch (error) {
+                console.warn(`Failed to get stats for fitting ${fitting.id}:`, error);
+            }
+
+            return this.createEnhancedFittingCard(fitting, stats, parsedFit);
+        }));
+
+        const content = enhancedCards.join('');
+
+        // Update all fittings-list elements
+        fittingsLists.forEach(list => {
+            list.innerHTML = content;
+        });
+
+        console.log('Rendered', this.fittings.length, 'enhanced fittings');
+    }
+
+    createEnhancedFittingCard(fitting, stats, parsedFit) {
+        const shipTypeId = parsedFit?.shipTypeId || 1;
+        const lastUpdated = new Date(fitting.updated_at).toLocaleString();
+
+        let statsHTML = '';
+        if (stats) {
+            statsHTML = `
+                <div class="fitting-stats">
+                    <div class="stat-group">
+                        <div class="stat-item">
+                            <span class="stat-label">DPS</span>
+                            <span class="stat-value">${this.formatNumber(stats.dps?.total || 0)}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">EHP</span>
+                            <span class="stat-value">${this.formatNumber(stats.ehp?.total || 0)}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Speed</span>
+                            <span class="stat-value">${Math.round(stats.speed || 0)} m/s</span>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        let visualFitHTML = '';
+        if (parsedFit) {
+            visualFitHTML = this.createCompactFittingVisual(parsedFit, shipTypeId);
+        }
+
+        return `
+            <div class="fitting-card enhanced" data-fitting-id="${fitting.id}">
+                <div class="fitting-header">
+                    <div class="fitting-title">
+                        <h4>${fitting.name}</h4>
+                        <div class="ship-name">${fitting.ship_name}</div>
+                        <p class="fitting-date">${lastUpdated}</p>
+                    </div>
+                    <div class="ship-render">
+                        <img src="https://images.evetech.net/types/${shipTypeId}/render?size=128"
+                             alt="${fitting.ship_name}"
+                             class="ship-image"
+                             onerror="this.src='https://images.evetech.net/types/${shipTypeId}/icon?size=64'" />
+                    </div>
+                </div>
+
+                ${visualFitHTML}
+                ${statsHTML}
+
+                <div class="fitting-actions">
+                    <button class="btn btn-small btn-primary" onclick="app.loadFittingToAnalysis(${fitting.id})">
+                        <i class="fas fa-upload"></i> Load
+                    </button>
+                    <button class="btn btn-small btn-secondary" onclick="app.toggleFittingDetails(${fitting.id})" data-eft="${encodeURIComponent(fitting.eft_format)}">
+                        <i class="fas fa-eye"></i> Details
+                    </button>
+                    <button class="btn btn-small btn-secondary" onclick="app.editFitting(${fitting.id})">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="btn btn-small btn-danger" onclick="app.deleteFitting(${fitting.id})">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
+
+                <div id="fitting-details-${fitting.id}" class="fitting-details-expanded" style="display: none;"></div>
+            </div>
+        `;
+    }
+
+    createCompactFittingVisual(parsedFit, shipTypeId) {
+        if (!parsedFit.modules) return '';
+
+        const modulesBySlot = {
+            high: parsedFit.modules.high || [],
+            med: parsedFit.modules.med || [],
+            low: parsedFit.modules.low || [],
+            rig: parsedFit.modules.rig || [],
+            subsystem: parsedFit.modules.subsystem || []
+        };
+
+        const createSlotGroup = (slotType, modules, maxSlots = 8) => {
+            const slots = [];
+
+            // Add filled slots
+            modules.forEach((module, index) => {
+                if (index < maxSlots) {
+                    const moduleTypeId = module.type_id || module.typeId;
+                    console.log(`Module ${module.name}: type_id=${moduleTypeId}`);
+
+                    if (moduleTypeId) {
+                        slots.push(`
+                            <div class="module-slot filled" title="${module.name}">
+                                <img src="https://images.evetech.net/types/${moduleTypeId}/icon?size=32"
+                                     alt="${module.name}"
+                                     onerror="console.warn('Failed to load icon for type_id ${moduleTypeId}', this.src); this.src='/api/placeholder-icon'; this.onerror=null;"
+                                     onload="console.log('Successfully loaded icon for ${module.name} (type_id: ${moduleTypeId})');"
+                                     loading="lazy" />
+                            </div>
+                        `);
+                    } else {
+                        console.warn(`Module ${module.name} has no type_id, using text fallback`);
+                        // Fallback for modules without type_id
+                        slots.push(`
+                            <div class="module-slot filled no-icon" title="${module.name}">
+                                <span class="module-text">${module.name.substring(0, 3)}</span>
+                            </div>
+                        `);
+                    }
+                }
+            });
+
+            // Add empty slots up to max
+            const filledCount = Math.min(modules.length, maxSlots);
+            for (let i = filledCount; i < maxSlots && i < 8; i++) {
+                slots.push(`<div class="module-slot empty"></div>`);
+            }
+
+            return `
+                <div class="slot-group ${slotType}-slots">
+                    <div class="slot-group-label">${slotType.toUpperCase()}</div>
+                    <div class="slots-row">
+                        ${slots.slice(0, Math.min(maxSlots, 8)).join('')}
+                    </div>
+                </div>
+            `;
+        };
+
+        return `
+            <div class="fitting-visual-compact">
+                <div class="modules-layout">
+                    ${createSlotGroup('high', modulesBySlot.high)}
+                    ${createSlotGroup('med', modulesBySlot.med)}
+                    ${createSlotGroup('low', modulesBySlot.low)}
+                    ${modulesBySlot.rig.length > 0 ? createSlotGroup('rig', modulesBySlot.rig, 3) : ''}
+                    ${modulesBySlot.subsystem.length > 0 ? createSlotGroup('sub', modulesBySlot.subsystem, 4) : ''}
+                </div>
+            </div>
+        `;
+    }
+
+    toggleFittingDetails(fittingId) {
+        const detailsDiv = document.getElementById(`fitting-details-${fittingId}`);
+        if (!detailsDiv) return;
+
+        if (detailsDiv.style.display === 'none') {
+            // Show details - use existing renderFittingDetails functionality
+            const button = document.querySelector(`[onclick*="toggleFittingDetails(${fittingId})"]`);
+            if (button) {
+                this.renderFittingDetails(fittingId, button);
+                detailsDiv.style.display = 'block';
+                button.innerHTML = '<i class="fas fa-eye-slash"></i> Hide';
+            }
+        } else {
+            // Hide details
+            detailsDiv.style.display = 'none';
+            detailsDiv.innerHTML = '';
+            const button = document.querySelector(`[onclick*="toggleFittingDetails(${fittingId})"]`);
+            if (button) {
+                button.innerHTML = '<i class="fas fa-eye"></i> Details';
+            }
+        }
+    }
+
+    async loadFittingToAnalysis(fittingId) {
+        try {
+            const response = await fetch(`/api/fleet/fittings/${fittingId}`);
+            if (!response.ok) throw new Error('Failed to load fitting');
+
+            const data = await response.json();
+            const fitting = data.fitting;
+
+            // Switch to combat tab and load fitting
+            this.switchTab('combat');
+            document.getElementById('your-eft-input').value = fitting.eft_format;
+
+            // Parse the fitting
+            await this.parseYourEFTFit();
+
+            this.showSuccess(`Loaded fitting: ${fitting.name}`);
+        } catch (error) {
+            console.error('Error loading fitting:', error);
+            this.showError('Failed to load fitting: ' + error.message);
+        }
+    }
+
+    async deleteFitting(fittingId) {
+        if (!confirm('Are you sure you want to delete this fitting?')) return;
+
+        try {
+            const response = await fetch(`/api/fleet/fittings/${fittingId}`, {
+                method: 'DELETE'
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Failed to delete fitting');
+            }
+
+            this.showSuccess('Fitting deleted successfully');
+            await this.loadFittings();
+        } catch (error) {
+            console.error('Error deleting fitting:', error);
+            this.showError('Failed to delete fitting: ' + error.message);
+        }
+    }
+
+    // ========== FLEET MANAGEMENT ==========
+
+    async loadFleets() {
+        try {
+            const response = await fetch('/api/fleet/fleets');
+            if (!response.ok) throw new Error('Failed to load fleets');
+
+            const data = await response.json();
+            this.fleets = data.fleets;
+            this.renderFleets();
+        } catch (error) {
+            console.error('Error loading fleets:', error);
+            this.showError('Failed to load fleets: ' + error.message);
+        }
+    }
+
+    async createFleet() {
+        if (this.fittings.length === 0) {
+            this.showError('You need some saved fittings before creating a fleet. Go to the Fittings section first.');
+            return;
+        }
+
+        // Simple fleet creation for now
+        const fleetName = prompt('Enter fleet name:');
+        if (!fleetName) return;
+
+        const fleetDescription = prompt('Enter fleet description (optional):') || '';
+
+        try {
+            const response = await fetch('/api/fleet/fleets', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: fleetName,
+                    description: fleetDescription
+                })
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Failed to create fleet');
+            }
+
+            this.showSuccess('Fleet created successfully');
+            await this.loadFleets();
+        } catch (error) {
+            console.error('Error creating fleet:', error);
+            this.showError('Failed to create fleet: ' + error.message);
+        }
+    }
+
+    renderFleets() {
+        console.log('=== renderFleets called ===');
+
+        // Find all fleets-list elements (original and cloned)
+        const fleetsLists = document.querySelectorAll('#fleets-list');
+        console.log('fleets-list elements found:', fleetsLists.length);
+        if (fleetsLists.length === 0) return;
+
+        console.log('Number of fleets to render:', this.fleets.length);
+
+        const content = this.fleets.length === 0
+            ? '<div style="color: white; background: #2a4a6b; padding: 20px; border: 2px solid #00d4ff; border-radius: 8px; text-align: center;"><p><i class="fas fa-info-circle"></i> No fleets found.</p><p>Create your first fleet to get started!</p><button class="btn btn-primary" onclick="app.createFleet()"><i class="fas fa-plus"></i> Create Fleet</button></div>'
+            : this.fleets.map(fleet => `
+                <div class="fleet-card" data-fleet-id="${fleet.id}">
+                    <h4>${fleet.name}</h4>
+                    <div class="fleet-stats">
+                        <div class="fleet-stat">
+                            <div class="stat-value">${fleet.total_ships || 0}</div>
+                            <div class="stat-label">Total Ships</div>
+                        </div>
+                        <div class="fleet-stat">
+                            <div class="stat-value">${fleet.ship_count || 0}</div>
+                            <div class="stat-label">Ship Types</div>
+                        </div>
+                    </div>
+                    <div class="fleet-actions">
+                        <button class="btn btn-small btn-primary" onclick="app.viewFleet(${fleet.id})">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                        <button class="btn btn-small btn-secondary" onclick="app.editFleet(${fleet.id})">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-small btn-danger" onclick="app.deleteFleet(${fleet.id})">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+        // Update all fleets-list elements
+        fleetsLists.forEach(list => {
+            list.innerHTML = content;
+        });
+
+        console.log('Rendered', this.fleets.length, 'fleets');
+    }
+
+    // ========== BATTLE SCENARIOS ==========
+
+    async loadBattleScenarios() {
+        try {
+            const response = await fetch('/api/fleet/scenarios');
+            if (!response.ok) throw new Error('Failed to load battle scenarios');
+
+            const data = await response.json();
+            this.scenarios = data.scenarios;
+            this.renderBattleScenarios();
+        } catch (error) {
+            console.error('Error loading battle scenarios:', error);
+            this.showError('Failed to load battle scenarios: ' + error.message);
+        }
+    }
+
+    async createBattleScenario() {
+        if (this.fleets.length < 2) {
+            this.showError('You need at least 2 fleets to create a battle scenario');
+            return;
+        }
+
+        // Simple battle scenario creation using prompts
+        const scenarioName = prompt('Enter battle scenario name:');
+        if (!scenarioName) return;
+
+        const fleetOptions = this.fleets.map((fleet, index) => `${index + 1}. ${fleet.name}`).join('\n');
+
+        const friendlyChoice = prompt(`Select friendly fleet:\n${fleetOptions}\n\nEnter number:`);
+        if (!friendlyChoice) return;
+
+        const friendlyIndex = parseInt(friendlyChoice) - 1;
+        if (friendlyIndex < 0 || friendlyIndex >= this.fleets.length) {
+            this.showError('Invalid fleet selection');
+            return;
+        }
+
+        const enemyChoice = prompt(`Select enemy fleet:\n${fleetOptions}\n\nEnter number (different from ${friendlyChoice}):`);
+        if (!enemyChoice) return;
+
+        const enemyIndex = parseInt(enemyChoice) - 1;
+        if (enemyIndex < 0 || enemyIndex >= this.fleets.length || enemyIndex === friendlyIndex) {
+            this.showError('Invalid enemy fleet selection');
+            return;
+        }
+
+        const notes = prompt('Enter scenario notes (optional):') || '';
+
+        try {
+            const response = await fetch('/api/fleet/scenarios', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: scenarioName,
+                    friendlyFleetId: this.fleets[friendlyIndex].id,
+                    enemyFleetId: this.fleets[enemyIndex].id,
+                    scenarioNotes: notes
+                })
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Failed to create battle scenario');
+            }
+
+            this.showSuccess('Battle scenario created successfully');
+            await this.loadBattleScenarios();
+        } catch (error) {
+            console.error('Error creating battle scenario:', error);
+            this.showError('Failed to create battle scenario: ' + error.message);
+        }
+    }
+
+    showBattleScenarioModal() {
+        // Create modal HTML
+        const modalHtml = `
+            <div class="modal" id="battle-scenario-modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Create Battle Scenario</h3>
+                        <span class="close" onclick="app.closeBattleScenarioModal()">&times;</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="scenario-name">Scenario Name:</label>
+                        <input type="text" id="scenario-name" placeholder="Enter scenario name">
+                    </div>
+                    <div class="form-group">
+                        <label for="friendly-fleet">Friendly Fleet:</label>
+                        <select id="friendly-fleet">
+                            <option value="">Select friendly fleet...</option>
+                            ${this.fleets.map(fleet => `<option value="${fleet.id}">${fleet.name}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="enemy-fleet">Enemy Fleet:</label>
+                        <select id="enemy-fleet">
+                            <option value="">Select enemy fleet...</option>
+                            ${this.fleets.map(fleet => `<option value="${fleet.id}">${fleet.name}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="scenario-notes">Notes (optional):</label>
+                        <textarea id="scenario-notes" placeholder="Additional scenario details..."></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-secondary" onclick="app.closeBattleScenarioModal()">Cancel</button>
+                        <button class="btn btn-primary" onclick="app.saveBattleScenario()">Create Scenario</button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Add modal to page
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        document.getElementById('battle-scenario-modal').style.display = 'block';
+    }
+
+    closeBattleScenarioModal() {
+        const modal = document.getElementById('battle-scenario-modal');
+        if (modal) {
+            modal.remove();
+        }
+    }
+
+    async saveBattleScenario() {
+        const name = document.getElementById('scenario-name').value.trim();
+        const friendlyFleetId = document.getElementById('friendly-fleet').value;
+        const enemyFleetId = document.getElementById('enemy-fleet').value;
+        const notes = document.getElementById('scenario-notes').value.trim();
+
+        if (!name || !friendlyFleetId || !enemyFleetId) {
+            this.showError('Please fill in all required fields');
+            return;
+        }
+
+        if (friendlyFleetId === enemyFleetId) {
+            this.showError('Friendly and enemy fleets must be different');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/fleet/scenarios', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name,
+                    friendlyFleetId: parseInt(friendlyFleetId),
+                    enemyFleetId: parseInt(enemyFleetId),
+                    scenarioNotes: notes
+                })
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Failed to create battle scenario');
+            }
+
+            this.closeBattleScenarioModal();
+            this.showSuccess('Battle scenario created successfully');
+            await this.loadBattleScenarios();
+        } catch (error) {
+            console.error('Error creating battle scenario:', error);
+            this.showError('Failed to create battle scenario: ' + error.message);
+        }
+    }
+
+    renderBattleScenarios() {
+        console.log('=== renderBattleScenarios called ===');
+
+        // Find all scenarios-list elements (original and cloned)
+        const scenariosLists = document.querySelectorAll('#scenarios-list');
+        console.log('scenarios-list elements found:', scenariosLists.length);
+        if (scenariosLists.length === 0) return;
+
+        console.log('Number of scenarios to render:', this.scenarios.length);
+
+        const content = this.scenarios.length === 0
+            ? '<div style="color: white; background: #2a4a6b; padding: 20px; border: 2px solid #00d4ff; border-radius: 8px; text-align: center;"><p><i class="fas fa-info-circle"></i> No battle scenarios found.</p><p>Create your first scenario to get started!</p><p><small>Note: You need at least 2 fleets to create a battle scenario.</small></p><button class="btn btn-primary" onclick="app.createBattleScenario()"><i class="fas fa-plus"></i> Create Scenario</button></div>'
+            : this.scenarios.map(scenario => `
+                <div class="scenario-card" data-scenario-id="${scenario.id}">
+                    <h4>${scenario.name}</h4>
+                    <div class="fleet-vs">
+                        <div class="fleet-name">${scenario.friendly_fleet_name}</div>
+                        <div class="vs-label">VS</div>
+                        <div class="fleet-name">${scenario.enemy_fleet_name}</div>
+                    </div>
+                    <div class="scenario-actions">
+                        <button class="btn btn-small btn-primary" onclick="app.analyzeScenario(${scenario.id}, event)" title="Click to analyze (Shift+Click for fresh analysis)">
+                            <i class="fas fa-chart-line"></i> Analyze
+                        </button>
+                        <button class="btn btn-small btn-secondary" onclick="app.editScenario(${scenario.id})">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-small btn-danger" onclick="app.deleteScenario(${scenario.id})">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+        // Update all scenarios-list elements
+        scenariosLists.forEach(list => {
+            list.innerHTML = content;
+        });
+
+        console.log('Rendered', this.scenarios.length, 'scenarios');
+    }
+
+    async analyzeScenario(scenarioId, event) {
+        const noCache = event && event.shiftKey;
+        this.showLoading(noCache ? 'Forcing fresh analysis...' : 'Analyzing fleet battle...');
+
+        try {
+            const url = `/api/fleet/analyze/${scenarioId}${noCache ? '?no-cache=true' : ''}`;
+            const response = await fetch(url, {
+                method: 'POST'
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Failed to analyze scenario');
+            }
+
+            const data = await response.json();
+            this.showFleetAnalysisResults(data.analysis, data.cached, scenarioId);
+        } catch (error) {
+            console.error('Error analyzing scenario:', error);
+            this.showError('Failed to analyze scenario: ' + error.message);
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    showFleetAnalysisResults(analysis, cached = false, scenarioId = null) {
+        console.log('=== showFleetAnalysisResults called ===');
+        console.log('Analysis object:', analysis);
+        console.log('Cached:', cached);
+
+        // Handle different response structures
+        const analysisData = analysis.analysis || analysis;
+        console.log('Analysis data:', analysisData);
+
+        // Basic fallback values
+        const winChance = analysisData.winChance || analysisData.winPercentage || 'Unknown';
+        const advantages = analysisData.advantages || [];
+        const disadvantages = analysisData.disadvantages || [];
+        const tactics = analysisData.recommendations?.tactics || analysisData.tactics || [];
+        const summary = analysisData.summary || 'Analysis completed successfully.';
+
+        // Cache indicator and fresh analysis button
+        const cacheIndicator = cached ? `
+            <div style="background: #ff6b35; color: white; padding: 10px; border-radius: 5px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+                <span>📋 Showing cached analysis results</span>
+                ${scenarioId ? `<button onclick="app.forceAnalysis(${scenarioId})" style="background: #00d4ff; color: #1a2332; border: none; padding: 5px 15px; border-radius: 3px; cursor: pointer; font-weight: bold;">Force Fresh Analysis</button>` : ''}
+            </div>
+        ` : `
+            <div style="background: #28a745; color: white; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
+                <span>🚀 Fresh AI analysis results</span>
+            </div>
+        `;
+
+        const resultsHtml = `
+            <div class="modal" id="analysis-results-modal" style="display: block; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8);">
+                <div class="modal-content" style="background-color: #1a2332; margin: 5% auto; padding: 20px; border: 2px solid #00d4ff; border-radius: 10px; width: 90%; max-width: 1000px; color: white; max-height: 80vh; overflow-y: auto;">
+                    <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #00d4ff;">
+                        <h3 style="color: #00d4ff; margin: 0;">🚀 Fleet Battle Analysis</h3>
+                        <span class="close" onclick="app.closeAnalysisModal()" style="color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+                    </div>
+                    ${cacheIndicator}
+                    <div class="analysis-results">
+                        <div class="win-chance" style="text-align: center; margin-bottom: 20px; padding: 20px; background: #2a4a6b; border-radius: 8px;">
+                            <div class="win-percentage" style="font-size: 3em; font-weight: bold; color: #00ff88;">${winChance}${typeof winChance === 'number' ? '%' : ''}</div>
+                            <div style="font-size: 1.2em; margin-top: 10px;">Win Chance</div>
+                        </div>
+
+                        <div class="fleet-stats-comparison" style="display: flex; justify-content: space-between; margin-bottom: 20px; gap: 20px;">
+                            ${this.createFleetStatsHTML('Friendly Fleet', analysis.friendlyFleet.stats)}
+                            ${this.createFleetStatsHTML('Enemy Fleet', analysis.enemyFleet.stats)}
+                        </div>
+
+                        ${advantages.length > 0 ? `
+                        <div class="analysis-section" style="margin-bottom: 20px;">
+                            <h4 style="color: #00ff88; border-bottom: 1px solid #00ff88; padding-bottom: 5px;">✅ Your Advantages</h4>
+                            <ul class="analysis-list" style="list-style: none; padding-left: 0;">
+                                ${advantages.map(adv => `<li style="padding: 8px 0; border-left: 3px solid #00ff88; padding-left: 15px; margin: 5px 0;">${this.markdownToHtml(adv)}</li>`).join('')}
+                            </ul>
+                        </div>
+                        ` : ''}
+
+                        ${disadvantages.length > 0 ? `
+                        <div class="analysis-section" style="margin-bottom: 20px;">
+                            <h4 style="color: #ff6b6b; border-bottom: 1px solid #ff6b6b; padding-bottom: 5px;">⚠️ Your Disadvantages</h4>
+                            <ul class="analysis-list" style="list-style: none; padding-left: 0;">
+                                ${disadvantages.map(dis => `<li style="padding: 8px 0; border-left: 3px solid #ff6b6b; padding-left: 15px; margin: 5px 0;">${this.markdownToHtml(dis)}</li>`).join('')}
+                            </ul>
+                        </div>
+                        ` : ''}
+
+                        ${tactics.length > 0 ? `
+                        <div class="analysis-section" style="margin-bottom: 20px;">
+                            <h4 style="color: #ffd700; border-bottom: 1px solid #ffd700; padding-bottom: 5px;">🎯 Tactical Recommendations</h4>
+                            <ul class="analysis-list" style="list-style: none; padding-left: 0;">
+                                ${tactics.map(tac => `<li style="padding: 8px 0; border-left: 3px solid #ffd700; padding-left: 15px; margin: 5px 0;">${this.markdownToHtml(tac)}</li>`).join('')}
+                            </ul>
+                        </div>
+                        ` : ''}
+
+                        <div class="analysis-section" style="margin-bottom: 20px;">
+                            <h4 style="color: #00d4ff; border-bottom: 1px solid #00d4ff; padding-bottom: 5px;">📋 Summary</h4>
+                            <p style="padding: 15px; background: #2a4a6b; border-radius: 8px; line-height: 1.6;">${this.markdownToHtml(summary)}</p>
+                        </div>
+
+                        <div style="text-align: center; margin-top: 30px;">
+                            <button onclick="app.closeAnalysisModal()" style="background: #00d4ff; color: #1a2332; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold;">Close Analysis</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Remove any existing modal first
+        const existingModal = document.getElementById('analysis-results-modal');
+        if (existingModal) existingModal.remove();
+
+        document.body.insertAdjacentHTML('beforeend', resultsHtml);
+        console.log('Modal added to DOM');
+    }
+
+    createFleetStatsHTML(title, stats) {
+        if (!stats) return '';
+
+        return `
+            <div class="fleet-stats-container" style="flex: 1; background: #2a4a6b; padding: 15px; border-radius: 8px;">
+                <h4 style="color: #00d4ff; margin-top: 0; margin-bottom: 10px; text-align: center;">${title}</h4>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tbody>
+                        <tr>
+                            <td style="padding: 5px; border-bottom: 1px solid #445;">Total Ships</td>
+                            <td style="padding: 5px; border-bottom: 1px solid #445; text-align: right; font-weight: bold;">${stats.totalShips}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 5px; border-bottom: 1px solid #445;">Total DPS</td>
+                            <td style="padding: 5px; border-bottom: 1px solid #445; text-align: right; font-weight: bold;">${this.formatNumber(stats.totalDps.total)}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 5px; border-bottom: 1px solid #445;">Total EHP</td>
+                            <td style="padding: 5px; border-bottom: 1px solid #445; text-align: right; font-weight: bold;">${this.formatNumber(stats.totalEhp.total)}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 5px; border-bottom: 1px solid #445;">Alpha Strike</td>
+                            <td style="padding: 5px; border-bottom: 1px solid #445; text-align: right; font-weight: bold;">${this.formatNumber(stats.totalAlpha.total)}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 5px; border-bottom: 1px solid #445;">DPS (EM)</td>
+                            <td style="padding: 5px; border-bottom: 1px solid #445; text-align: right;">${this.formatNumber(stats.totalDps.em)}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 5px; border-bottom: 1px solid #445;">DPS (Therm)</td>
+                            <td style="padding: 5px; border-bottom: 1px solid #445; text-align: right;">${this.formatNumber(stats.totalDps.thermal)}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 5px; border-bottom: 1px solid #445;">DPS (Kin)</td>
+                            <td style="padding: 5px; border-bottom: 1px solid #445; text-align: right;">${this.formatNumber(stats.totalDps.kinetic)}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 5px; border-bottom: 1px solid #445;">DPS (Exp)</td>
+                            <td style="padding: 5px; border-bottom: 1px solid #445; text-align: right;">${this.formatNumber(stats.totalDps.explosive)}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        `;
+    }
+
+    closeAnalysisModal() {
+        const modal = document.getElementById('analysis-results-modal');
+        if (modal) {
+            modal.remove();
+        }
+    }
+
+    async forceAnalysis(scenarioId) {
+        this.closeAnalysisModal();
+        await this.analyzeScenario(scenarioId, { shiftKey: true });
+    }
+
+    async deleteScenario(scenarioId) {
+        if (!confirm('Are you sure you want to delete this battle scenario?')) return;
+
+        try {
+            const response = await fetch(`/api/fleet/scenarios/${scenarioId}`, {
+                method: 'DELETE'
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Failed to delete scenario');
+            }
+
+            this.showSuccess('Battle scenario deleted successfully');
+            await this.loadBattleScenarios();
+        } catch (error) {
+            console.error('Error deleting scenario:', error);
+            this.showError('Failed to delete scenario: ' + error.message);
+        }
+    }
+
+    // ========== FLEET BUILDER METHODS ==========
+
+    showFleetBuilder(fleetId = null) {
+        this.editingFleetId = fleetId;
+
+        // Show the modal
+        document.getElementById('fleet-builder-modal').style.display = 'block';
+
+        // Load available fittings
+        this.renderAvailableFittings();
+
+        // If editing existing fleet, load its composition
+        if (fleetId) {
+            this.loadFleetForEditing(fleetId);
+            document.getElementById('fleet-builder-title').textContent = 'Edit Fleet Composition';
+        } else {
+            document.getElementById('fleet-builder-title').textContent = 'Build Fleet Composition';
+            document.getElementById('fleet-builder-name').value = '';
+            document.getElementById('fleet-builder-description').value = '';
+            this.currentFleetComposition = [];
+            this.renderFleetComposition();
+        }
+    }
+
+    closeFleetBuilder() {
+        document.getElementById('fleet-builder-modal').style.display = 'none';
+        this.currentFleetComposition = [];
+        this.editingFleetId = null;
+    }
+
+    renderAvailableFittings() {
+        const container = document.getElementById('available-fittings');
+        if (!this.fittings || this.fittings.length === 0) {
+            container.innerHTML = '<p>No fittings available. Save some fittings first!</p>';
+            return;
+        }
+
+        container.innerHTML = this.fittings.map(fitting => `
+            <div class="draggable-fitting" draggable="true" data-fitting-id="${fitting.id}">
+                <div class="fitting-name">${fitting.name}</div>
+                <div class="fitting-ship">${fitting.ship_name}</div>
+            </div>
+        `).join('');
+
+        // Add drag and drop event listeners
+        container.querySelectorAll('.draggable-fitting').forEach(fitting => {
+            fitting.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', fitting.dataset.fittingId);
+                fitting.classList.add('dragging');
+            });
+
+            fitting.addEventListener('dragend', () => {
+                fitting.classList.remove('dragging');
+            });
+
+            fitting.addEventListener('click', () => {
+                this.addFittingToFleet(parseInt(fitting.dataset.fittingId));
+            });
+        });
+    }
+
+    addFittingToFleet(fittingId) {
+        const fitting = this.fittings.find(f => f.id === fittingId);
+        if (!fitting) return;
+
+        // Check if fitting already in fleet
+        const existingIndex = this.currentFleetComposition.findIndex(ship => ship.fittingId === fittingId);
+
+        if (existingIndex >= 0) {
+            // Increase quantity
+            this.currentFleetComposition[existingIndex].quantity++;
+        } else {
+            // Add new ship
+            this.currentFleetComposition.push({
+                fittingId: fittingId,
+                fittingName: fitting.name,
+                shipName: fitting.ship_name,
+                quantity: 1,
+                role: 'line'
+            });
+        }
+
+        this.renderFleetComposition();
+        this.updateFleetStats();
+    }
+
+    renderFleetComposition() {
+        const container = document.getElementById('fleet-ships-list');
+
+        if (this.currentFleetComposition.length === 0) {
+            container.innerHTML = `
+                <div class="empty-fleet">
+                    <i class="fas fa-plus-circle"></i>
+                    <p>Drag fittings here to build your fleet</p>
+                </div>
+            `;
+        } else {
+            container.innerHTML = this.currentFleetComposition.map((ship, index) => `
+                <div class="fleet-ship-entry" data-index="${index}">
+                    <div class="fleet-ship-info">
+                        <div class="fleet-ship-name">${ship.fittingName}</div>
+                        <div class="fleet-ship-type">${ship.shipName}</div>
+                        <div class="fleet-ship-role">Role: ${ship.role}</div>
+                    </div>
+                    <div class="fleet-ship-controls">
+                        <div class="quantity-controls">
+                            <button class="quantity-btn" onclick="app.changeShipQuantity(${index}, -1)">-</button>
+                            <div class="quantity-display">${ship.quantity}</div>
+                            <button class="quantity-btn" onclick="app.changeShipQuantity(${index}, 1)">+</button>
+                        </div>
+                        <select class="role-selector" onchange="app.changeShipRole(${index}, this.value)">
+                            <option value="line" ${ship.role === 'line' ? 'selected' : ''}>Line</option>
+                            <option value="dps" ${ship.role === 'dps' ? 'selected' : ''}>DPS</option>
+                            <option value="logistics" ${ship.role === 'logistics' ? 'selected' : ''}>Logistics</option>
+                            <option value="ewar" ${ship.role === 'ewar' ? 'selected' : ''}>EWAR</option>
+                            <option value="tackle" ${ship.role === 'tackle' ? 'selected' : ''}>Tackle</option>
+                            <option value="support" ${ship.role === 'support' ? 'selected' : ''}>Support</option>
+                        </select>
+                        <button class="remove-ship-btn" onclick="app.removeShipFromComposition(${index})">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Setup drop zone
+        container.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            container.classList.add('drag-over');
+        });
+
+        container.addEventListener('dragleave', () => {
+            container.classList.remove('drag-over');
+        });
+
+        container.addEventListener('drop', (e) => {
+            e.preventDefault();
+            container.classList.remove('drag-over');
+            const fittingId = parseInt(e.dataTransfer.getData('text/plain'));
+            this.addFittingToFleet(fittingId);
+        });
+    }
+
+    changeShipQuantity(index, delta) {
+        const ship = this.currentFleetComposition[index];
+        ship.quantity = Math.max(1, ship.quantity + delta);
+        this.renderFleetComposition();
+        this.updateFleetStats();
+    }
+
+    changeShipRole(index, newRole) {
+        this.currentFleetComposition[index].role = newRole;
+        this.updateFleetStats();
+    }
+
+    removeShipFromComposition(index) {
+        this.currentFleetComposition.splice(index, 1);
+        this.renderFleetComposition();
+        this.updateFleetStats();
+    }
+
+    updateFleetStats() {
+        const totalShips = this.currentFleetComposition.reduce((sum, ship) => sum + ship.quantity, 0);
+        document.getElementById('fleet-total-ships').textContent = totalShips;
+
+        // For now, show placeholders for DPS/EHP - would need to calculate actual stats
+        document.getElementById('fleet-total-dps').textContent = '~';
+        document.getElementById('fleet-total-ehp').textContent = '~';
+    }
+
+    async saveFleetComposition() {
+        const name = document.getElementById('fleet-builder-name').value.trim();
+        const description = document.getElementById('fleet-builder-description').value.trim();
+
+        if (!name) {
+            this.showError('Please enter a fleet name');
+            return;
+        }
+
+        if (this.currentFleetComposition.length === 0) {
+            this.showError('Please add some ships to your fleet');
+            return;
+        }
+
+        try {
+            // First create/update the fleet
+            let fleetId = this.editingFleetId;
+
+            if (!fleetId) {
+                // Create new fleet
+                const fleetResponse = await fetch('/api/fleet/fleets', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, description })
+                });
+
+                if (!fleetResponse.ok) {
+                    const error = await fleetResponse.json();
+                    throw new Error(error.error || 'Failed to create fleet');
+                }
+
+                const fleetData = await fleetResponse.json();
+                fleetId = fleetData.fleetId;
+            } else {
+                // Update existing fleet
+                const fleetResponse = await fetch(`/api/fleet/fleets/${fleetId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, description })
+                });
+
+                if (!fleetResponse.ok) {
+                    const error = await fleetResponse.json();
+                    throw new Error(error.error || 'Failed to update fleet');
+                }
+            }
+
+            // Add ships to fleet
+            for (const ship of this.currentFleetComposition) {
+                await fetch(`/api/fleet/fleets/${fleetId}/ships`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        fittingId: ship.fittingId,
+                        quantity: ship.quantity,
+                        role: ship.role
+                    })
+                });
+            }
+
+            this.closeFleetBuilder();
+            this.showSuccess(`Fleet "${name}" saved successfully`);
+            await this.loadFleets();
+        } catch (error) {
+            console.error('Error saving fleet:', error);
+            this.showError('Failed to save fleet: ' + error.message);
+        }
+    }
+
+    async editFleet(fleetId) {
+        // Simple fleet editing for now - show fittings and allow adding them
+        const fleet = this.fleets.find(f => f.id === fleetId);
+        if (!fleet) return;
+
+        if (this.fittings.length === 0) {
+            this.showError('You need some saved fittings to add to the fleet. Go to Fittings tab first.');
+            return;
+        }
+
+        const fittingOptions = this.fittings.map((fitting, index) =>
+            `${index + 1}. ${fitting.name} (${fitting.ship_name})`
+        ).join('\n');
+
+        const choice = prompt(`Add fitting to fleet "${fleet.name}":\n\n${fittingOptions}\n\nEnter fitting number:`);
+        if (!choice) return;
+
+        const fittingIndex = parseInt(choice) - 1;
+        if (fittingIndex < 0 || fittingIndex >= this.fittings.length) {
+            this.showError('Invalid fitting selection');
+            return;
+        }
+
+        const quantity = prompt('How many of this ship? (default: 1)') || '1';
+        const role = prompt('Ship role (line/logistics/tackle/etc, default: line)') || 'line';
+
+        try {
+            const response = await fetch(`/api/fleet/fleets/${fleetId}/ships`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    fittingId: this.fittings[fittingIndex].id,
+                    quantity: parseInt(quantity),
+                    role: role,
+                    notes: ''
+                })
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Failed to add ship to fleet');
+            }
+
+            this.showSuccess(`Added ${quantity}x ${this.fittings[fittingIndex].name} to fleet`);
+            await this.loadFleets(); // Refresh fleet list
+        } catch (error) {
+            console.error('Error adding ship to fleet:', error);
+            this.showError('Failed to add ship to fleet: ' + error.message);
+        }
+    }
+
+    async loadFleetForEditing(fleetId) {
+        try {
+            const response = await fetch(`/api/fleet/fleets/${fleetId}`);
+            if (!response.ok) throw new Error('Failed to load fleet');
+
+            const data = await response.json();
+            const fleet = data.fleet;
+            const composition = data.composition;
+
+            // Populate form
+            document.getElementById('fleet-builder-name').value = fleet.name;
+            document.getElementById('fleet-builder-description').value = fleet.description || '';
+
+            // Populate composition
+            this.currentFleetComposition = composition.map(ship => ({
+                fittingId: ship.fitting_id,
+                fittingName: ship.fitting_name,
+                shipName: ship.ship_name,
+                quantity: ship.quantity,
+                role: ship.role || 'line'
+            }));
+
+            this.renderFleetComposition();
+            this.updateFleetStats();
+        } catch (error) {
+            console.error('Error loading fleet for editing:', error);
+            this.showError('Failed to load fleet: ' + error.message);
+        }
+    }
+
+    async viewFleet(fleetId) {
+        try {
+            const response = await fetch(`/api/fleet/fleets/${fleetId}`);
+            if (!response.ok) throw new Error('Failed to load fleet details');
+
+            const data = await response.json();
+            const fleet = data.fleet;
+            const composition = data.composition || [];
+            const stats = data.stats || {};
+
+            // Store current fleet ID for editing
+            this.currentViewingFleetId = fleetId;
+
+            // Create working fleet modal
+            const workingModal = document.createElement('div');
+            workingModal.id = 'working-fleet-modal';
+            workingModal.innerHTML = `
+                <div style="
+                    background: linear-gradient(135deg, #0c1821 0%, #1a2332 50%, #243447 100%);
+                    border: 2px solid #00d4ff;
+                    border-radius: 12px;
+                    padding: 2rem;
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    z-index: 99999;
+                    max-width: 900px;
+                    max-height: 90vh;
+                    overflow-y: auto;
+                    color: white;
+                ">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid rgba(0, 212, 255, 0.3); padding-bottom: 1rem;">
+                        <h3 style="color: #00d4ff; margin: 0;">${fleet.name}</h3>
+                        <span onclick="app.closeFleetView()" style="cursor: pointer; font-size: 1.5rem; color: #00d4ff;">&times;</span>
+                    </div>
+
+                    <div style="margin-bottom: 2rem;">
+                        <p style="color: #b0b0b0; margin-bottom: 2rem;">${fleet.description || 'No description provided'}</p>
+
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                            <div style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 8px; padding: 1rem; text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: bold; color: #ffffff;">${stats.total_ships || 0}</div>
+                                <div style="font-size: 0.9rem; color: #b0b0b0;">Total Ships</div>
+                            </div>
+                            <div style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 8px; padding: 1rem; text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: bold; color: #ffffff;">${(stats.total_dps || 0).toLocaleString()}</div>
+                                <div style="font-size: 0.9rem; color: #b0b0b0;">Total DPS</div>
+                            </div>
+                            <div style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 8px; padding: 1rem; text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: bold; color: #ffffff;">${(stats.total_ehp || 0).toLocaleString()}</div>
+                                <div style="font-size: 0.9rem; color: #b0b0b0;">Total EHP</div>
+                            </div>
+                            <div style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 8px; padding: 1rem; text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: bold; color: #ffffff;">${stats.ship_types || 0}</div>
+                                <div style="font-size: 0.9rem; color: #b0b0b0;">Ship Types</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 style="color: #00d4ff; margin-bottom: 1rem;">Fleet Composition</h4>
+                        <div style="max-height: 300px; overflow-y: auto;">
+                            ${composition.length === 0 ?
+                                '<p style="color: #b0b0b0; text-align: center; padding: 2rem;">No ships in this fleet yet. Click Edit to add ships.</p>' :
+                                composition.map(ship => `
+                                    <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 6px; padding: 1rem; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+                                        <div style="display: flex; align-items: center; gap: 1rem;">
+                                            <div style="background: #ff6b35; color: white; padding: 0.3rem 0.7rem; border-radius: 15px; font-size: 0.8rem; font-weight: bold; min-width: 40px; text-align: center;">${ship.quantity}</div>
+                                            <div>
+                                                <div style="font-weight: bold; color: white; margin-bottom: 0.2rem;">${ship.fitting_name}</div>
+                                                <div style="color: #b0b0b0; font-size: 0.9rem;">${ship.ship_name}</div>
+                                            </div>
+                                        </div>
+                                        <div style="background: rgba(0, 212, 255, 0.2); color: #00d4ff; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.8rem; text-transform: uppercase;">${ship.role}</div>
+                                    </div>
+                                `).join('')
+                            }
+                        </div>
+                    </div>
+                </div>
+            `;
+            workingModal.style.cssText = 'position: fixed !important; top: 0 !important; left: 0 !important; width: 100% !important; height: 100% !important; background: rgba(0, 0, 0, 0.8) !important; z-index: 99999 !important; display: block !important;';
+            document.body.appendChild(workingModal);
+        } catch (error) {
+            console.error('Error viewing fleet:', error);
+            this.showError('Failed to load fleet details: ' + error.message);
+        }
+    }
+
+
+    closeFleetView() {
+        const modal = document.getElementById('working-fleet-modal');
+        if (modal) {
+            modal.remove();
+        }
+        this.currentViewingFleetId = null;
+    }
+
+    editFleetFromView() {
+        if (this.currentViewingFleetId) {
+            this.closeFleetView();
+            this.editFleet(this.currentViewingFleetId);
+        }
+    }
+
+    async deleteFleet(fleetId) {
+        if (!confirm('Are you sure you want to delete this fleet?')) return;
+
+        try {
+            const response = await fetch(`/api/fleet/fleets/${fleetId}`, {
+                method: 'DELETE'
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Failed to delete fleet');
+            }
+
+            this.showSuccess('Fleet deleted successfully');
+            await this.loadFleets();
+        } catch (error) {
+            console.error('Error deleting fleet:', error);
+            this.showError('Failed to delete fleet: ' + error.message);
+        }
+    }
+
+    // ========== FLEET VS FLEET MODAL ==========
+
+    showFleetVsFleetModal() {
+        if (this.fleets.length < 2) {
+            this.showError('You need at least 2 saved fleets to run a fleet vs fleet analysis. Create some fleets first!');
+            return;
+        }
+
+        const modalHtml = `
+            <div class="modal fleet-vs-fleet-modal" id="fleet-vs-fleet-modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Fleet vs Fleet Analysis</h3>
+                        <span class="close" onclick="app.closeFleetVsFleetModal()">&times;</span>
+                    </div>
+
+                    <div class="fleet-selection">
+                        <div class="fleet-selector">
+                            <h4>Your Fleet</h4>
+                            <select id="friendly-fleet-select">
+                                <option value="">Select your fleet...</option>
+                                ${this.fleets.map(fleet => `<option value="${fleet.id}">${fleet.name}</option>`).join('')}
+                            </select>
+                            <div class="fleet-preview" id="friendly-fleet-preview">
+                                Select a fleet to see details
+                            </div>
+                        </div>
+
+                        <div class="vs-divider">VS</div>
+
+                        <div class="fleet-selector">
+                            <h4>Enemy Fleet</h4>
+                            <select id="enemy-fleet-select">
+                                <option value="">Select enemy fleet...</option>
+                                ${this.fleets.map(fleet => `<option value="${fleet.id}">${fleet.name}</option>`).join('')}
+                            </select>
+                            <div class="fleet-preview" id="enemy-fleet-preview">
+                                Select a fleet to see details
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="scenario-context">Battle Context (optional):</label>
+                        <textarea id="scenario-context" placeholder="Describe the battle scenario (gate fight, station defense, etc.)"></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn btn-secondary" onclick="app.closeFleetVsFleetModal()">Cancel</button>
+                        <button class="btn btn-primary" onclick="app.analyzeFleetVsFleet()">
+                            <i class="fas fa-chart-line"></i> Analyze Battle
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        document.getElementById('fleet-vs-fleet-modal').style.display = 'block';
+
+        // Add fleet selection change handlers
+        document.getElementById('friendly-fleet-select').addEventListener('change', (e) => {
+            this.updateFleetPreview('friendly-fleet-preview', e.target.value);
+        });
+
+        document.getElementById('enemy-fleet-select').addEventListener('change', (e) => {
+            this.updateFleetPreview('enemy-fleet-preview', e.target.value);
+        });
+    }
+
+    updateFleetPreview(previewId, fleetId) {
+        const preview = document.getElementById(previewId);
+        if (!fleetId) {
+            preview.textContent = 'Select a fleet to see details';
+            return;
+        }
+
+        const fleet = this.fleets.find(f => f.id == fleetId);
+        if (fleet) {
+            preview.innerHTML = `
+                <strong>${fleet.total_ships || 0}</strong> ships,
+                <strong>${fleet.ship_count || 0}</strong> ship types
+            `;
+        }
+    }
+
+    closeFleetVsFleetModal() {
+        const modal = document.getElementById('fleet-vs-fleet-modal');
+        if (modal) {
+            modal.remove();
+        }
+    }
+
+    async analyzeFleetVsFleet() {
+        const friendlyFleetId = document.getElementById('friendly-fleet-select').value;
+        const enemyFleetId = document.getElementById('enemy-fleet-select').value;
+        const context = document.getElementById('scenario-context').value.trim();
+
+        if (!friendlyFleetId || !enemyFleetId) {
+            this.showError('Please select both fleets');
+            return;
+        }
+
+        if (friendlyFleetId === enemyFleetId) {
+            this.showError('Please select different fleets');
+            return;
+        }
+
+        this.showLoading('Analyzing fleet battle...');
+
+        try {
+            const response = await fetch('/api/fleet/compare', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    friendlyFleetId: parseInt(friendlyFleetId),
+                    enemyFleetId: parseInt(enemyFleetId),
+                    notes: context
+                })
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Failed to analyze fleets');
+            }
+
+            const data = await response.json();
+            this.closeFleetVsFleetModal();
+            this.showFleetAnalysisResults(data.analysis, false);
+        } catch (error) {
+            console.error('Error analyzing fleets:', error);
+            this.showError('Failed to analyze fleets: ' + error.message);
+        } finally {
+            this.hideLoading();
+        }
+    }
 }
 
 // Initialize the application when the DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    new EVEFightTaker();
+    window.app = new EVEFightTaker();
 });

@@ -1,7 +1,7 @@
 {
   "name": "eve-fight-taker",
-  "version": "2.3.0",
-  "description": "EVE Online ship combat analysis tool using dynamic dogma effects processing, static data, and AI-powered tactical recommendations with professional logging system",
+  "version": "2.4.0",
+  "description": "EVE Online fleet management and ship combat analysis tool with enhanced fitting cards, EFT parsing fixes, dynamic dogma effects processing, and AI-powered tactical recommendations",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -13,6 +13,7 @@
   "dependencies": {
     "@google/genai": "^1.15.0",
     "axios": "^1.11.0",
+    "better-sqlite3": "^12.2.0",
     "chai": "^5.3.1",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.4.5",
@@ -20,6 +21,7 @@
     "express-session": "^1.18.0",
     "fs-extra": "^11.2.0",
     "mocha": "^11.7.1",
+    "sqlite3": "^5.1.7",
     "winston": "^3.17.0"
   },
   "devDependencies": {
@@ -29,8 +31,11 @@
     "@eslint/js": "^9.34.0",
     "eslint": "^9.34.0",
     "globals": "^16.3.0",
+    "jsdom": "^27.0.0",
     "nodemon": "^3.1.10",
-    "npm-check-updates": "^18.0.2"
+    "npm-check-updates": "^18.0.2",
+    "stylelint": "^16.24.0",
+    "stylelint-config-standard": "^39.0.0"
   },
   "keywords": [
     "eve-online",
@@ -47,7 +52,11 @@
     "dogma-effects",
     "hull-bonuses",
     "winston",
-    "logging"
+    "logging",
+    "fleet-management",
+    "eft-parsing",
+    "fitting-cards",
+    "enhanced-ui"
   ],
   "author": "EVE Fight Taker",
   "license": "MIT",
