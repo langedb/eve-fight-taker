@@ -734,6 +734,53 @@ body {
     display: none;
 }
 
+/* Stored fittings dropdown styling */
+.advanced-dropdown-container .dropdown-group-header {
+    padding: 0.5rem 1rem;
+    background: rgb(0 212 255 / 10%);
+    color: #00d4ff;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-bottom: 1px solid rgb(0 212 255 / 20%);
+}
+
+.advanced-dropdown-container .dropdown-option {
+    padding: 0.75rem 1.5rem;
+    color: #e0e0e0;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    white-space: nowrap;
+    overflow: visible;
+}
+
+.advanced-dropdown-container .dropdown-option:hover {
+    background: rgb(0 212 255 / 20%);
+    color: #00d4ff;
+}
+
+.advanced-dropdown-container .dropdown-option.selected {
+    background: rgb(0 212 255 / 30%);
+    color: #00d4ff;
+}
+
+/* Ensure dropdown containers have proper dimensions */
+.dropdown-list {
+    position: relative;
+    background: rgba(0, 0, 0, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    min-width: 100%;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+/* Ensure the dropdown content is visible */
+.dropdown-content {
+    padding: 8px 0;
+}
+
 .option-ship-name {
     font-weight: 500;
 }

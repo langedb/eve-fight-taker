@@ -142,14 +142,19 @@ app.get('/api/character/ship', async (req, res) => {
 });
 
 app.get('/api/fittings', async (req, res) => {
+  log.debug('GET /api/fittings - Request received');
   try {
     if (!req.session.accessToken) {
+      log.debug('GET /api/fittings - No access token in session');
       return res.status(401).json({ error: 'Not authenticated' });
     }
+    log.debug('GET /api/fittings - Fetching fittings from ESI');
     const fittings = await esiAuth.getAllFittings(req.session.accessToken);
+    log.debug('GET /api/fittings - Retrieved fittings', { count: fittings.length });
+    log.debug('First fitting structure:', fittings[0]);
     res.json(fittings);
   } catch (error) {
-    log.error('Error getting fittings', { error: error.message });
+    log.error('Error getting fittings', { error: error.message, stack: error.stack });
     res.status(500).json({ error: 'Failed to retrieve fittings' });
   }
 });
