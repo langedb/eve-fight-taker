@@ -2034,26 +2034,32 @@ class EVEFightTaker {
             const { fit, stats } = await parseResponse.json();
             console.log('Parsed fit:', fit?.shipType, 'Stats DPS:', stats?.dps?.total);
 
-            // Create a fitting object compatible with the fleet system
-            const newFitting = {
-                id: selectedFitting.fitting_id || Date.now(), // Use ESI fitting_id or generate one
-                name: selectedFitting.name,
-                ship_name: selectedFitting.ship_name || fit.shipType,
-                eft_format: fitData.eftText,
-                fit: fit,
-                stats: stats
-            };
+            // Save the fitting to the database
+            console.log('Saving fitting to database...');
+            const saveResponse = await fetch('/api/fleet/fittings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: selectedFitting.name,
+                    shipTypeId: selectedFitting.ship_type_id,
+                    shipName: selectedFitting.ship_name || fit.shipType,
+                    eftFormat: fitData.eftText
+                })
+            });
 
-            // Add to fittings array if not already there
-            const existingIndex = this.fittings.findIndex(f => f.id === newFitting.id);
-            if (existingIndex === -1) {
-                this.fittings.push(newFitting);
+            if (!saveResponse.ok) {
+                const errorText = await saveResponse.text();
+                console.error('Save error:', errorText);
+                throw new Error('Failed to save fitting to database');
             }
 
-            // Add to current fleet
-            this.addFittingToFleet(newFitting.id);
+            const savedData = await saveResponse.json();
+            console.log('Fitting saved to database with ID:', savedData.fittingId);
 
-            this.showSuccess(`Added ${newFitting.name} to fleet`);
+            // Reload fittings to show the new one
+            await this.loadFittings();
+
+            this.showSuccess(`Saved ${selectedFitting.name} to your fittings`);
 
             // Close the stored fittings dropdown
             const dropdown = document.getElementById('stored-fittings-dropdown-list');
@@ -2924,8 +2930,14 @@ class EVEFightTaker {
     }
 
     addFittingToFleet(fittingId) {
+        console.log('[addFittingToFleet] Called with fittingId:', fittingId, 'type:', typeof fittingId);
+        console.log('[addFittingToFleet] Available fittings:', this.fittings.map(f => `${f.id}(${typeof f.id})`).join(', '));
         const fitting = this.fittings.find(f => f.id === fittingId);
-        if (!fitting) return;
+        console.log('[addFittingToFleet] Found fitting:', fitting ? fitting.name : 'NOT FOUND');
+        if (!fitting) {
+            console.error('[addFittingToFleet] Fitting not found! fittingId:', fittingId);
+            return;
+        }
 
         // Check if fitting already in fleet
         const existingIndex = this.currentFleetComposition.findIndex(ship => ship.fittingId === fittingId);
