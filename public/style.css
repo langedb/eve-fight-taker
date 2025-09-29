@@ -131,6 +131,15 @@ body {
     box-shadow: none;
 }
 
+/* Force enabled state for specific button */
+.btn.force-enabled {
+    background: linear-gradient(135deg, #00d4ff, #09c) !important;
+    color: white !important;
+    cursor: pointer !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
 .btn-primary {
     background: linear-gradient(135deg, #00d4ff, #09c);
 }

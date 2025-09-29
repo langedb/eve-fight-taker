@@ -1769,12 +1769,17 @@ class EVEFightTaker {
         console.log('HTML set, dropdown now has', dropdown.children.length, 'child elements');
 
         // Add click handlers
-        dropdown.querySelectorAll('.dropdown-option').forEach(option => {
-            option.addEventListener('click', () => {
+        dropdown.querySelectorAll('.dropdown-option').forEach((option, i) => {
+            console.log(`Adding click handler to option ${i}, data-index:`, option.getAttribute('data-index'));
+            option.addEventListener('click', (e) => {
+                console.log('Click event triggered on option:', option.getAttribute('data-index'));
+                e.preventDefault();
+                e.stopPropagation();
                 const index = parseInt(option.getAttribute('data-index'));
                 this.selectStoredFitting(index);
             });
         });
+        console.log('Added click handlers to', dropdown.querySelectorAll('.dropdown-option').length, 'options');
 
         // Setup search functionality
         this.setupStoredFittingsSearch();
@@ -1880,21 +1885,55 @@ class EVEFightTaker {
     }
 
     selectStoredFitting(index) {
+        console.log('=== selectStoredFitting called with index:', index);
         this.selectedStoredFittingIndex = index;
         const fitting = this.storedFittingsForFleet[index];
 
+        console.log('Selected fitting:', fitting);
         if (!fitting) return;
 
         // Update search input to show selected fitting
         const searchInput = document.getElementById('stored-fittings-search');
         const loadButton = document.getElementById('load-selected-stored-fitting-btn');
 
+        console.log('Search input found:', !!searchInput);
+        console.log('Load button found:', !!loadButton);
+        console.log('Load button element:', loadButton);
+
         if (searchInput) {
             searchInput.value = `${fitting.name} (${fitting.ship_name})`;
+            console.log('Search input value set to:', searchInput.value);
         }
 
         if (loadButton) {
+            console.log('Load button disabled before:', loadButton.disabled);
             loadButton.disabled = false;
+            loadButton.removeAttribute('disabled');  // Remove the HTML disabled attribute
+
+            // Add force-enabled class with !important styles
+            loadButton.classList.add('force-enabled');
+            loadButton.classList.remove('disabled');
+
+            console.log('Load button disabled after:', loadButton.disabled);
+            console.log('Load button has disabled attribute:', loadButton.hasAttribute('disabled'));
+            console.log('Load button computed style after forcing:', window.getComputedStyle(loadButton).backgroundColor);
+            console.log('Load button classes:', loadButton.className);
+        }
+
+        // Update visual selection in dropdown
+        const dropdown = document.getElementById('stored-fittings-dropdown-content');
+        if (dropdown) {
+            // Remove previous selection
+            dropdown.querySelectorAll('.dropdown-option.selected').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+
+            // Add selection to current option
+            const selectedOption = dropdown.querySelector(`[data-index="${index}"]`);
+            if (selectedOption) {
+                selectedOption.classList.add('selected');
+                console.log('Added selected class to option');
+            }
         }
 
         // Close dropdown
@@ -1902,9 +1941,15 @@ class EVEFightTaker {
         const dropdownArrow = document.getElementById('stored-dropdown-arrow');
         if (dropdownList) dropdownList.style.display = 'none';
         if (dropdownArrow) dropdownArrow.style.transform = 'rotate(0deg)';
+
+        console.log('selectStoredFitting completed');
     }
 
     async loadSelectedStoredFitting() {
+        console.log('=== loadSelectedStoredFitting called ===');
+        console.log('selectedStoredFittingIndex:', this.selectedStoredFittingIndex);
+        console.log('storedFittingsForFleet length:', this.storedFittingsForFleet?.length);
+
         if (this.selectedStoredFittingIndex === null || !this.storedFittingsForFleet) {
             this.showError('No fitting selected');
             return;
@@ -1916,9 +1961,11 @@ class EVEFightTaker {
             return;
         }
 
+        console.log('Selected fitting:', selectedFitting);
         this.showLoading('Loading fitting...');
 
         try {
+            console.log('Converting ESI fitting to EFT...');
             // Convert ESI fitting to EFT format
             const response = await fetch('/api/convert-esi-to-eft', {
                 method: 'POST',
@@ -1926,20 +1973,30 @@ class EVEFightTaker {
                 body: JSON.stringify({ esiFitting: selectedFitting })
             });
 
+            console.log('Convert response status:', response.status);
             if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Convert response error:', errorText);
                 throw new Error('Failed to convert ESI fitting to EFT');
             }
 
             const fitData = await response.json();
+            console.log('Converted EFT text length:', fitData.eftText?.length);
+            console.log('EFT text preview:', fitData.eftText?.substring(0, 100));
 
             // Populate the EFT textarea
             const eftField = document.getElementById('fitting-eft');
-            if (eftField) {
-                eftField.value = selectedFitting.eft_format || '';
-            }
+            console.log('EFT field found:', !!eftField);
 
-            // Parse and display the fitting
-            await this.parseFittingInput();
+            if (eftField) {
+                eftField.value = fitData.eftText || '';
+                console.log('EFT field value set, length:', eftField.value.length);
+
+                // Parse and display the fitting
+                await this.parseFittingInput();
+            } else {
+                console.error('Could not find fitting-eft element');
+            }
 
         } catch (error) {
             console.error('Error loading selected fitting:', error);

@@ -151,8 +151,26 @@ app.get('/api/fittings', async (req, res) => {
     log.debug('GET /api/fittings - Fetching fittings from ESI');
     const fittings = await esiAuth.getAllFittings(req.session.accessToken);
     log.debug('GET /api/fittings - Retrieved fittings', { count: fittings.length });
-    log.debug('First fitting structure:', fittings[0]);
-    res.json(fittings);
+
+    // Enhance fittings with ship names from static data
+    const enhancedFittings = await Promise.all(fittings.map(async (fitting) => {
+      try {
+        const shipInfo = await fitCalculator.staticData.getItemInfo(fitting.ship_type_id);
+        return {
+          ...fitting,
+          ship_name: shipInfo ? shipInfo.name : `Ship Type ${fitting.ship_type_id}`
+        };
+      } catch (error) {
+        log.warn('Failed to resolve ship name for type_id', fitting.ship_type_id, error.message);
+        return {
+          ...fitting,
+          ship_name: `Ship Type ${fitting.ship_type_id}`
+        };
+      }
+    }));
+
+    log.debug('GET /api/fittings - Enhanced fittings with ship names');
+    res.json(enhancedFittings);
   } catch (error) {
     log.error('Error getting fittings', { error: error.message, stack: error.stack });
     res.status(500).json({ error: 'Failed to retrieve fittings' });
