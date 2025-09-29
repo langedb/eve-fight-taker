@@ -2349,3 +2349,605 @@ body {
         min-width: auto;
     }
 }
+/* ===== NEW DRAG-AND-DROP FLEET BUILDER ===== */
+
+/* Fleet Builder New Layout */
+.fleet-builder-new {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    height: calc(100vh - 200px);
+    overflow: hidden;
+}
+
+.fleet-info-bar {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+}
+
+.fleet-info-bar .fleet-name-input {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    color: #e0e0e0;
+    padding: 0.75rem;
+    border-radius: 5px;
+    font-size: 1.1rem;
+}
+
+.fleet-stats-inline {
+    display: flex;
+    gap: 2rem;
+    color: #00d4ff;
+    font-weight: 600;
+}
+
+.fleet-stats-inline span {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Two Column Layout */
+.fleet-builder-columns {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 1rem;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* Available Fittings Panel */
+.available-fittings-panel {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.available-fittings-panel h4 {
+    color: #00d4ff;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.fittings-search {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.fittings-search input {
+    width: 100%;
+    padding: 0.5rem 2rem 0.5rem 0.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 5px;
+    color: #e0e0e0;
+}
+
+.fittings-search i {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #00d4ff;
+}
+
+/* Fittings Icon Grid */
+.fittings-icon-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 0.75rem;
+    overflow-y: auto;
+    padding: 0.5rem;
+}
+
+.fitting-icon-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    cursor: grab;
+    transition: all 0.2s ease;
+}
+
+.fitting-icon-item:hover {
+    background: rgba(0, 212, 255, 0.15);
+    border-color: #00d4ff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
+}
+
+.fitting-icon-item:active {
+    cursor: grabbing;
+}
+
+.fitting-icon-item.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+}
+
+.fitting-icon-item img {
+    width: 48px;
+    height: 48px;
+    border-radius: 4px;
+}
+
+.fitting-icon-item .fitting-icon-name {
+    font-size: 0.75rem;
+    text-align: center;
+    color: #e0e0e0;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Fleet Composition Panel */
+.fleet-composition-panel {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.fleet-composition-panel h4 {
+    color: #00d4ff;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Role Zones */
+.role-zones {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    overflow-y: auto;
+    padding: 0.5rem;
+}
+
+.role-zone {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.role-zone-header {
+    padding: 0.75rem 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #00d4ff;
+    font-weight: 600;
+}
+
+.role-zone-droparea {
+    min-height: 80px;
+    padding: 0.75rem;
+    position: relative;
+}
+
+.role-zone-droparea.drag-over {
+    background: rgba(0, 212, 255, 0.15);
+    border: 2px dashed #00d4ff;
+}
+
+.droparea-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 0.9rem;
+    padding: 1rem;
+}
+
+.droparea-placeholder i {
+    font-size: 1.5rem;
+}
+
+.role-zone-droparea:has(.fleet-role-ship) .droparea-placeholder {
+    display: none;
+}
+
+/* Role Ships List */
+.role-ships-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.fleet-role-ship {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 8px;
+    position: relative;
+}
+
+.fleet-role-ship img {
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+}
+
+.fleet-role-ship-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.fleet-role-ship-name {
+    color: #e0e0e0;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.fleet-role-ship-ship {
+    color: #b0b0b0;
+    font-size: 0.75rem;
+}
+
+.fleet-role-ship-quantity {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.fleet-role-ship-quantity label {
+    color: #00d4ff;
+    font-size: 0.75rem;
+}
+
+.fleet-role-ship-quantity input {
+    width: 60px;
+    padding: 0.25rem 0.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 4px;
+    color: #e0e0e0;
+    text-align: center;
+}
+
+.fleet-role-ship-remove {
+    position: absolute;
+    top: 0.25rem;
+    right: 0.25rem;
+    background: rgba(255, 50, 50, 0.8);
+    border: none;
+    color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    transition: all 0.2s ease;
+}
+
+.fleet-role-ship-remove:hover {
+    background: rgba(255, 50, 50, 1);
+    transform: scale(1.1);
+}
+
+/* Fleet Builder Actions */
+.fleet-builder-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    margin-top: auto;
+}
+
+/* ===== BATTLE SCENARIOS DRAG-AND-DROP ===== */
+
+.scenario-builder {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.scenario-builder-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.scenario-builder-header h4 {
+    color: #00d4ff;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+}
+
+.scenario-name-input {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    color: #e0e0e0;
+    padding: 0.75rem;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.scenario-builder-layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 1.5rem;
+}
+
+/* Available Fleets Panel */
+.available-fleets-panel {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.available-fleets-panel h5 {
+    color: #00d4ff;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.available-fleets-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.fleet-drag-card {
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    cursor: grab;
+    transition: all 0.2s ease;
+}
+
+.fleet-drag-card:hover {
+    background: rgba(0, 212, 255, 0.15);
+    border-color: #00d4ff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
+}
+
+.fleet-drag-card:active {
+    cursor: grabbing;
+}
+
+.fleet-drag-card.dragging {
+    opacity: 0.5;
+}
+
+.fleet-drag-card-name {
+    color: #e0e0e0;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.fleet-drag-card-stats {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.8rem;
+    color: #b0b0b0;
+}
+
+/* Battle Setup Panel */
+.battle-setup-panel {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.battle-setup-panel h5 {
+    color: #00d4ff;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.battle-dropzones {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.fleet-dropzone {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.fleet-dropzone.friendly-zone {
+    border-color: rgba(0, 255, 100, 0.3);
+}
+
+.fleet-dropzone.enemy-zone {
+    border-color: rgba(255, 50, 50, 0.3);
+}
+
+.dropzone-header {
+    padding: 0.75rem 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 600;
+}
+
+.friendly-zone .dropzone-header {
+    color: #00ff64;
+}
+
+.enemy-zone .dropzone-header {
+    color: #ff3232;
+}
+
+.fleet-droparea {
+    min-height: 120px;
+    padding: 1rem;
+    position: relative;
+}
+
+.fleet-droparea.drag-over {
+    background: rgba(0, 212, 255, 0.15);
+    border: 2px dashed #00d4ff;
+}
+
+.battle-vs {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: #00d4ff;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.fleet-slot {
+    width: 100%;
+}
+
+.fleet-slot-card {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 8px;
+    padding: 1rem;
+    position: relative;
+}
+
+.fleet-slot-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.fleet-slot-card-name {
+    color: #e0e0e0;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.fleet-slot-card-remove {
+    background: rgba(255, 50, 50, 0.8);
+    border: none;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.fleet-slot-card-remove:hover {
+    background: rgba(255, 50, 50, 1);
+    transform: scale(1.1);
+}
+
+.fleet-slot-card-stats {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 0.9rem;
+    color: #b0b0b0;
+}
+
+.scenario-notes {
+    margin-bottom: 1.5rem;
+}
+
+.scenario-notes label {
+    display: block;
+    color: #00d4ff;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.scenario-notes textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 5px;
+    color: #e0e0e0;
+    resize: vertical;
+}
+
+.scenario-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.section-divider {
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 2rem 0;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .fleet-builder-columns {
+        grid-template-columns: 1fr;
+    }
+    
+    .scenario-builder-layout {
+        grid-template-columns: 1fr;
+    }
+    
+    .battle-dropzones {
+        grid-template-columns: 1fr;
+    }
+    
+    .battle-vs {
+        transform: rotate(90deg);
+    }
+}

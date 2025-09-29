@@ -349,52 +349,128 @@ Right-click your ship in-game → Copy → Copy Fitting" rows="8" class="eft-tex
                                     <span class="close" onclick="app.closeFleetBuilder()">&times;</span>
                                 </div>
 
-                                <div class="fleet-builder">
-                                    <div class="fleet-builder-sidebar">
-                                        <h4>Available Fittings</h4>
-                                        <div class="fittings-search">
-                                            <input type="text" id="fleet-fittings-search" placeholder="Search fittings...">
+                                <div class="fleet-builder-new">
+                                    <!-- Fleet Info -->
+                                    <div class="fleet-info-bar">
+                                        <input type="text" id="fleet-builder-name" placeholder="Fleet Name" class="fleet-name-input">
+                                        <div class="fleet-stats-inline">
+                                            <span><i class="fas fa-rocket"></i> <span id="fleet-total-ships">0</span> ships</span>
+                                            <span><i class="fas fa-crosshairs"></i> <span id="fleet-total-dps">0</span> DPS</span>
+                                            <span><i class="fas fa-shield-alt"></i> <span id="fleet-total-ehp">0</span> EHP</span>
                                         </div>
-                                        <div id="available-fittings" class="available-fittings"></div>
                                     </div>
 
-                                    <div class="fleet-composition-area">
-                                        <div class="fleet-info">
-                                            <input type="text" id="fleet-builder-name" placeholder="Fleet Name" class="fleet-name-input">
-                                            <textarea id="fleet-builder-description" placeholder="Fleet Description (optional)" class="fleet-description-input"></textarea>
-                                        </div>
-
-                                        <div class="fleet-stats-summary">
-                                            <div class="stat-box">
-                                                <div class="stat-value" id="fleet-total-ships">0</div>
-                                                <div class="stat-label">Ships</div>
+                                    <!-- Two Column Layout -->
+                                    <div class="fleet-builder-columns">
+                                        <!-- Left: Available Fittings as Icons -->
+                                        <div class="available-fittings-panel">
+                                            <h4><i class="fas fa-box"></i> Available Fittings</h4>
+                                            <div class="fittings-search">
+                                                <input type="text" id="fleet-fittings-search" placeholder="Search fittings...">
+                                                <i class="fas fa-search"></i>
                                             </div>
-                                            <div class="stat-box">
-                                                <div class="stat-value" id="fleet-total-dps">0</div>
-                                                <div class="stat-label">Total DPS</div>
-                                            </div>
-                                            <div class="stat-box">
-                                                <div class="stat-value" id="fleet-total-ehp">0</div>
-                                                <div class="stat-label">Total EHP</div>
+                                            <div id="available-fittings-icons" class="fittings-icon-grid">
+                                                <!-- Fitting icons will be populated here -->
                                             </div>
                                         </div>
 
-                                        <div class="fleet-ships-area">
-                                            <h4>Fleet Composition</h4>
-                                            <div id="fleet-ships-list" class="fleet-ships-list">
-                                                <div class="empty-fleet">
-                                                    <i class="fas fa-plus-circle"></i>
-                                                    <p>Drag fittings here to build your fleet</p>
+                                        <!-- Right: Role-Based Drop Zones -->
+                                        <div class="fleet-composition-panel">
+                                            <h4><i class="fas fa-users"></i> Fleet Composition</h4>
+
+                                            <div class="role-zones">
+                                                <div class="role-zone" data-role="line">
+                                                    <div class="role-zone-header">
+                                                        <i class="fas fa-fighter-jet"></i>
+                                                        <span>Line Ships (DPS)</span>
+                                                    </div>
+                                                    <div class="role-zone-droparea" data-role="line">
+                                                        <div class="droparea-placeholder">
+                                                            <i class="fas fa-plus"></i>
+                                                            <span>Drag fittings here</span>
+                                                        </div>
+                                                        <div class="role-ships-list" id="role-ships-line"></div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="role-zone" data-role="logi">
+                                                    <div class="role-zone-header">
+                                                        <i class="fas fa-heart"></i>
+                                                        <span>Logistics (Healers)</span>
+                                                    </div>
+                                                    <div class="role-zone-droparea" data-role="logi">
+                                                        <div class="droparea-placeholder">
+                                                            <i class="fas fa-plus"></i>
+                                                            <span>Drag fittings here</span>
+                                                        </div>
+                                                        <div class="role-ships-list" id="role-ships-logi"></div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="role-zone" data-role="ewar">
+                                                    <div class="role-zone-header">
+                                                        <i class="fas fa-satellite-dish"></i>
+                                                        <span>EWAR (Electronic Warfare)</span>
+                                                    </div>
+                                                    <div class="role-zone-droparea" data-role="ewar">
+                                                        <div class="droparea-placeholder">
+                                                            <i class="fas fa-plus"></i>
+                                                            <span>Drag fittings here</span>
+                                                        </div>
+                                                        <div class="role-ships-list" id="role-ships-ewar"></div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="role-zone" data-role="tackle">
+                                                    <div class="role-zone-header">
+                                                        <i class="fas fa-link"></i>
+                                                        <span>Tackle (Point/Web)</span>
+                                                    </div>
+                                                    <div class="role-zone-droparea" data-role="tackle">
+                                                        <div class="droparea-placeholder">
+                                                            <i class="fas fa-plus"></i>
+                                                            <span>Drag fittings here</span>
+                                                        </div>
+                                                        <div class="role-ships-list" id="role-ships-tackle"></div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="role-zone" data-role="support">
+                                                    <div class="role-zone-header">
+                                                        <i class="fas fa-hands-helping"></i>
+                                                        <span>Support (Command/Hauler)</span>
+                                                    </div>
+                                                    <div class="role-zone-droparea" data-role="support">
+                                                        <div class="droparea-placeholder">
+                                                            <i class="fas fa-plus"></i>
+                                                            <span>Drag fittings here</span>
+                                                        </div>
+                                                        <div class="role-ships-list" id="role-ships-support"></div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="role-zone" data-role="other">
+                                                    <div class="role-zone-header">
+                                                        <i class="fas fa-star"></i>
+                                                        <span>Other</span>
+                                                    </div>
+                                                    <div class="role-zone-droparea" data-role="other">
+                                                        <div class="droparea-placeholder">
+                                                            <i class="fas fa-plus"></i>
+                                                            <span>Drag fittings here</span>
+                                                        </div>
+                                                        <div class="role-ships-list" id="role-ships-other"></div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
 
-                                        <div class="fleet-builder-actions">
-                                            <button class="btn btn-secondary" onclick="app.closeFleetBuilder()">Cancel</button>
-                                            <button class="btn btn-primary" id="save-fleet-btn" onclick="app.saveFleetComposition()">
-                                                <i class="fas fa-save"></i> Save Fleet
-                                            </button>
-                                        </div>
+                                    <div class="fleet-builder-actions">
+                                        <button class="btn btn-secondary" onclick="app.closeFleetBuilder()">Cancel</button>
+                                        <button class="btn btn-primary" id="save-fleet-btn" onclick="app.saveFleetComposition()">
+                                            <i class="fas fa-save"></i> Save Fleet
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -408,6 +484,91 @@ Right-click your ship in-game → Copy → Copy Fitting" rows="8" class="eft-tex
                             <button id="create-scenario-btn" class="btn btn-primary">
                                 <i class="fas fa-plus"></i> Create Scenario
                             </button>
+                        </div>
+
+                        <!-- Scenario Builder -->
+                        <div class="scenario-builder">
+                            <div class="scenario-builder-header">
+                                <h4><i class="fas fa-crosshairs"></i> New Battle Scenario</h4>
+                                <input type="text" id="scenario-name-input" placeholder="Scenario Name (e.g., 'Assault on POS')" class="scenario-name-input">
+                            </div>
+
+                            <div class="scenario-builder-layout">
+                                <!-- Left: Available Fleets -->
+                                <div class="available-fleets-panel">
+                                    <h5><i class="fas fa-users"></i> Available Fleets</h5>
+                                    <div class="fleets-search">
+                                        <input type="text" id="scenario-fleets-search" placeholder="Search fleets...">
+                                        <i class="fas fa-search"></i>
+                                    </div>
+                                    <div id="available-fleets-list" class="available-fleets-list">
+                                        <!-- Fleet cards will be populated here -->
+                                    </div>
+                                </div>
+
+                                <!-- Right: Battle Setup -->
+                                <div class="battle-setup-panel">
+                                    <h5><i class="fas fa-swords"></i> Battle Setup</h5>
+
+                                    <div class="battle-dropzones">
+                                        <div class="fleet-dropzone friendly-zone">
+                                            <div class="dropzone-header">
+                                                <i class="fas fa-shield-alt"></i>
+                                                <span>Your Fleet (Friendly)</span>
+                                            </div>
+                                            <div class="fleet-droparea" id="friendly-fleet-droparea" data-side="friendly">
+                                                <div class="droparea-placeholder">
+                                                    <i class="fas fa-hand-point-up"></i>
+                                                    <span>Drag a fleet here</span>
+                                                </div>
+                                                <div id="friendly-fleet-slot" class="fleet-slot"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="battle-vs">
+                                            <i class="fas fa-bolt"></i>
+                                            <span>VS</span>
+                                        </div>
+
+                                        <div class="fleet-dropzone enemy-zone">
+                                            <div class="dropzone-header">
+                                                <i class="fas fa-skull-crossbones"></i>
+                                                <span>Enemy Fleet</span>
+                                            </div>
+                                            <div class="fleet-droparea" id="enemy-fleet-droparea" data-side="enemy">
+                                                <div class="droparea-placeholder">
+                                                    <i class="fas fa-hand-point-up"></i>
+                                                    <span>Drag a fleet here</span>
+                                                </div>
+                                                <div id="enemy-fleet-slot" class="fleet-slot"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="scenario-notes">
+                                        <label for="scenario-notes-textarea">Additional Notes:</label>
+                                        <textarea id="scenario-notes-textarea" placeholder="Environmental factors, tactical considerations, etc."></textarea>
+                                    </div>
+
+                                    <div class="scenario-actions">
+                                        <button class="btn btn-secondary" onclick="app.clearScenarioBuilder()">
+                                            <i class="fas fa-times"></i> Clear
+                                        </button>
+                                        <button class="btn btn-success" id="save-scenario-btn" onclick="app.saveScenario()" disabled>
+                                            <i class="fas fa-save"></i> Save Scenario
+                                        </button>
+                                        <button class="btn btn-primary" id="analyze-scenario-btn" onclick="app.analyzeScenarioNow()" disabled>
+                                            <i class="fas fa-chart-line"></i> Analyze Now
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="section-divider">
+
+                        <div class="section-header">
+                            <h4>Saved Scenarios</h4>
                         </div>
 
                         <div class="scenarios-grid">

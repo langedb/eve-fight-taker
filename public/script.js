@@ -2385,32 +2385,251 @@ class EVEFightTaker {
             return;
         }
 
-        // Simple fleet creation for now
-        const fleetName = prompt('Enter fleet name:');
-        if (!fleetName) return;
+        // Open the new drag-and-drop fleet builder
+        this.openFleetBuilder();
+    }
 
-        const fleetDescription = prompt('Enter fleet description (optional):') || '';
+    openFleetBuilder(fleetId = null) {
+        console.log('Opening fleet builder', fleetId ? `for fleet ${fleetId}` : 'for new fleet');
+
+        // Initialize fleet composition state
+        this.currentFleetComposition = {
+            line: [],
+            logi: [],
+            ewar: [],
+            tackle: [],
+            support: [],
+            other: []
+        };
+        this.editingFleetId = fleetId;
+
+        // Show modal
+        const modal = document.getElementById('fleet-builder-modal');
+        modal.style.display = 'block';
+
+        // Clear and populate fittings
+        this.populateAvailableFittings();
+
+        // Initialize drag-and-drop
+        this.initializeFleetBuilderDragDrop();
+
+        // Clear role zones
+        this.clearRoleZones();
+
+        // Update stats
+        this.updateFleetStats();
+    }
+
+    populateAvailableFittings() {
+        const container = document.getElementById('available-fittings-icons');
+        if (!container) return;
+
+        const html = this.fittings.map(fitting => `
+            <div class="fitting-icon-item" draggable="true" data-fitting-id="${fitting.id}">
+                <img src="https://images.evetech.net/types/${fitting.ship_type_id || 1}/icon?size=64"
+                     alt="${fitting.ship_name}"
+                     onerror="this.src='https://images.evetech.net/types/1/icon?size=64'" />
+                <div class="fitting-icon-name" title="${fitting.name}">${fitting.name}</div>
+            </div>
+        `).join('');
+
+        container.innerHTML = html;
+    }
+
+    initializeFleetBuilderDragDrop() {
+        // Add drag listeners to fitting icons
+        const fittingItems = document.querySelectorAll('.fitting-icon-item');
+        fittingItems.forEach(item => {
+            item.addEventListener('dragstart', (e) => {
+                item.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'copy';
+                e.dataTransfer.setData('fittingId', item.getAttribute('data-fitting-id'));
+            });
+
+            item.addEventListener('dragend', () => {
+                item.classList.remove('dragging');
+            });
+        });
+
+        // Add drop listeners to role zones
+        const dropAreas = document.querySelectorAll('.role-zone-droparea');
+        dropAreas.forEach(dropArea => {
+            dropArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'copy';
+                dropArea.classList.add('drag-over');
+            });
+
+            dropArea.addEventListener('dragleave', () => {
+                dropArea.classList.remove('drag-over');
+            });
+
+            dropArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropArea.classList.remove('drag-over');
+
+                const fittingId = parseInt(e.dataTransfer.getData('fittingId'));
+                const role = dropArea.getAttribute('data-role');
+
+                this.addShipToRole(fittingId, role);
+            });
+        });
+    }
+
+    addShipToRole(fittingId, role) {
+        const fitting = this.fittings.find(f => f.id === fittingId);
+        if (!fitting) return;
+
+        // Check if already in this role
+        if (this.currentFleetComposition[role].some(s => s.fittingId === fittingId)) {
+            this.showError('This fitting is already in this role');
+            return;
+        }
+
+        // Add to composition
+        const ship = {
+            fittingId: fittingId,
+            name: fitting.name,
+            shipName: fitting.ship_name,
+            shipTypeId: fitting.ship_type_id || 1,
+            quantity: 1,
+            role: role
+        };
+
+        this.currentFleetComposition[role].push(ship);
+        this.renderRoleShips(role);
+        this.updateFleetStats();
+    }
+
+    renderRoleShips(role) {
+        const container = document.getElementById(`role-ships-${role}`);
+        if (!container) return;
+
+        const ships = this.currentFleetComposition[role];
+        const html = ships.map((ship, index) => `
+            <div class="fleet-role-ship" data-role="${role}" data-index="${index}">
+                <img src="https://images.evetech.net/types/${ship.shipTypeId}/icon?size=64"
+                     alt="${ship.shipName}"
+                     onerror="this.src='https://images.evetech.net/types/1/icon?size=64'" />
+                <div class="fleet-role-ship-info">
+                    <div class="fleet-role-ship-name">${ship.name}</div>
+                    <div class="fleet-role-ship-ship">${ship.shipName}</div>
+                    <div class="fleet-role-ship-quantity">
+                        <label>Qty:</label>
+                        <input type="number" min="1" max="999" value="${ship.quantity}"
+                               onchange="app.updateShipQuantity('${role}', ${index}, this.value)">
+                    </div>
+                </div>
+                <button class="fleet-role-ship-remove" onclick="app.removeShipFromRole('${role}', ${index})">×</button>
+            </div>
+        `).join('');
+
+        container.innerHTML = html;
+    }
+
+    updateShipQuantity(role, index, quantity) {
+        const qty = parseInt(quantity);
+        if (qty < 1) return;
+
+        this.currentFleetComposition[role][index].quantity = qty;
+        this.updateFleetStats();
+    }
+
+    removeShipFromRole(role, index) {
+        this.currentFleetComposition[role].splice(index, 1);
+        this.renderRoleShips(role);
+        this.updateFleetStats();
+    }
+
+    clearRoleZones() {
+        Object.keys(this.currentFleetComposition).forEach(role => {
+            this.currentFleetComposition[role] = [];
+            this.renderRoleShips(role);
+        });
+    }
+
+    updateFleetStats() {
+        // Calculate total ships
+        let totalShips = 0;
+        Object.values(this.currentFleetComposition).forEach(roleShips => {
+            roleShips.forEach(ship => {
+                totalShips += ship.quantity;
+            });
+        });
+
+        // Update display
+        document.getElementById('fleet-total-ships').textContent = totalShips;
+
+        // TODO: Calculate DPS and EHP from fittings
+        document.getElementById('fleet-total-dps').textContent = '0';
+        document.getElementById('fleet-total-ehp').textContent = '0';
+    }
+
+    closeFleetBuilder() {
+        const modal = document.getElementById('fleet-builder-modal');
+        modal.style.display = 'none';
+        this.currentFleetComposition = null;
+        this.editingFleetId = null;
+    }
+
+    async saveFleetComposition() {
+        const fleetName = document.getElementById('fleet-builder-name').value.trim();
+        if (!fleetName) {
+            this.showError('Please enter a fleet name');
+            return;
+        }
+
+        // Check if there are any ships
+        const hasShips = Object.values(this.currentFleetComposition).some(roleShips => roleShips.length > 0);
+        if (!hasShips) {
+            this.showError('Please add at least one ship to the fleet');
+            return;
+        }
 
         try {
-            const response = await fetch('/api/fleet/fleets', {
+            this.showLoading('Saving fleet...');
+
+            // Create the fleet
+            const fleetResponse = await fetch('/api/fleet/fleets', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     name: fleetName,
-                    description: fleetDescription
+                    description: ''
                 })
             });
 
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.error || 'Failed to create fleet');
+            if (!fleetResponse.ok) {
+                throw new Error('Failed to create fleet');
             }
 
-            this.showSuccess('Fleet created successfully');
+            const fleetData = await fleetResponse.json();
+            const fleetId = fleetData.fleetId;
+
+            // Add ships to the fleet
+            for (const role of Object.keys(this.currentFleetComposition)) {
+                for (const ship of this.currentFleetComposition[role]) {
+                    await fetch(`/api/fleet/fleets/${fleetId}/ships`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            fittingId: ship.fittingId,
+                            quantity: ship.quantity,
+                            role: role,
+                            notes: ''
+                        })
+                    });
+                }
+            }
+
+            this.showSuccess('Fleet saved successfully');
+            this.closeFleetBuilder();
             await this.loadFleets();
         } catch (error) {
-            console.error('Error creating fleet:', error);
-            this.showError('Failed to create fleet: ' + error.message);
+            console.error('Error saving fleet:', error);
+            this.showError('Failed to save fleet: ' + error.message);
+        } finally {
+            this.hideLoading();
         }
     }
 
@@ -2471,9 +2690,233 @@ class EVEFightTaker {
             const data = await response.json();
             this.scenarios = data.scenarios;
             this.renderBattleScenarios();
+
+            // Also populate the available fleets for scenario builder
+            this.populateAvailableFleets();
         } catch (error) {
             console.error('Error loading battle scenarios:', error);
             this.showError('Failed to load battle scenarios: ' + error.message);
+        }
+    }
+
+    populateAvailableFleets() {
+        const container = document.getElementById('available-fleets-list');
+        if (!container) return;
+
+        const html = this.fleets.map(fleet => `
+            <div class="fleet-drag-card" draggable="true" data-fleet-id="${fleet.id}">
+                <div class="fleet-drag-card-name">${fleet.name}</div>
+                <div class="fleet-drag-card-stats">
+                    <span>${fleet.total_ships || 0} ships</span>
+                    <span>${fleet.ship_count || 0} types</span>
+                </div>
+            </div>
+        `).join('');
+
+        container.innerHTML = html || '<p style="color: #999; text-align: center; padding: 2rem;">No fleets available. Create fleets first!</p>';
+
+        // Initialize drag-and-drop for fleet cards
+        this.initializeScenarioDragDrop();
+    }
+
+    initializeScenarioDragDrop() {
+        // Add drag listeners to fleet cards
+        const fleetCards = document.querySelectorAll('.fleet-drag-card');
+        fleetCards.forEach(card => {
+            card.addEventListener('dragstart', (e) => {
+                card.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'copy';
+                e.dataTransfer.setData('fleetId', card.getAttribute('data-fleet-id'));
+            });
+
+            card.addEventListener('dragend', () => {
+                card.classList.remove('dragging');
+            });
+        });
+
+        // Add drop listeners to fleet drop areas
+        const dropAreas = document.querySelectorAll('.fleet-droparea');
+        dropAreas.forEach(dropArea => {
+            dropArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'copy';
+                dropArea.classList.add('drag-over');
+            });
+
+            dropArea.addEventListener('dragleave', () => {
+                dropArea.classList.remove('drag-over');
+            });
+
+            dropArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropArea.classList.remove('drag-over');
+
+                const fleetId = parseInt(e.dataTransfer.getData('fleetId'));
+                const side = dropArea.getAttribute('data-side');
+
+                this.addFleetToScenario(fleetId, side);
+            });
+        });
+    }
+
+    addFleetToScenario(fleetId, side) {
+        const fleet = this.fleets.find(f => f.id === fleetId);
+        if (!fleet) return;
+
+        // Store the fleet assignment
+        if (side === 'friendly') {
+            this.scenarioFriendlyFleet = fleet;
+        } else {
+            this.scenarioEnemyFleet = fleet;
+        }
+
+        // Render the fleet in the slot
+        const slot = document.getElementById(`${side}-fleet-slot`);
+        if (!slot) return;
+
+        slot.innerHTML = `
+            <div class="fleet-slot-card">
+                <div class="fleet-slot-card-header">
+                    <div class="fleet-slot-card-name">${fleet.name}</div>
+                    <button class="fleet-slot-card-remove" onclick="app.removeFleetFromScenario('${side}')">×</button>
+                </div>
+                <div class="fleet-slot-card-stats">
+                    <span>${fleet.total_ships || 0} ships</span>
+                    <span>${fleet.ship_count || 0} types</span>
+                </div>
+            </div>
+        `;
+
+        // Update button states
+        this.updateScenarioButtons();
+    }
+
+    removeFleetFromScenario(side) {
+        if (side === 'friendly') {
+            this.scenarioFriendlyFleet = null;
+        } else {
+            this.scenarioEnemyFleet = null;
+        }
+
+        const slot = document.getElementById(`${side}-fleet-slot`);
+        if (slot) {
+            slot.innerHTML = '';
+        }
+
+        this.updateScenarioButtons();
+    }
+
+    clearScenarioBuilder() {
+        this.scenarioFriendlyFleet = null;
+        this.scenarioEnemyFleet = null;
+
+        document.getElementById('friendly-fleet-slot').innerHTML = '';
+        document.getElementById('enemy-fleet-slot').innerHTML = '';
+        document.getElementById('scenario-name-input').value = '';
+        document.getElementById('scenario-notes-textarea').value = '';
+
+        this.updateScenarioButtons();
+    }
+
+    updateScenarioButtons() {
+        const saveBtn = document.getElementById('save-scenario-btn');
+        const analyzeBtn = document.getElementById('analyze-scenario-btn');
+
+        const bothFleetsSelected = this.scenarioFriendlyFleet && this.scenarioEnemyFleet;
+
+        if (saveBtn) saveBtn.disabled = !bothFleetsSelected;
+        if (analyzeBtn) analyzeBtn.disabled = !bothFleetsSelected;
+    }
+
+    async saveScenario() {
+        const scenarioName = document.getElementById('scenario-name-input').value.trim();
+        if (!scenarioName) {
+            this.showError('Please enter a scenario name');
+            return;
+        }
+
+        if (!this.scenarioFriendlyFleet || !this.scenarioEnemyFleet) {
+            this.showError('Please select both fleets');
+            return;
+        }
+
+        if (this.scenarioFriendlyFleet.id === this.scenarioEnemyFleet.id) {
+            this.showError('Please select different fleets');
+            return;
+        }
+
+        const notes = document.getElementById('scenario-notes-textarea').value.trim();
+
+        try {
+            this.showLoading('Saving scenario...');
+
+            const response = await fetch('/api/fleet/scenarios', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: scenarioName,
+                    friendlyFleetId: this.scenarioFriendlyFleet.id,
+                    enemyFleetId: this.scenarioEnemyFleet.id,
+                    scenarioNotes: notes
+                })
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Failed to create battle scenario');
+            }
+
+            this.showSuccess('Battle scenario saved successfully');
+            this.clearScenarioBuilder();
+            await this.loadBattleScenarios();
+        } catch (error) {
+            console.error('Error saving scenario:', error);
+            this.showError('Failed to save scenario: ' + error.message);
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    async analyzeScenarioNow() {
+        const scenarioName = document.getElementById('scenario-name-input').value.trim();
+
+        if (!this.scenarioFriendlyFleet || !this.scenarioEnemyFleet) {
+            this.showError('Please select both fleets');
+            return;
+        }
+
+        if (this.scenarioFriendlyFleet.id === this.scenarioEnemyFleet.id) {
+            this.showError('Please select different fleets');
+            return;
+        }
+
+        const notes = document.getElementById('scenario-notes-textarea').value.trim();
+
+        this.showLoading('Analyzing fleet battle...');
+
+        try {
+            const response = await fetch('/api/fleet/compare', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    friendlyFleetId: this.scenarioFriendlyFleet.id,
+                    enemyFleetId: this.scenarioEnemyFleet.id,
+                    notes: notes
+                })
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Failed to analyze fleets');
+            }
+
+            const data = await response.json();
+            this.showFleetAnalysisResults(data.analysis, false);
+        } catch (error) {
+            console.error('Error analyzing fleets:', error);
+            this.showError('Failed to analyze fleets: ' + error.message);
+        } finally {
+            this.hideLoading();
         }
     }
 
