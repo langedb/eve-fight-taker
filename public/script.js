@@ -227,11 +227,15 @@ class EVEFightTaker {
         }
 
         const loadSelectedStoredFittingBtn = container.querySelector('#load-selected-stored-fitting-btn');
+        console.log('Looking for load-selected-stored-fitting-btn, found:', !!loadSelectedStoredFittingBtn);
         if (loadSelectedStoredFittingBtn) {
+            console.log('Adding click listener to load-selected-stored-fitting-btn');
             loadSelectedStoredFittingBtn.addEventListener('click', () => {
-                console.log('Load selected stored fitting button clicked');
+                console.log('!!! Load selected stored fitting button CLICKED !!!');
                 this.loadSelectedStoredFitting();
             });
+        } else {
+            console.error('load-selected-stored-fitting-btn not found in container!');
         }
 
         // Fleet management
@@ -1946,18 +1950,28 @@ class EVEFightTaker {
     }
 
     async loadSelectedStoredFitting() {
+        console.log('===loadSelectedStoredFitting START===');
+        console.log('selectedStoredFittingIndex:', this.selectedStoredFittingIndex);
+        console.log('storedFittingsForFleet:', this.storedFittingsForFleet);
+
         if (this.selectedStoredFittingIndex === null || !this.storedFittingsForFleet) {
+            console.error('No fitting selected!');
             this.showError('No fitting selected');
             return;
         }
 
         const selectedFitting = this.storedFittingsForFleet[this.selectedStoredFittingIndex];
+        console.log('selectedFitting:', selectedFitting);
+
         if (!selectedFitting) {
+            console.error('Selected fitting not found!');
             this.showError('Failed to load selected fitting. Please try again.');
             return;
         }
 
+        console.log('About to show loading...');
         this.showLoading('Adding fitting to fleet...');
+        console.log('Loading shown, starting conversion...');
 
         try {
             // Convert ESI fitting to EFT format
