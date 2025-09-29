@@ -1802,6 +1802,20 @@ class EVEFightTaker {
             fleetManager.style.display = 'block';
         }
 
+        // Re-attach event listener to the load button (in case it's in a cloned area)
+        const loadButton = document.getElementById('load-selected-stored-fitting-btn');
+        if (loadButton) {
+            console.log('Re-attaching click handler to load button');
+            // Remove any existing listeners by cloning the button
+            const newButton = loadButton.cloneNode(true);
+            loadButton.parentNode.replaceChild(newButton, loadButton);
+            // Add new listener
+            newButton.addEventListener('click', () => {
+                console.log('!!! Load selected stored fitting button CLICKED (from displayStoredFittingsForFleet) !!!');
+                this.loadSelectedStoredFitting();
+            });
+        }
+
         // Show container
         console.log('About to show container');
         console.log('Container current display:', storedFittingsContainer.style.display);
