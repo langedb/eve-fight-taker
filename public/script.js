@@ -1999,30 +1999,40 @@ class EVEFightTaker {
 
         try {
             // Convert ESI fitting to EFT format
+            console.log('Calling /api/convert-esi-to-eft...');
             const convertResponse = await fetch('/api/convert-esi-to-eft', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ esiFitting: selectedFitting })
             });
+            console.log('Convert response received, ok:', convertResponse.ok);
 
             if (!convertResponse.ok) {
+                const errorText = await convertResponse.text();
+                console.error('Convert error:', errorText);
                 throw new Error('Failed to convert ESI fitting to EFT');
             }
 
             const fitData = await convertResponse.json();
+            console.log('Converted to EFT, length:', fitData.eftText?.length);
 
             // Parse and calculate stats on the server
+            console.log('Calling /api/parse-fitting...');
             const parseResponse = await fetch('/api/parse-fitting', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ eftText: fitData.eftText })
             });
+            console.log('Parse response received, ok:', parseResponse.ok);
 
             if (!parseResponse.ok) {
+                const errorText = await parseResponse.text();
+                console.error('Parse error:', errorText);
                 throw new Error('Failed to parse fitting');
             }
 
             const { fit, stats } = await parseResponse.json();
+            console.log('Parsed fit:', fit?.shipType, 'Stats DPS:', stats?.dps?.total);
 
             // Create a fitting object compatible with the fleet system
             const newFitting = {
