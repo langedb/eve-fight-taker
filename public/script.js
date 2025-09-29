@@ -1910,13 +1910,17 @@ class EVEFightTaker {
         console.log('Selected fitting:', fitting);
         if (!fitting) return;
 
-        // Update search input to show selected fitting
-        const searchInput = document.getElementById('stored-fittings-search');
-        const loadButton = document.getElementById('load-selected-stored-fitting-btn');
+        // Update search input to show selected fitting - check temp area first
+        let searchInput = document.querySelector('#temp-fleet-area #stored-fittings-search');
+        if (!searchInput) searchInput = document.getElementById('stored-fittings-search');
+
+        let loadButton = document.querySelector('#temp-fleet-area #load-selected-stored-fitting-btn');
+        if (!loadButton) loadButton = document.getElementById('load-selected-stored-fitting-btn');
 
         console.log('Search input found:', !!searchInput);
         console.log('Load button found:', !!loadButton);
         console.log('Load button element:', loadButton);
+        console.log('Load button in temp area:', !!document.querySelector('#temp-fleet-area #load-selected-stored-fitting-btn'));
 
         if (searchInput) {
             searchInput.value = `${fitting.name} (${fitting.ship_name})`;
@@ -1939,7 +1943,9 @@ class EVEFightTaker {
         }
 
         // Update visual selection in dropdown
-        const dropdown = document.getElementById('stored-fittings-dropdown-content');
+        let dropdown = document.querySelector('#temp-fleet-area #stored-fittings-dropdown-content');
+        if (!dropdown) dropdown = document.getElementById('stored-fittings-dropdown-content');
+
         if (dropdown) {
             // Remove previous selection
             dropdown.querySelectorAll('.dropdown-option.selected').forEach(opt => {
@@ -1955,8 +1961,12 @@ class EVEFightTaker {
         }
 
         // Close dropdown
-        const dropdownList = document.getElementById('stored-fittings-dropdown-list');
-        const dropdownArrow = document.getElementById('stored-dropdown-arrow');
+        let dropdownList = document.querySelector('#temp-fleet-area #stored-fittings-dropdown-list');
+        if (!dropdownList) dropdownList = document.getElementById('stored-fittings-dropdown-list');
+
+        let dropdownArrow = document.querySelector('#temp-fleet-area #stored-dropdown-arrow');
+        if (!dropdownArrow) dropdownArrow = document.getElementById('stored-dropdown-arrow');
+
         if (dropdownList) dropdownList.style.display = 'none';
         if (dropdownArrow) dropdownArrow.style.transform = 'rotate(0deg)';
 
