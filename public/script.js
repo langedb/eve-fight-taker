@@ -2511,7 +2511,7 @@ class EVEFightTaker {
                         <div class="analysis-section" style="margin-bottom: 20px;">
                             <h4 style="color: #00ff88; border-bottom: 1px solid #00ff88; padding-bottom: 5px;">✅ Your Advantages</h4>
                             <ul class="analysis-list" style="list-style: none; padding-left: 0;">
-                                ${advantages.map(adv => `<li style="padding: 8px 0; border-left: 3px solid #00ff88; padding-left: 15px; margin: 5px 0;">${this.markdownToHtml(adv)}</li>`).join('')}
+                                ${advantages.map(adv => `<li style="padding: 8px 0; border-left: 3px solid #00ff88; padding-left: 15px; margin: 5px 0;">• ${adv}</li>`).join('')}
                             </ul>
                         </div>
                         ` : ''}
@@ -2520,7 +2520,7 @@ class EVEFightTaker {
                         <div class="analysis-section" style="margin-bottom: 20px;">
                             <h4 style="color: #ff6b6b; border-bottom: 1px solid #ff6b6b; padding-bottom: 5px;">⚠️ Your Disadvantages</h4>
                             <ul class="analysis-list" style="list-style: none; padding-left: 0;">
-                                ${disadvantages.map(dis => `<li style="padding: 8px 0; border-left: 3px solid #ff6b6b; padding-left: 15px; margin: 5px 0;">${this.markdownToHtml(dis)}</li>`).join('')}
+                                ${disadvantages.map(dis => `<li style="padding: 8px 0; border-left: 3px solid #ff6b6b; padding-left: 15px; margin: 5px 0;">• ${dis}</li>`).join('')}
                             </ul>
                         </div>
                         ` : ''}
@@ -2529,14 +2529,14 @@ class EVEFightTaker {
                         <div class="analysis-section" style="margin-bottom: 20px;">
                             <h4 style="color: #ffd700; border-bottom: 1px solid #ffd700; padding-bottom: 5px;">🎯 Tactical Recommendations</h4>
                             <ul class="analysis-list" style="list-style: none; padding-left: 0;">
-                                ${tactics.map(tac => `<li style="padding: 8px 0; border-left: 3px solid #ffd700; padding-left: 15px; margin: 5px 0;">${this.markdownToHtml(tac)}</li>`).join('')}
+                                ${tactics.map(tac => `<li style="padding: 8px 0; border-left: 3px solid #ffd700; padding-left: 15px; margin: 5px 0;">• ${tac}</li>`).join('')}
                             </ul>
                         </div>
                         ` : ''}
 
                         <div class="analysis-section" style="margin-bottom: 20px;">
                             <h4 style="color: #00d4ff; border-bottom: 1px solid #00d4ff; padding-bottom: 5px;">📋 Summary</h4>
-                            <p style="padding: 15px; background: #2a4a6b; border-radius: 8px; line-height: 1.6;">${this.markdownToHtml(summary)}</p>
+                            <p style="padding: 15px; background: #2a4a6b; border-radius: 8px; line-height: 1.6;">${summary}</p>
                         </div>
 
                         <div style="text-align: center; margin-top: 30px;">
