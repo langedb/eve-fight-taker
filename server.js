@@ -191,6 +191,21 @@ app.post('/api/convert-esi-to-eft', async (req, res) => {
   }
 });
 
+app.post('/api/parse-fitting', async (req, res) => {
+  try {
+    const { eftText } = req.body;
+    if (!eftText) {
+      return res.status(400).json({ error: 'EFT text required' });
+    }
+    const fit = await fitCalculator.parseEFT(eftText);
+    const stats = await fitCalculator.calculateFitStats(fit);
+    res.json({ fit, stats });
+  } catch (error) {
+    log.error('Error parsing fitting:', error);
+    res.status(500).json({ error: 'Failed to parse fitting' });
+  }
+});
+
 app.post('/api/analyze-combat', async (req, res) => {
   try {
     const { currentFit, targetFit } = req.body;

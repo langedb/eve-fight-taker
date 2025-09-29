@@ -1946,10 +1946,6 @@ class EVEFightTaker {
     }
 
     async loadSelectedStoredFitting() {
-        console.log('=== loadSelectedStoredFitting called ===');
-        console.log('selectedStoredFittingIndex:', this.selectedStoredFittingIndex);
-        console.log('storedFittingsForFleet length:', this.storedFittingsForFleet?.length);
-
         if (this.selectedStoredFittingIndex === null || !this.storedFittingsForFleet) {
             this.showError('No fitting selected');
             return;
@@ -1961,42 +1957,59 @@ class EVEFightTaker {
             return;
         }
 
-        console.log('Selected fitting:', selectedFitting);
-        this.showLoading('Loading fitting...');
+        this.showLoading('Adding fitting to fleet...');
 
         try {
-            console.log('Converting ESI fitting to EFT...');
             // Convert ESI fitting to EFT format
-            const response = await fetch('/api/convert-esi-to-eft', {
+            const convertResponse = await fetch('/api/convert-esi-to-eft', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ esiFitting: selectedFitting })
             });
 
-            console.log('Convert response status:', response.status);
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.error('Convert response error:', errorText);
+            if (!convertResponse.ok) {
                 throw new Error('Failed to convert ESI fitting to EFT');
             }
 
-            const fitData = await response.json();
-            console.log('Converted EFT text length:', fitData.eftText?.length);
-            console.log('EFT text preview:', fitData.eftText?.substring(0, 100));
+            const fitData = await convertResponse.json();
 
-            // Populate the EFT textarea
-            const eftField = document.getElementById('fitting-eft');
-            console.log('EFT field found:', !!eftField);
+            // Parse and calculate stats on the server
+            const parseResponse = await fetch('/api/parse-fitting', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ eftText: fitData.eftText })
+            });
 
-            if (eftField) {
-                eftField.value = fitData.eftText || '';
-                console.log('EFT field value set, length:', eftField.value.length);
-
-                // Parse and display the fitting
-                await this.parseFittingInput();
-            } else {
-                console.error('Could not find fitting-eft element');
+            if (!parseResponse.ok) {
+                throw new Error('Failed to parse fitting');
             }
+
+            const { fit, stats } = await parseResponse.json();
+
+            // Create a fitting object compatible with the fleet system
+            const newFitting = {
+                id: selectedFitting.fitting_id || Date.now(), // Use ESI fitting_id or generate one
+                name: selectedFitting.name,
+                ship_name: selectedFitting.ship_name || fit.shipType,
+                eft_format: fitData.eftText,
+                fit: fit,
+                stats: stats
+            };
+
+            // Add to fittings array if not already there
+            const existingIndex = this.fittings.findIndex(f => f.id === newFitting.id);
+            if (existingIndex === -1) {
+                this.fittings.push(newFitting);
+            }
+
+            // Add to current fleet
+            this.addFittingToFleet(newFitting.id);
+
+            this.showSuccess(`Added ${newFitting.name} to fleet`);
+
+            // Close the stored fittings dropdown
+            const dropdown = document.getElementById('stored-fittings-dropdown-list');
+            if (dropdown) dropdown.style.display = 'none';
 
         } catch (error) {
             console.error('Error loading selected fitting:', error);
