@@ -586,11 +586,27 @@ body {
     .analysis-details {
         grid-template-columns: 1fr;
     }
-    
+
     .recommendations-section {
         grid-template-columns: 1fr;
     }
-    
+
+    /* Stack analysis table cells vertically on mobile */
+    .analysis-table tr {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .analysis-cell {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid rgb(255 255 255 / 10%);
+    }
+
+    .analysis-cell:last-child {
+        border-bottom: none;
+    }
+
     .tactics-grid {
         grid-template-columns: 1fr;
     }
@@ -1355,6 +1371,90 @@ body {
 
 .analysis-list li.threat {
     border-left-color: #ff6b35;
+}
+
+/* Analysis Details Table */
+.analysis-details-table {
+    margin: 2rem 0;
+}
+
+.analysis-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid rgb(255 255 255 / 10%);
+    border-radius: 8px;
+    overflow: hidden;
+    background: rgb(255 255 255 / 3%);
+}
+
+.analysis-cell {
+    padding: 1.5rem;
+    vertical-align: top;
+    border-right: 1px solid rgb(255 255 255 / 10%);
+    width: 25%;
+}
+
+.analysis-cell:last-child {
+    border-right: none;
+}
+
+.analysis-cell h4 {
+    color: #00d4ff;
+    margin: 0 0 1rem;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-bottom: 1px solid rgb(255 255 255 / 10%);
+    padding-bottom: 0.5rem;
+}
+
+.advantages-cell h4 {
+    color: #28a745;
+}
+
+.disadvantages-cell h4 {
+    color: #dc3545;
+}
+
+.ammo-cell h4 {
+    color: #ffc107;
+}
+
+.modules-cell h4 {
+    color: #00d4ff;
+}
+
+.analysis-cell ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.analysis-cell ul li {
+    background: rgb(0 0 0 / 20%);
+    margin-bottom: 0.5rem;
+    padding: 0.75rem;
+    border-radius: 5px;
+    border-left: 3px solid #00d4ff;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.advantages-cell ul li {
+    border-left-color: #28a745;
+}
+
+.disadvantages-cell ul li {
+    border-left-color: #dc3545;
+}
+
+.ammo-cell ul li {
+    border-left-color: #ffc107;
+}
+
+.modules-cell ul li {
+    border-left-color: #00d4ff;
 }
 
 /* Enhanced Fitting Card Styles */
