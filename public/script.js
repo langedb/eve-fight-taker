@@ -1248,7 +1248,7 @@ class EVEFightTaker {
         if (data.error) {
           throw new Error(data.error);
         }
-        const { parsedFit } = data;
+        const { parsedFit, stats } = data;
 
         let html = '<div style="display: grid; grid-template-columns: auto 1fr; gap: 1.5rem; align-items: start;">';
 
@@ -1256,68 +1256,48 @@ class EVEFightTaker {
         html += `<div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: center;">
           <img src="https://images.evetech.net/types/${parsedFit.shipTypeId}/render?size=128"
                style="width: 128px; height: 128px; border-radius: 8px; background: rgba(0,0,0,0.3);" />
-          <div style="color: #00d4ff; font-weight: bold; text-align: center;">${parsedFit.shipType}</div>
+          <div style="color: #00d4ff; font-weight: bold; text-align: center; font-size: 14px;">${parsedFit.shipType}</div>
         </div>`;
 
-        // Modules on the right
-        html += '<div style="display: flex; flex-direction: column; gap: 1rem;">';
+        // Stats on the right
+        html += '<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem;">';
 
-        // High slots
-        if (parsedFit.modules.high && parsedFit.modules.high.length > 0) {
-          html += '<div class="slot-group">';
-          html += '<div class="slot-group-label" style="color: #ff6b6b; margin-bottom: 0.5rem;"><i class="fas fa-circle"></i> High Slots</div>';
-          html += '<div class="slots-row">';
-          html += parsedFit.modules.high.map(module => this.generateSlotHTML(module)).join('');
-          html += '</div></div>';
+        // Combat stats
+        html += this.generateStatBox('DPS', Math.round(stats.dps?.total || 0).toLocaleString(), '#ff6b6b', 'fa-crosshairs');
+        html += this.generateStatBox('Volley', Math.round(stats.dps?.volley || 0).toLocaleString(), '#ff8787', 'fa-bomb');
+        html += this.generateStatBox('EHP', Math.round(stats.ehp?.total || 0).toLocaleString(), '#4ecdc4', 'fa-shield-alt');
+        html += this.generateStatBox('Armor', Math.round(stats.ehp?.armor || 0).toLocaleString(), '#ffd700', 'fa-shield-halved');
+
+        // Tank stats
+        if (stats.tank) {
+          html += this.generateStatBox('Shield/s', Math.round(stats.tank.shieldRegen || 0).toLocaleString(), '#5dade2', 'fa-heart-pulse');
+          html += this.generateStatBox('Armor/s', Math.round(stats.tank.armorRepair || 0).toLocaleString(), '#f8b739', 'fa-wrench');
         }
 
-        // Med slots
-        if (parsedFit.modules.med && parsedFit.modules.med.length > 0) {
-          html += '<div class="slot-group">';
-          html += '<div class="slot-group-label" style="color: #ffd700; margin-bottom: 0.5rem;"><i class="fas fa-circle"></i> Med Slots</div>';
-          html += '<div class="slots-row">';
-          html += parsedFit.modules.med.map(module => this.generateSlotHTML(module)).join('');
-          html += '</div></div>';
+        // Movement stats
+        html += this.generateStatBox('Speed', Math.round(stats.speed || 0).toLocaleString() + ' m/s', '#95e1d3', 'fa-rocket');
+        html += this.generateStatBox('Signature', Math.round(stats.signature || 0).toLocaleString() + ' m', '#a78bfa', 'fa-bullseye');
+
+        // Capacitor stats
+        if (stats.capacitor) {
+          const capStable = stats.capacitor.stable ? 'Stable' : Math.round(stats.capacitor.timeToEmpty / 1000) + 's';
+          html += this.generateStatBox('Capacitor', capStable, '#00d4ff', 'fa-battery-three-quarters');
         }
 
-        // Low slots
-        if (parsedFit.modules.low && parsedFit.modules.low.length > 0) {
-          html += '<div class="slot-group">';
-          html += '<div class="slot-group-label" style="color: #4ecdc4; margin-bottom: 0.5rem;"><i class="fas fa-circle"></i> Low Slots</div>';
-          html += '<div class="slots-row">';
-          html += parsedFit.modules.low.map(module => this.generateSlotHTML(module)).join('');
-          html += '</div></div>';
+        // Range stats
+        if (stats.range) {
+          const optimalRange = Math.round(stats.range.optimal / 1000);
+          html += this.generateStatBox('Range', optimalRange > 0 ? optimalRange + ' km' : 'N/A', '#f9ca24', 'fa-arrows-alt-h');
         }
 
-        // Rig slots
-        if (parsedFit.modules.rig && parsedFit.modules.rig.length > 0) {
-          html += '<div class="slot-group">';
-          html += '<div class="slot-group-label" style="color: #95e1d3; margin-bottom: 0.5rem;"><i class="fas fa-cog"></i> Rigs</div>';
-          html += '<div class="slots-row">';
-          html += parsedFit.modules.rig.map(module => this.generateSlotHTML(module)).join('');
-          html += '</div></div>';
+        // Drone stats
+        if (stats.drones && stats.drones.dps > 0) {
+          html += this.generateStatBox('Drone DPS', Math.round(stats.drones.dps).toLocaleString(), '#f39c12', 'fa-drone');
+          html += this.generateStatBox('Bandwidth', stats.drones.bandwidth + ' Mbit/s', '#e67e22', 'fa-signal');
         }
 
-        // Subsystems
-        if (parsedFit.modules.subsystem && parsedFit.modules.subsystem.length > 0) {
-          html += '<div class="slot-group">';
-          html += '<div class="slot-group-label" style="color: #a78bfa; margin-bottom: 0.5rem;"><i class="fas fa-cube"></i> Subsystems</div>';
-          html += '<div class="slots-row">';
-          html += parsedFit.modules.subsystem.map(module => this.generateSlotHTML(module)).join('');
-          html += '</div></div>';
-        }
-
-        // Drones
-        if (parsedFit.drones && parsedFit.drones.length > 0) {
-          html += '<div class="slot-group">';
-          html += '<div class="slot-group-label" style="color: #f9ca24; margin-bottom: 0.5rem;"><i class="fas fa-drone"></i> Drones</div>';
-          html += '<div class="slots-row">';
-          html += parsedFit.drones.map(drone => this.generateDroneHTML(drone)).join('');
-          html += '</div></div>';
-        }
-
-        html += '</div>'; // end modules column
-        html += '</div>'; // end grid
+        html += '</div>'; // end stats grid
+        html += '</div>'; // end main grid
 
         detailsContainer.innerHTML = html;
       })
@@ -1325,6 +1305,18 @@ class EVEFightTaker {
         console.error('Error rendering fitting details:', error);
         detailsContainer.innerHTML = '<p style="color: #ff6b6b; padding: 1rem;">Failed to load fitting details.</p>';
       });
+  }
+
+  generateStatBox(label, value, color, icon) {
+    return `
+      <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-left: 3px solid ${color}; border-radius: 6px; padding: 0.75rem; display: flex; flex-direction: column; gap: 0.25rem;">
+        <div style="color: rgba(255,255,255,0.6); font-size: 11px; text-transform: uppercase; display: flex; align-items: center; gap: 0.5rem;">
+          <i class="fas ${icon}" style="color: ${color}; width: 14px;"></i>
+          ${label}
+        </div>
+        <div style="color: white; font-size: 18px; font-weight: bold;">${value}</div>
+      </div>
+    `;
   }
 
   generateSlotHTML(module) {

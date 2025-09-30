@@ -171,7 +171,10 @@ router.post('/fittings/parse', requireAuth, async (req, res) => {
       }
     }
 
-    res.json({ parsedFit });
+    // Calculate stats
+    const stats = await fitCalculator.calculateFitStats(parsedFit);
+
+    res.json({ parsedFit, stats });
   } catch (error) {
     log.error('Parse EFT error:', error);
     res.status(500).json({ error: error.message });
