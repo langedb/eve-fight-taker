@@ -1307,6 +1307,8 @@ class EVEFightTaker {
     // ========== FLEET MANAGEMENT METHODS ==========
 
     switchTab(tabName) {
+        console.log('switchTab called with:', tabName);
+
         // Hide all tab contents
         document.querySelectorAll('.tab-content').forEach(content => {
             content.classList.remove('active');
@@ -1318,8 +1320,17 @@ class EVEFightTaker {
         });
 
         // Show selected tab content
-        document.getElementById(`${tabName}-tab`).classList.add('active');
-        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+        const tabElement = document.getElementById(`${tabName}-tab`);
+        console.log('Tab element:', tabElement);
+        if (tabElement) {
+            tabElement.classList.add('active');
+            console.log('Tab element computed display:', window.getComputedStyle(tabElement).display);
+        }
+
+        const navTab = document.querySelector(`[data-tab="${tabName}"]`);
+        if (navTab) {
+            navTab.classList.add('active');
+        }
 
         this.currentTab = tabName;
 
@@ -1336,48 +1347,16 @@ class EVEFightTaker {
         const authRequired = document.getElementById('fleet-auth-required');
         const fleetContent = document.getElementById('fleet-manager-content');
 
+        console.log('updateFleetTabAuth - isAuthenticated:', this.isAuthenticated);
+        console.log('updateFleetTabAuth - authRequired:', authRequired);
+        console.log('updateFleetTabAuth - fleetContent:', fleetContent);
+
         if (this.isAuthenticated) {
-            if (authRequired) authRequired.style.display = 'none';
+            if (authRequired) {
+                authRequired.style.display = 'none';
+            }
             if (fleetContent) {
-                // TEMPORARY WORKAROUND: Move fleet content to a working area
-                console.log('WORKAROUND: Moving fleet content to main content area');
-
-                // Find the main container that we know works
-                const mainContainer = document.querySelector('.main .container');
-                if (mainContainer) {
-                    // Create a temporary fleet display area
-                    let tempFleetArea = document.getElementById('temp-fleet-area');
-                    if (!tempFleetArea) {
-                        tempFleetArea = document.createElement('div');
-                        tempFleetArea.id = 'temp-fleet-area';
-                        tempFleetArea.style.cssText = `
-                            background: rgba(0, 20, 40, 0.95);
-                            border: 2px solid #00d4ff;
-                            border-radius: 10px;
-                            padding: 20px;
-                            margin: 20px 0;
-                            min-height: 400px;
-                        `;
-
-                        // Clone the fleet content and put it in the working area
-                        const fleetContentClone = fleetContent.cloneNode(true);
-                        fleetContentClone.style.cssText = 'display: block !important; visibility: visible !important;';
-
-                        tempFleetArea.innerHTML = `
-                            <h2 style="color: #00d4ff; margin-bottom: 20px;">🚀 Fleet Manager (Temporary Display)</h2>
-                        `;
-                        tempFleetArea.appendChild(fleetContentClone);
-
-                        mainContainer.appendChild(tempFleetArea);
-
-                        // Re-attach event listeners to the cloned elements
-                        this.attachFleetEventListeners(tempFleetArea);
-
-                    }
-                }
-
-                // Hide the original broken content
-                fleetContent.style.display = 'none';
+                fleetContent.style.display = 'block';
             }
         } else {
             if (authRequired) authRequired.style.display = 'block';
@@ -1388,38 +1367,47 @@ class EVEFightTaker {
     switchFleetSection(sectionName) {
         console.log('=== switchFleetSection called ===', sectionName);
 
-        // Work on both original and temp area elements
-        const containers = [document, document.getElementById('temp-fleet-area')].filter(c => c);
+        // Work on the original fleet-manager-content
+        const fleetContent = document.getElementById('fleet-manager-content');
+        if (!fleetContent) {
+            console.error('fleet-manager-content not found!');
+            return;
+        }
 
-        containers.forEach(container => {
-            // Hide all fleet sections
-            container.querySelectorAll('.fleet-section').forEach(section => {
-                section.classList.remove('active');
-                section.style.display = 'none';
-            });
-
-            // Remove active class from all fleet tab buttons
-            container.querySelectorAll('.fleet-tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-
-            // Show selected section
-            const targetSection = container.querySelector(`#${sectionName}-section`);
-            const targetBtn = container.querySelector(`[data-section="${sectionName}"]`);
-
-            console.log(`Container: ${container.id || 'document'}, targetSection:`, targetSection, 'targetBtn:', targetBtn);
-
-            if (targetSection) {
-                targetSection.classList.add('active');
-                targetSection.style.display = 'block';
-                console.log(`Set ${sectionName}-section display to block`);
-            } else {
-                console.error(`Could not find #${sectionName}-section in container`);
-            }
-            if (targetBtn) {
-                targetBtn.classList.add('active');
-            }
+        // Hide all fleet sections
+        fleetContent.querySelectorAll('.fleet-section').forEach(section => {
+            section.classList.remove('active');
+            section.style.display = 'none';
+            console.log('Hiding section:', section.id);
         });
+
+        // Remove active class from all fleet tab buttons
+        fleetContent.querySelectorAll('.fleet-tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        // Show selected section
+        const targetSection = fleetContent.querySelector(`#${sectionName}-section`);
+        const targetBtn = fleetContent.querySelector(`[data-section="${sectionName}"]`);
+
+        console.log(`targetSection:`, targetSection, 'targetBtn:', targetBtn);
+
+        if (targetSection) {
+            targetSection.classList.add('active');
+            targetSection.style.display = 'block';
+            targetSection.style.visibility = 'visible';
+            targetSection.style.opacity = '1';
+            targetSection.style.zIndex = '1';
+            console.log(`Set ${sectionName}-section display to block`);
+            console.log(`Target section computed style:`, window.getComputedStyle(targetSection).display,
+                window.getComputedStyle(targetSection).visibility,
+                window.getComputedStyle(targetSection).height);
+        } else {
+            console.error(`Could not find #${sectionName}-section`);
+        }
+        if (targetBtn) {
+            targetBtn.classList.add('active');
+        }
 
         this.currentFleetSection = sectionName;
 

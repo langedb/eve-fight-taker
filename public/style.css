@@ -955,6 +955,7 @@ body {
     display: block;
 }
 
+
 /* Fleet Manager Styles */
 .fleet-manager {
     margin-top: 2rem;
@@ -1028,7 +1029,9 @@ body {
 
 .fleet-section.active {
     display: block;
+    min-height: 200px;
 }
+
 
 .section-header {
     display: flex;
