@@ -2682,6 +2682,38 @@ class EVEFightTaker {
         console.log('Rendered', this.fleets.length, 'fleets');
     }
 
+    async viewFleet(fleetId) {
+        // TODO: Implement fleet view modal
+        this.showError('Fleet view not yet implemented');
+    }
+
+    async editFleet(fleetId) {
+        // TODO: Load fleet composition and open fleet builder in edit mode
+        this.showError('Fleet editing not yet implemented');
+    }
+
+    async deleteFleet(fleetId) {
+        if (!confirm('Are you sure you want to delete this fleet?')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/fleet/fleets/${fleetId}`, {
+                method: 'DELETE'
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to delete fleet');
+            }
+
+            this.showSuccess('Fleet deleted successfully');
+            await this.loadFleetData();
+        } catch (error) {
+            console.error('Error deleting fleet:', error);
+            this.showError('Failed to delete fleet: ' + error.message);
+        }
+    }
+
     // ========== BATTLE SCENARIOS ==========
 
     async loadBattleScenarios() {
