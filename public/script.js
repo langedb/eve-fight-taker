@@ -589,7 +589,7 @@ class EVEFightTaker {
         advantagesList.innerHTML = '';
         (analysis.majorAdvantages || []).forEach(advantage => {
             const li = document.createElement('li');
-            li.textContent = advantage;
+            li.innerHTML = this.markdownToHtml(advantage);
             advantagesList.appendChild(li);
         });
 
@@ -598,7 +598,7 @@ class EVEFightTaker {
         disadvantagesList.innerHTML = '';
         (analysis.majorDisadvantages || []).forEach(disadvantage => {
             const li = document.createElement('li');
-            li.textContent = disadvantage;
+            li.innerHTML = this.markdownToHtml(disadvantage);
             disadvantagesList.appendChild(li);
         });
 
@@ -712,24 +712,7 @@ class EVEFightTaker {
 
     markdownToHtml(text) {
         if (!text) return '';
-
-        // Convert common Markdown patterns to HTML
-        return text
-            // Bold text: **text** or __text__
-            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-            .replace(/__(.*?)__/g, '<strong>$1</strong>')
-            // Italic text: *text* or _text_ (but avoid conflicts with list items)
-            .replace(/\*([^*\n]+)\*/g, '<em>$1</em>')
-            .replace(/_([^_\n]+)_/g, '<em>$1</em>')
-            // Code: `code`
-            .replace(/`(.*?)`/g, '<code>$1</code>')
-            // Bullet points: • or - at start of line
-            .replace(/^[•\-]\s+(.+)$/gm, '• $1')
-            .replace(/\n[•\-]\s+(.+)/g, '<br>• $1')
-            // Line breaks
-            .replace(/\n/g, '<br>')
-            // Links: [text](url)
-            .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+        return marked.parse(text);
     }
 
     showLoading(message = 'Analyzing combat scenario...') {
