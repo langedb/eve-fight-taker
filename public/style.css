@@ -2504,7 +2504,7 @@ body {
     padding: 1rem;
     display: flex;
     flex-direction: column;
-    overflow: visible;
+    height: 100%;
 }
 
 .fleet-composition-panel h4 {
@@ -2513,6 +2513,7 @@ body {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    flex-shrink: 0;
 }
 
 /* Role Zones */
@@ -2522,13 +2523,15 @@ body {
     gap: 0.75rem;
     overflow-y: auto;
     padding: 0.5rem;
+    flex: 1;
+    max-height: calc(100vh - 350px);
 }
 
 .role-zone {
     background: rgba(255, 255, 255, 0.02);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .role-zone-header {
@@ -2546,6 +2549,7 @@ body {
     min-height: 80px;
     padding: 0.75rem;
     position: relative;
+    overflow: visible;
 }
 
 .role-zone-droparea.drag-over {

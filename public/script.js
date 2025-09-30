@@ -2499,22 +2499,15 @@ class EVEFightTaker {
         };
 
         this.currentFleetComposition[role].push(ship);
-        console.log(`Added ship to ${role}:`, ship);
-        console.log(`Current ${role} composition:`, this.currentFleetComposition[role]);
         this.renderRoleShips(role);
         this.updateFleetStats();
     }
 
     renderRoleShips(role) {
         const container = document.getElementById(`role-ships-${role}`);
-        console.log(`Rendering ships for role ${role}, container:`, container);
-        if (!container) {
-            console.error(`Container not found for role: ${role}`);
-            return;
-        }
+        if (!container) return;
 
         const ships = this.currentFleetComposition[role];
-        console.log(`Ships to render for ${role}:`, ships);
         const html = ships.map((ship, index) => `
             <div class="fleet-role-ship" data-role="${role}" data-index="${index}">
                 <img src="https://images.evetech.net/types/${ship.shipTypeId}/icon?size=64"
@@ -2533,9 +2526,7 @@ class EVEFightTaker {
             </div>
         `).join('');
 
-        console.log(`Generated HTML for ${role}:`, html);
         container.innerHTML = html;
-        console.log(`Container after render:`, container);
     }
 
     updateShipQuantity(role, index, quantity) {
