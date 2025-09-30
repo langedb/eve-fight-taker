@@ -5,6 +5,7 @@ A comprehensive EVE Online fleet management and ship combat analysis tool that u
 ## Features
 
 - **Fleet Management System**: Create, manage, and analyze fleet compositions with role assignments and battle scenarios
+- **Dynamic Fleet Statistics**: Real-time DPS and EHP calculation as ships are added, removed, or modified
 - **Enhanced Fitting Cards**: Professional zKillboard-style UI with module icons, ship stats, and detailed visualization
 - **Dual Ship Analysis**: Compare your ship against target ships with detailed combat predictions
 - **Enhanced EFT Parsing**: Full EVE Fitting Tool format support with intelligent subsystem validation and smart cargo handling

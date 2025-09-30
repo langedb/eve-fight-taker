@@ -166,13 +166,15 @@ LOG_LEVEL=<error|warn|info|debug>
 **Subsystems**: Launcher Efficiency Configuration, Covert Reconfiguration bonuses
 **Testing**: Unit tests, integration tests, stacking penalty verification
 
-## Fleet Management System (v2.4.0)
+## Fleet Management System (v2.5.0)
 
 **Enhanced Fitting Cards**: zKillboard-style professional UI with module icons, stats display, and ship renders
 **Fleet Operations**: Create, manage, and analyze fleet compositions with role assignments
+**Dynamic Fleet Stats**: Real-time DPS and EHP calculation as ships are added/removed/modified
 **Battle Scenarios**: Save and compare fleet vs fleet matchups with cached analysis
 **Authentication**: EVE SSO integration for secure character-based fleet management
 **Database**: SQLite-based storage for fittings, fleets, and scenario data with automatic cleanup
+**Stats Caching**: Client-side fitting stats cache for efficient aggregation
 
 ## EFT Parsing Engine
 
@@ -191,7 +193,16 @@ LOG_LEVEL=<error|warn|info|debug>
 **Real-time Updates**: Async loading with loading spinners and error states
 **Image Fallbacks**: Placeholder system for failed module icon loads
 
-## Recent v2.4.0 Enhancements
+## Recent v2.5.0 Enhancements
+
+- **Dynamic Fleet Stats**: Real-time DPS and EHP calculation in fleet builder with async updates
+- **Fleet Edit Feature**: Complete fleet editing with view and edit modals
+- **Stats Caching**: Client-side fitting stats cache preventing redundant API calls
+- **New API Endpoint**: GET /api/fleet/fittings/:id/stats for efficient stats retrieval
+- **Enhanced UX**: Formatted number display with thousands separators
+- **Comprehensive Testing**: 42 fleet tests (14 edit + 28 view) with 100% pass rate
+
+## v2.4.0 Enhancements
 
 - **EFT Parsing Fix**: Resolved critical slot misalignment bug affecting Cormorant and other ships
 - **Enhanced Fitting Cards**: Complete redesign with professional zKillboard-style appearance
