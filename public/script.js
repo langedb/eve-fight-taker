@@ -1250,42 +1250,100 @@ class EVEFightTaker {
         }
         const { parsedFit } = data;
 
-        let html = '<div class="fitting-layout">';
-        html += `<div class="ship-icon"><img src="https://images.evetech.net/types/${parsedFit.shipTypeId}/render?size=64" width="64" height="64" /></div>`;
+        let html = '<div style="display: grid; grid-template-columns: auto 1fr; gap: 1.5rem; align-items: start;">';
 
-        html += '<div class="slots high-slots">';
-        html += parsedFit.modules.high.map(module => this.generateSlotHTML(module)).join('');
-        html += '</div>';
+        // Ship render on the left
+        html += `<div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: center;">
+          <img src="https://images.evetech.net/types/${parsedFit.shipTypeId}/render?size=128"
+               style="width: 128px; height: 128px; border-radius: 8px; background: rgba(0,0,0,0.3);" />
+          <div style="color: #00d4ff; font-weight: bold; text-align: center;">${parsedFit.shipType}</div>
+        </div>`;
 
-        html += '<div class="slots med-slots">';
-        html += parsedFit.modules.med.map(module => this.generateSlotHTML(module)).join('');
-        html += '</div>';
+        // Modules on the right
+        html += '<div style="display: flex; flex-direction: column; gap: 1rem;">';
 
-        html += '<div class="slots low-slots">';
-        html += parsedFit.modules.low.map(module => this.generateSlotHTML(module)).join('');
-        html += '</div>';
+        // High slots
+        if (parsedFit.modules.high && parsedFit.modules.high.length > 0) {
+          html += '<div class="slot-group">';
+          html += '<div class="slot-group-label" style="color: #ff6b6b; margin-bottom: 0.5rem;"><i class="fas fa-circle"></i> High Slots</div>';
+          html += '<div class="slots-row">';
+          html += parsedFit.modules.high.map(module => this.generateSlotHTML(module)).join('');
+          html += '</div></div>';
+        }
 
-        html += '<div class="slots rig-slots">';
-        html += parsedFit.modules.rig.map(module => this.generateSlotHTML(module)).join('');
-        html += '</div>';
+        // Med slots
+        if (parsedFit.modules.med && parsedFit.modules.med.length > 0) {
+          html += '<div class="slot-group">';
+          html += '<div class="slot-group-label" style="color: #ffd700; margin-bottom: 0.5rem;"><i class="fas fa-circle"></i> Med Slots</div>';
+          html += '<div class="slots-row">';
+          html += parsedFit.modules.med.map(module => this.generateSlotHTML(module)).join('');
+          html += '</div></div>';
+        }
 
-        html += '<div class="slots subsystem-slots">';
-        html += parsedFit.modules.subsystem.map(module => this.generateSlotHTML(module)).join('');
-        html += '</div>';
+        // Low slots
+        if (parsedFit.modules.low && parsedFit.modules.low.length > 0) {
+          html += '<div class="slot-group">';
+          html += '<div class="slot-group-label" style="color: #4ecdc4; margin-bottom: 0.5rem;"><i class="fas fa-circle"></i> Low Slots</div>';
+          html += '<div class="slots-row">';
+          html += parsedFit.modules.low.map(module => this.generateSlotHTML(module)).join('');
+          html += '</div></div>';
+        }
 
-        html += '</div>'; // end fitting-layout
+        // Rig slots
+        if (parsedFit.modules.rig && parsedFit.modules.rig.length > 0) {
+          html += '<div class="slot-group">';
+          html += '<div class="slot-group-label" style="color: #95e1d3; margin-bottom: 0.5rem;"><i class="fas fa-cog"></i> Rigs</div>';
+          html += '<div class="slots-row">';
+          html += parsedFit.modules.rig.map(module => this.generateSlotHTML(module)).join('');
+          html += '</div></div>';
+        }
+
+        // Subsystems
+        if (parsedFit.modules.subsystem && parsedFit.modules.subsystem.length > 0) {
+          html += '<div class="slot-group">';
+          html += '<div class="slot-group-label" style="color: #a78bfa; margin-bottom: 0.5rem;"><i class="fas fa-cube"></i> Subsystems</div>';
+          html += '<div class="slots-row">';
+          html += parsedFit.modules.subsystem.map(module => this.generateSlotHTML(module)).join('');
+          html += '</div></div>';
+        }
+
+        // Drones
+        if (parsedFit.drones && parsedFit.drones.length > 0) {
+          html += '<div class="slot-group">';
+          html += '<div class="slot-group-label" style="color: #f9ca24; margin-bottom: 0.5rem;"><i class="fas fa-drone"></i> Drones</div>';
+          html += '<div class="slots-row">';
+          html += parsedFit.drones.map(drone => this.generateDroneHTML(drone)).join('');
+          html += '</div></div>';
+        }
+
+        html += '</div>'; // end modules column
+        html += '</div>'; // end grid
 
         detailsContainer.innerHTML = html;
       })
       .catch(error => {
         console.error('Error rendering fitting details:', error);
-        detailsContainer.innerHTML = '<p class="text-danger">Failed to load fitting details.</p>';
+        detailsContainer.innerHTML = '<p style="color: #ff6b6b; padding: 1rem;">Failed to load fitting details.</p>';
       });
   }
 
   generateSlotHTML(module) {
-    const iconUrl = module.icon_id ? `https://images.evetech.net/icons/${module.icon_id}.png` : 'https://via.placeholder.com/32';
-    return `<div class="slot" title="${module.name}"><img src="${iconUrl}" /></div>`;
+    const iconUrl = module.icon_id ? `https://images.evetech.net/types/${module.type_id}/icon?size=64` : 'https://images.evetech.net/types/1/icon?size=64';
+    return `<div class="module-slot" title="${module.name}">
+      <img src="${iconUrl}"
+           style="width: 100%; height: 100%;"
+           onerror="this.src='https://images.evetech.net/types/1/icon?size=64'" />
+    </div>`;
+  }
+
+  generateDroneHTML(drone) {
+    const iconUrl = `https://images.evetech.net/types/${drone.type_id || 1}/icon?size=64`;
+    return `<div class="module-slot" title="${drone.name} x${drone.quantity}">
+      <img src="${iconUrl}"
+           style="width: 100%; height: 100%;"
+           onerror="this.src='https://images.evetech.net/types/1/icon?size=64'" />
+      ${drone.quantity > 1 ? `<span style="position: absolute; bottom: 2px; right: 2px; background: rgba(0,0,0,0.8); color: white; font-size: 10px; padding: 1px 3px; border-radius: 2px;">${drone.quantity}</span>` : ''}
+    </div>`;
   }
 
   // ========== FLEET MANAGEMENT METHODS ==========
