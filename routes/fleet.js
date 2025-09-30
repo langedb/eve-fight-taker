@@ -119,6 +119,31 @@ router.delete('/fittings/:id', requireAuth, async (req, res) => {
   }
 });
 
+// Get fitting stats (DPS, EHP)
+router.get('/fittings/:id/stats', requireAuth, async (req, res) => {
+  try {
+    const characterId = req.session.character.id;
+    const fittingId = parseInt(req.params.id);
+
+    const fitting = await fleetManager.getFitting(characterId, fittingId);
+    if (!fitting) {
+      return res.status(404).json({ error: 'Fitting not found' });
+    }
+
+    // Parse and calculate stats
+    const parsedFit = await fitCalculator.parseEFT(fitting.eft_format);
+    const stats = await fitCalculator.calculateFitStats(parsedFit);
+
+    res.json({
+      dps: stats.dps?.total || 0,
+      ehp: stats.ehp?.total || 0
+    });
+  } catch (error) {
+    log.error('Get fitting stats error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Parse EFT string
 router.post('/fittings/parse', requireAuth, async (req, res) => {
   try {

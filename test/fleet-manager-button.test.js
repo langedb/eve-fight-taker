@@ -85,7 +85,7 @@ describe('Fleet Manager Button Enabling', function() {
       button.style.pointerEvents = 'auto';
 
       // Check computed styles
-      const computedStyle = window.getComputedStyle(button);
+      const _computedStyle = window.getComputedStyle(button);
 
       // The button should not have the disabled styling
       expect(button.disabled).to.be.false;
@@ -141,7 +141,7 @@ describe('Fleet Manager Button Enabling', function() {
       button.setAttribute('disabled', '');
 
       // Check computed styles for disabled state
-      const computedStyle = window.getComputedStyle(button);
+      const _computedStyle = window.getComputedStyle(button);
 
       // Note: JSDOM may not fully support all CSS features
       // But we can at least verify the button state
