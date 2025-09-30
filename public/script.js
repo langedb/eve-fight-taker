@@ -1328,20 +1328,22 @@ class EVEFightTaker {
   }
 
   generateSlotHTML(module) {
-    const iconUrl = module.icon_id ? `https://images.evetech.net/types/${module.type_id}/icon?size=64` : 'https://images.evetech.net/types/1/icon?size=64';
+    const typeId = module.type_id || 1;
+    const iconUrl = `https://images.evetech.net/types/${typeId}/icon?size=64`;
     return `<div class="module-slot" title="${module.name}">
       <img src="${iconUrl}"
            style="width: 100%; height: 100%;"
-           onerror="this.src='https://images.evetech.net/types/1/icon?size=64'" />
+           onerror="this.src='https://images.evetech.net/types/1/icon?size=64'; this.onerror=null;" />
     </div>`;
   }
 
   generateDroneHTML(drone) {
-    const iconUrl = `https://images.evetech.net/types/${drone.type_id || 1}/icon?size=64`;
+    const typeId = drone.type_id || 1;
+    const iconUrl = `https://images.evetech.net/types/${typeId}/icon?size=64`;
     return `<div class="module-slot" title="${drone.name} x${drone.quantity}">
       <img src="${iconUrl}"
-           style="width: 100%; height: 100%;"
-           onerror="this.src='https://images.evetech.net/types/1/icon?size=64'" />
+           style="width: 100%; height: 100%; object-fit: contain;"
+           onerror="this.src='https://images.evetech.net/types/1/icon?size=64'; this.onerror=null;" />
       ${drone.quantity > 1 ? `<span style="position: absolute; bottom: 2px; right: 2px; background: rgba(0,0,0,0.8); color: white; font-size: 10px; padding: 1px 3px; border-radius: 2px;">${drone.quantity}</span>` : ''}
     </div>`;
   }
