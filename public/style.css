@@ -2504,7 +2504,7 @@ body {
     padding: 1rem;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .fleet-composition-panel h4 {
@@ -2577,10 +2577,12 @@ body {
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
+    min-height: 50px;
+    width: 100%;
 }
 
 .fleet-role-ship {
-    display: flex;
+    display: flex !important;
     align-items: center;
     gap: 0.75rem;
     padding: 0.75rem;
@@ -2588,6 +2590,10 @@ body {
     border: 1px solid rgba(0, 212, 255, 0.3);
     border-radius: 8px;
     position: relative;
+    min-height: 60px;
+    min-width: 200px;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
 .fleet-role-ship img {
