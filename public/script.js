@@ -1407,9 +1407,14 @@ class EVEFightTaker {
             const targetSection = container.querySelector(`#${sectionName}-section`);
             const targetBtn = container.querySelector(`[data-section="${sectionName}"]`);
 
+            console.log(`Container: ${container.id || 'document'}, targetSection:`, targetSection, 'targetBtn:', targetBtn);
+
             if (targetSection) {
                 targetSection.classList.add('active');
                 targetSection.style.display = 'block';
+                console.log(`Set ${sectionName}-section display to block`);
+            } else {
+                console.error(`Could not find #${sectionName}-section in container`);
             }
             if (targetBtn) {
                 targetBtn.classList.add('active');
@@ -2718,14 +2723,17 @@ class EVEFightTaker {
 
     async loadBattleScenarios() {
         try {
+            console.log('Loading battle scenarios...');
             const response = await fetch('/api/fleet/scenarios');
             if (!response.ok) throw new Error('Failed to load battle scenarios');
 
             const data = await response.json();
             this.scenarios = data.scenarios;
+            console.log('Loaded', this.scenarios.length, 'scenarios');
             this.renderBattleScenarios();
 
             // Also populate the available fleets for scenario builder
+            console.log('Populating available fleets for drag-and-drop...');
             this.populateAvailableFleets();
         } catch (error) {
             console.error('Error loading battle scenarios:', error);
@@ -2734,20 +2742,34 @@ class EVEFightTaker {
     }
 
     populateAvailableFleets() {
-        const container = document.getElementById('available-fleets-list');
-        if (!container) return;
+        console.log('populateAvailableFleets - fleets:', this.fleets);
 
-        const html = this.fleets.map(fleet => `
-            <div class="fleet-drag-card" draggable="true" data-fleet-id="${fleet.id}">
-                <div class="fleet-drag-card-name">${fleet.name}</div>
-                <div class="fleet-drag-card-stats">
-                    <span>${fleet.total_ships || 0} ships</span>
-                    <span>${fleet.ship_count || 0} types</span>
+        // Work on both original and temp area elements
+        const searchContainers = [document, document.getElementById('temp-fleet-area')].filter(c => c);
+
+        searchContainers.forEach(searchContainer => {
+            const container = searchContainer.querySelector('#available-fleets-list');
+            console.log(`populateAvailableFleets - container in ${searchContainer.id || 'document'}:`, container);
+
+            if (!container) {
+                console.error(`available-fleets-list container not found in ${searchContainer.id || 'document'}!`);
+                return;
+            }
+
+            const html = this.fleets.map(fleet => `
+                <div class="fleet-drag-card" draggable="true" data-fleet-id="${fleet.id}">
+                    <div class="fleet-drag-card-name">${fleet.name}</div>
+                    <div class="fleet-drag-card-stats">
+                        <span>${fleet.total_ships || 0} ships</span>
+                        <span>${fleet.ship_count || 0} types</span>
+                    </div>
                 </div>
-            </div>
-        `).join('');
+            `).join('');
 
-        container.innerHTML = html || '<p style="color: #999; text-align: center; padding: 2rem;">No fleets available. Create fleets first!</p>';
+            console.log(`Generated fleet cards HTML for ${searchContainer.id || 'document'}:`, html);
+            container.innerHTML = html || '<p style="color: #999; text-align: center; padding: 2rem;">No fleets available. Create fleets first!</p>';
+            console.log(`Container after setting innerHTML in ${searchContainer.id || 'document'}:`, container);
+        });
 
         // Initialize drag-and-drop for fleet cards
         this.initializeScenarioDragDrop();
@@ -2804,11 +2826,9 @@ class EVEFightTaker {
             this.scenarioEnemyFleet = fleet;
         }
 
-        // Render the fleet in the slot
-        const slot = document.getElementById(`${side}-fleet-slot`);
-        if (!slot) return;
-
-        slot.innerHTML = `
+        // Render the fleet in the slot (work on both original and cloned)
+        const slots = document.querySelectorAll(`#${side}-fleet-slot`);
+        const html = `
             <div class="fleet-slot-card">
                 <div class="fleet-slot-card-header">
                     <div class="fleet-slot-card-name">${fleet.name}</div>
@@ -2821,6 +2841,10 @@ class EVEFightTaker {
             </div>
         `;
 
+        slots.forEach(slot => {
+            slot.innerHTML = html;
+        });
+
         // Update button states
         this.updateScenarioButtons();
     }
@@ -2832,10 +2856,10 @@ class EVEFightTaker {
             this.scenarioEnemyFleet = null;
         }
 
-        const slot = document.getElementById(`${side}-fleet-slot`);
-        if (slot) {
+        const slots = document.querySelectorAll(`#${side}-fleet-slot`);
+        slots.forEach(slot => {
             slot.innerHTML = '';
-        }
+        });
 
         this.updateScenarioButtons();
     }
@@ -2844,26 +2868,29 @@ class EVEFightTaker {
         this.scenarioFriendlyFleet = null;
         this.scenarioEnemyFleet = null;
 
-        document.getElementById('friendly-fleet-slot').innerHTML = '';
-        document.getElementById('enemy-fleet-slot').innerHTML = '';
-        document.getElementById('scenario-name-input').value = '';
-        document.getElementById('scenario-notes-textarea').value = '';
+        document.querySelectorAll('#friendly-fleet-slot').forEach(el => el.innerHTML = '');
+        document.querySelectorAll('#enemy-fleet-slot').forEach(el => el.innerHTML = '');
+        document.querySelectorAll('#scenario-name-input').forEach(el => el.value = '');
+        document.querySelectorAll('#scenario-notes-textarea').forEach(el => el.value = '');
 
         this.updateScenarioButtons();
     }
 
     updateScenarioButtons() {
-        const saveBtn = document.getElementById('save-scenario-btn');
-        const analyzeBtn = document.getElementById('analyze-scenario-btn');
+        const saveBtns = document.querySelectorAll('#save-scenario-btn');
+        const analyzeBtns = document.querySelectorAll('#analyze-scenario-btn');
 
         const bothFleetsSelected = this.scenarioFriendlyFleet && this.scenarioEnemyFleet;
 
-        if (saveBtn) saveBtn.disabled = !bothFleetsSelected;
-        if (analyzeBtn) analyzeBtn.disabled = !bothFleetsSelected;
+        saveBtns.forEach(btn => { btn.disabled = !bothFleetsSelected; });
+        analyzeBtns.forEach(btn => { btn.disabled = !bothFleetsSelected; });
     }
 
     async saveScenario() {
-        const scenarioName = document.getElementById('scenario-name-input').value.trim();
+        // Get values from the first matching element
+        const nameInput = document.querySelector('#scenario-name-input');
+        const scenarioName = nameInput ? nameInput.value.trim() : '';
+
         if (!scenarioName) {
             this.showError('Please enter a scenario name');
             return;
@@ -2879,7 +2906,8 @@ class EVEFightTaker {
             return;
         }
 
-        const notes = document.getElementById('scenario-notes-textarea').value.trim();
+        const notesInput = document.querySelector('#scenario-notes-textarea');
+        const notes = notesInput ? notesInput.value.trim() : '';
 
         try {
             this.showLoading('Saving scenario...');
@@ -2912,7 +2940,8 @@ class EVEFightTaker {
     }
 
     async analyzeScenarioNow() {
-        const scenarioName = document.getElementById('scenario-name-input').value.trim();
+        const nameInput = document.querySelector('#scenario-name-input');
+        const scenarioName = nameInput ? nameInput.value.trim() : '';
 
         if (!this.scenarioFriendlyFleet || !this.scenarioEnemyFleet) {
             this.showError('Please select both fleets');
@@ -2924,7 +2953,8 @@ class EVEFightTaker {
             return;
         }
 
-        const notes = document.getElementById('scenario-notes-textarea').value.trim();
+        const notesInput = document.querySelector('#scenario-notes-textarea');
+        const notes = notesInput ? notesInput.value.trim() : '';
 
         this.showLoading('Analyzing fleet battle...');
 
