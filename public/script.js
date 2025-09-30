@@ -2390,8 +2390,6 @@ class EVEFightTaker {
     }
 
     openFleetBuilder(fleetId = null) {
-        console.log('Opening fleet builder', fleetId ? `for fleet ${fleetId}` : 'for new fleet');
-
         // Initialize fleet composition state
         this.currentFleetComposition = {
             line: [],
@@ -2405,6 +2403,10 @@ class EVEFightTaker {
 
         // Show modal
         const modal = document.getElementById('fleet-builder-modal');
+        if (!modal) {
+            this.showError('Fleet builder modal not found. Please refresh the page.');
+            return;
+        }
         modal.style.display = 'block';
 
         // Clear and populate fittings
