@@ -200,8 +200,8 @@ Caldari Navy Mjolnir Heavy Assault Missile x940`;
     const fit = await fitCalculator.parseEFT(eft);
     const stats = await fitCalculator.calculateFitStats(fit);
 
-    // Signature radius calculation corrected - now showing realistic values (~197m)
-    expect(stats.signatureRadius).to.be.closeTo(197, 20);
+    // Signature radius: base 160m + rig drawbacks (with stacking) + shield extender flat bonus = ~219m
+    expect(stats.signatureRadius).to.be.closeTo(219, 2);
   });
 
   it('should calculate DPS for the Caracal fit correctly', async function() {
