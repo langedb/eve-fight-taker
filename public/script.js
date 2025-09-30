@@ -2382,6 +2382,92 @@ class EVEFightTaker {
     }
   }
 
+  async editFitting(fittingId) {
+    try {
+      // Load the fitting details
+      const response = await fetch(`/api/fleet/fittings/${fittingId}`);
+      if (!response.ok) throw new Error('Failed to load fitting');
+
+      const data = await response.json();
+      const fitting = data.fitting;
+
+      // Store the fitting ID for later use
+      this.editingFittingId = fittingId;
+
+      // Populate the modal fields
+      document.getElementById('edit-fitting-name').value = fitting.name;
+      document.getElementById('edit-fitting-eft').value = fitting.eft_format;
+
+      // Show the modal
+      document.getElementById('edit-fitting-modal').style.display = 'block';
+    } catch (error) {
+      console.error('Error loading fitting for edit:', error);
+      this.showError('Failed to load fitting: ' + error.message);
+    }
+  }
+
+  closeEditFitting() {
+    document.getElementById('edit-fitting-modal').style.display = 'none';
+    this.editingFittingId = null;
+  }
+
+  async saveEditedFitting() {
+    if (!this.editingFittingId) {
+      this.showError('No fitting selected for editing');
+      return;
+    }
+
+    const name = document.getElementById('edit-fitting-name').value.trim();
+    const eftFormat = document.getElementById('edit-fitting-eft').value.trim();
+
+    if (!name || !eftFormat) {
+      this.showError('Please provide both fitting name and EFT format');
+      return;
+    }
+
+    try {
+      // Parse the EFT to extract ship info
+      const parseResponse = await fetch('/api/fleet/fittings/parse', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ eftFormat })
+      });
+
+      if (!parseResponse.ok) {
+        const error = await parseResponse.json();
+        throw new Error(error.error || 'Failed to parse EFT format');
+      }
+
+      const parseData = await parseResponse.json();
+      const shipName = parseData.parsedFit.shipType;
+      const shipTypeId = parseData.parsedFit.shipTypeId || 1;
+
+      // Update the fitting
+      const response = await fetch(`/api/fleet/fittings/${this.editingFittingId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          shipTypeId,
+          shipName,
+          eftFormat
+        })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to update fitting');
+      }
+
+      this.showSuccess('Fitting updated successfully');
+      this.closeEditFitting();
+      await this.loadFittings();
+    } catch (error) {
+      console.error('Error updating fitting:', error);
+      this.showError('Failed to update fitting: ' + error.message);
+    }
+  }
+
   // ========== FLEET MANAGEMENT ==========
 
   async loadFleets() {

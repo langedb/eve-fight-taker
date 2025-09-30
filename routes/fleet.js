@@ -101,6 +101,32 @@ router.get('/fittings/:id', requireAuth, async (req, res) => {
   }
 });
 
+// Update fitting
+router.put('/fittings/:id', requireAuth, async (req, res) => {
+  try {
+    const characterId = req.session.character.id;
+    const fittingId = parseInt(req.params.id);
+    const { name, shipTypeId, shipName, eftFormat } = req.body;
+
+    if (!name || !shipTypeId || !shipName || !eftFormat) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const updated = await fleetManager.updateFitting(characterId, fittingId, name, shipTypeId, shipName, eftFormat);
+    if (!updated) {
+      return res.status(404).json({ error: 'Fitting not found' });
+    }
+
+    res.json({
+      success: true,
+      message: `Fitting '${name}' updated successfully`
+    });
+  } catch (error) {
+    log.error('Update fitting error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Delete fitting
 router.delete('/fittings/:id', requireAuth, async (req, res) => {
   try {

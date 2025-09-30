@@ -683,6 +683,32 @@ Right-click your ship in-game → Copy → Copy Fitting" rows="8" class="eft-tex
         </div>
     </div>
 
+    <!-- Edit Fitting Modal -->
+    <div id="edit-fitting-modal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3>Edit Fitting</h3>
+                <span class="close" onclick="app.closeEditFitting()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="edit-fitting-name">Fitting Name</label>
+                    <input type="text" id="edit-fitting-name" class="form-control" placeholder="Enter fitting name">
+                </div>
+                <div class="form-group">
+                    <label for="edit-fitting-eft">EFT Format</label>
+                    <textarea id="edit-fitting-eft" class="form-control" rows="15" placeholder="Paste EFT format here"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="app.closeEditFitting()">Cancel</button>
+                <button class="btn btn-primary" onclick="app.saveEditedFitting()">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>

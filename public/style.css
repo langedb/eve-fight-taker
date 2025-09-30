@@ -1286,6 +1286,19 @@ body {
     color: #ff6b35;
 }
 
+.modal-body {
+    margin-bottom: 1.5rem;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgb(255 255 255 / 10%);
+}
+
 .form-group {
     margin-bottom: 1.5rem;
 }
