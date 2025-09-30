@@ -1260,40 +1260,56 @@ class EVEFightTaker {
         </div>`;
 
         // Stats on the right
-        html += '<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem;">';
+        html += '<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; align-items: stretch;">';
 
-        // Combat stats
+        // Combat stats - always show
         html += this.generateStatBox('DPS', Math.round(stats.dps?.total || 0).toLocaleString(), '#ff6b6b', 'fa-crosshairs');
         html += this.generateStatBox('Volley', Math.round(stats.dps?.volley || 0).toLocaleString(), '#ff8787', 'fa-bomb');
         html += this.generateStatBox('EHP', Math.round(stats.ehp?.total || 0).toLocaleString(), '#4ecdc4', 'fa-shield-alt');
         html += this.generateStatBox('Armor', Math.round(stats.ehp?.armor || 0).toLocaleString(), '#ffd700', 'fa-shield-halved');
 
-        // Tank stats
-        if (stats.tank) {
-          html += this.generateStatBox('Shield/s', Math.round(stats.tank.shieldRegen || 0).toLocaleString(), '#5dade2', 'fa-heart-pulse');
-          html += this.generateStatBox('Armor/s', Math.round(stats.tank.armorRepair || 0).toLocaleString(), '#f8b739', 'fa-wrench');
+        // Tank stats - only show if non-zero
+        const shieldRegen = stats.tank?.shieldRegen || stats.tank?.passiveShieldRegen || 0;
+        const armorRepair = stats.tank?.armorRepair || 0;
+        if (shieldRegen > 0 || armorRepair > 0) {
+          if (shieldRegen > 0) {
+            html += this.generateStatBox('Shield/s', Math.round(shieldRegen).toLocaleString(), '#5dade2', 'fa-heart-pulse');
+          }
+          if (armorRepair > 0) {
+            html += this.generateStatBox('Armor/s', Math.round(armorRepair).toLocaleString(), '#f8b739', 'fa-wrench');
+          }
         }
 
         // Movement stats
         html += this.generateStatBox('Speed', Math.round(stats.speed || 0).toLocaleString() + ' m/s', '#95e1d3', 'fa-rocket');
-        html += this.generateStatBox('Signature', Math.round(stats.signature || 0).toLocaleString() + ' m', '#a78bfa', 'fa-bullseye');
+
+        const sigRadius = stats.signatureRadius || stats.signature || 0;
+        html += this.generateStatBox('Signature', Math.round(sigRadius).toLocaleString() + ' m', '#a78bfa', 'fa-bullseye');
 
         // Capacitor stats
         if (stats.capacitor) {
-          const capStable = stats.capacitor.stable ? 'Stable' : Math.round(stats.capacitor.timeToEmpty / 1000) + 's';
-          html += this.generateStatBox('Capacitor', capStable, '#00d4ff', 'fa-battery-three-quarters');
+          let capText = 'N/A';
+          if (stats.capacitor.stable) {
+            capText = 'Stable';
+          } else if (stats.capacitor.timeToEmpty && !isNaN(stats.capacitor.timeToEmpty)) {
+            const seconds = Math.round(stats.capacitor.timeToEmpty / 1000);
+            capText = seconds > 0 ? seconds + 's' : 'N/A';
+          }
+          html += this.generateStatBox('Capacitor', capText, '#00d4ff', 'fa-battery-three-quarters');
         }
 
-        // Range stats
-        if (stats.range) {
+        // Range stats - only show if exists
+        if (stats.range && stats.range.optimal > 0) {
           const optimalRange = Math.round(stats.range.optimal / 1000);
-          html += this.generateStatBox('Range', optimalRange > 0 ? optimalRange + ' km' : 'N/A', '#f9ca24', 'fa-arrows-alt-h');
+          html += this.generateStatBox('Range', optimalRange + ' km', '#f9ca24', 'fa-arrows-alt-h');
         }
 
-        // Drone stats
+        // Drone stats - only show if has drones
         if (stats.drones && stats.drones.dps > 0) {
           html += this.generateStatBox('Drone DPS', Math.round(stats.drones.dps).toLocaleString(), '#f39c12', 'fa-drone');
-          html += this.generateStatBox('Bandwidth', stats.drones.bandwidth + ' Mbit/s', '#e67e22', 'fa-signal');
+          if (stats.drones.bandwidth) {
+            html += this.generateStatBox('Bandwidth', stats.drones.bandwidth + ' Mbit/s', '#e67e22', 'fa-signal');
+          }
         }
 
         html += '</div>'; // end stats grid
@@ -1309,12 +1325,12 @@ class EVEFightTaker {
 
   generateStatBox(label, value, color, icon) {
     return `
-      <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-left: 3px solid ${color}; border-radius: 6px; padding: 0.75rem; display: flex; flex-direction: column; gap: 0.25rem;">
-        <div style="color: rgba(255,255,255,0.6); font-size: 11px; text-transform: uppercase; display: flex; align-items: center; gap: 0.5rem;">
+      <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-left: 3px solid ${color}; border-radius: 6px; padding: 0.75rem; display: flex; flex-direction: column; gap: 0.25rem; min-height: 70px; justify-content: center;">
+        <div style="color: rgba(255,255,255,0.6); font-size: 11px; text-transform: uppercase; display: flex; align-items: center; gap: 0.5rem; line-height: 1.2;">
           <i class="fas ${icon}" style="color: ${color}; width: 14px;"></i>
           ${label}
         </div>
-        <div style="color: white; font-size: 18px; font-weight: bold;">${value}</div>
+        <div style="color: white; font-size: 18px; font-weight: bold; line-height: 1.2;">${value}</div>
       </div>
     `;
   }
