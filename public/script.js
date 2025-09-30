@@ -1250,17 +1250,17 @@ class EVEFightTaker {
         }
         const { parsedFit, stats } = data;
 
-        let html = '<div style="display: grid; grid-template-columns: auto 1fr; gap: 1.5rem; align-items: start;">';
+        let html = '<div style="display: flex; flex-direction: column; gap: 1rem; width: 100%;">';
 
-        // Ship render on the left
-        html += `<div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: center;">
-          <img src="https://images.evetech.net/types/${parsedFit.shipTypeId}/render?size=128"
-               style="width: 128px; height: 128px; border-radius: 8px; background: rgba(0,0,0,0.3);" />
-          <div style="color: #00d4ff; font-weight: bold; text-align: center; font-size: 14px;">${parsedFit.shipType}</div>
+        // Ship header
+        html += `<div style="display: flex; align-items: center; gap: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
+          <img src="https://images.evetech.net/types/${parsedFit.shipTypeId}/render?size=64"
+               style="width: 64px; height: 64px; border-radius: 6px; background: rgba(0,0,0,0.3);" />
+          <div style="color: #00d4ff; font-weight: bold; font-size: 16px;">${parsedFit.shipType}</div>
         </div>`;
 
-        // Stats on the right
-        html += '<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; align-items: start; max-width: 100%;">';
+        // Stats grid - responsive
+        html += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem; width: 100%;">';
 
         // Combat stats - always show
         html += this.generateStatBox('DPS', Math.round(stats.dps?.total || 0).toLocaleString(), '#ff6b6b', 'fa-crosshairs');
@@ -1286,7 +1286,7 @@ class EVEFightTaker {
         }
 
         html += '</div>'; // end stats grid
-        html += '</div>'; // end main grid
+        html += '</div>'; // end main container
 
         detailsContainer.innerHTML = html;
       })
