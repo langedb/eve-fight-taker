@@ -10,6 +10,7 @@ const { FitCalculator } = require('./lib/fit-calculator');
 const { AIAnalyzer } = require('./lib/ai-analyzer');
 const { ZKillboardParser } = require('./lib/zkillboard-parser');
 const { dbManager } = require('./lib/database');
+const { rateLimitHandler } = require('./lib/rate-limit-handler');
 
 // Load environment variables
 require('dotenv').config();
@@ -356,14 +357,16 @@ app.get('/api/search/character/:characterName', async (req, res) => {
     log.info('Using ESI POST /universe/ids/ for character search');
 
     try {
-      const searchResponse = await axios.post(searchUrl,
-        [characterName], // Array of names to search for
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'User-Agent': 'EVE Fight Taker - Combat Analysis Tool'
+      const searchResponse = await rateLimitHandler.executeRequest(() =>
+        axios.post(searchUrl,
+          [characterName], // Array of names to search for
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'User-Agent': 'EVE Fight Taker - Combat Analysis Tool'
+            }
           }
-        }
+        )
       );
 
       log.info('ESI search response:', searchResponse.data);
@@ -381,11 +384,13 @@ app.get('/api/search/character/:characterName', async (req, res) => {
 
       // Get additional character info (this endpoint is public, no auth needed)
       const characterInfoUrl = `https://esi.evetech.net/latest/characters/${characterId}/`;
-      const characterInfoResponse = await axios.get(characterInfoUrl, {
-        headers: {
-          'User-Agent': 'EVE Fight Taker - Combat Analysis Tool'
-        }
-      });
+      const characterInfoResponse = await rateLimitHandler.executeRequest(() =>
+        axios.get(characterInfoUrl, {
+          headers: {
+            'User-Agent': 'EVE Fight Taker - Combat Analysis Tool'
+          }
+        })
+      );
 
       res.json({
         character_id: characterId,
@@ -468,7 +473,9 @@ app.get('/api/character/:characterId/death/:shipTypeId', async (req, res) => {
       try {
         // Get full killmail data from ESI
         const killmailUrl = `https://esi.evetech.net/latest/killmails/${km.killmail_id}/${km.zkb.hash}/`;
-        const killmailResponse = await axios.get(killmailUrl);
+        const killmailResponse = await rateLimitHandler.executeRequest(() =>
+          axios.get(killmailUrl)
+        );
         const fullKillmailData = killmailResponse.data;
 
         log.info(`  Ship type: ${fullKillmailData.victim.ship_type_id}`);
@@ -566,7 +573,9 @@ app.get('/api/character/:characterId/deaths', async (req, res) => {
       try {
         // Get full killmail data from ESI
         const killmailUrl = `https://esi.evetech.net/latest/killmails/${km.killmail_id}/${km.zkb.hash}/`;
-        const killmailResponse = await axios.get(killmailUrl);
+        const killmailResponse = await rateLimitHandler.executeRequest(() =>
+          axios.get(killmailUrl)
+        );
         const fullKillmailData = killmailResponse.data;
 
         // Get ship type name from static data
@@ -638,7 +647,9 @@ app.get('/api/killmail/:killmailId/:killmailHash', async (req, res) => {
 
     // Get full killmail data from ESI
     const killmailUrl = `https://esi.evetech.net/latest/killmails/${killmailId}/${killmailHash}/`;
-    const killmailResponse = await axios.get(killmailUrl);
+    const killmailResponse = await rateLimitHandler.executeRequest(() =>
+      axios.get(killmailUrl)
+    );
     const killmailData = killmailResponse.data;
 
     // Convert killmail to EFT format
