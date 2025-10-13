@@ -66,19 +66,21 @@ LOG_LEVEL=<error|warn|info|debug>
 
 ### Advanced Weapon Systems
 
-**Fighters** (category 87): Light 50-60 DPS, Heavy 75-90 DPS per fighter, all-V fighter skills  
-**Breacher Pods** (group 4807): Resistance-ignoring damage, flat HP or % HP (whichever lower)  
-**HAW Weapons**: Capital anti-subcapital, 2000-3000+ DPS vs small targets  
-**Doomsday**: Capital-only targeting, subcapital restriction enforced  
+**Fighters** (category 87): Light 50-60 DPS, Heavy 75-90 DPS per fighter, all-V fighter skills
+**Breacher Pods** (group 4807): Resistance-ignoring damage, flat HP or % HP (whichever lower)
+**HAW Weapons**: Capital anti-subcapital, 2000-3000+ DPS vs small targets
+**Doomsday**: Capital-only targeting, subcapital restriction enforced
 **T3 Cruisers**: Hull bonuses (Loki: missile+projectile, Tengu: missile, Proteus: hybrid, Legion: energy), subsystem bonuses
+**Triglavian Entropic Disintegrators** (group 1986): Progressive spool mechanic - Cycle 1: 100%, Cycle 2: 150%, Cycle 3: 200%, Cycle 4+: 250% max spool. Target switching resets to base. Ships: Damavik, Vedmak, Leshak, Kikimora, Zarmazd
 
 ### AI Analysis (`lib/ai-analyzer.js`)
 
 **Gemini 2.5 Flash** with detailed prompts including:
-- **Ship vs Ship**: Complete fit details, weapon/ammo data, damage types, all-V skill bonus stats, range analysis, drone control ranges, 5-drone active limit enforcement, tactical deployment strategies
+- **Ship vs Ship**: Complete fit details, weapon/ammo data, damage types, all-V skill bonus stats, range analysis, drone control ranges, 5-drone active limit enforcement, Triglavian spool mechanics, tactical deployment strategies
 - **Fleet vs Fleet**: Fleet composition analysis, role breakdown, range analysis, mobility assessment, tactical recommendations
+- **Triglavian Analysis**: Spool progression display (base/average/max DPS), target-switching warnings, ramp-up time calculations
 
-**Response:** JSON with winChance, timeToKill, advantages/disadvantages, ammo/module recommendations, range tactics, summary
+**Response:** JSON with winChance, timeToKill, advantages/disadvantages, ammo/module recommendations, range tactics, spool management strategies, summary
 
 ### Character Death Search
 
@@ -111,13 +113,14 @@ LOG_LEVEL=<error|warn|info|debug>
 
 ## Recent Major Enhancements
 
+- **Triglavian Spool Mechanics** (v2.5.1): Complete implementation of entropic disintegrator progressive damage ramp-up (100%→150%→200%→250%), AI analysis includes spool progression, target-switching warnings, tactical recommendations
 - **Dynamic Hull Bonus System**: Complete replacement of hardcoded ship bonuses with generic dogmaEffects processing
 - **Static Data Migration**: ESI to PyFA static data with 50,243+ dogmaEffects
 - **All-V Skill System**: Comprehensive verified bonuses (~40 → 284 DPS improvement)
 - **PyFA Compatibility**: Attribute calculation matching PyFA's algorithms
-- **Advanced Weapons**: Fighters, breacher pods, HAW, doomsday restrictions, T3 cruisers
+- **Advanced Weapons**: Fighters, breacher pods, HAW, doomsday restrictions, T3 cruisers, Triglavian spool
 - **Range Analysis**: Weapon ranges, EWAR limits, kiting/brawling tactics
-- **AI Enhancement**: Gemini 2.5 Flash with tactical prompts, 5-drone limit enforcement
+- **AI Enhancement**: Gemini 2.5 Flash with tactical prompts, 5-drone limit enforcement, Triglavian tactics
 - **Subsystem Classification Fix**: Resolved bug where non-T3 ships incorrectly showed mid-slot modules as subsystems
 - **Enhanced EFT Parsing**: Smart section switching and improved cargo handling for items without quantities
 - **Bug Fixes**: EHP calculations, stacking penalties, skill bonus over-application, subsystem misclassification
