@@ -253,12 +253,14 @@ Mjolnir Rocket x2000`;
 
   describe('Rocket Group ID Verification', () => {
     it('should have rocket launchers in missile weapon groups', () => {
-      const missileWeaponGroups = [506, 507, 508, 509, 510, 511, 771, 812, 524, 1245];
+      // Missile launcher group IDs from EVE static data (category 7 = Module)
+      const missileWeaponGroups = [56, 506, 507, 508, 509, 510, 511, 512, 524, 771, 862, 1245, 1673, 1674, 4807];
       expect(missileWeaponGroups).to.include(507); // Rocket Launcher group
     });
 
     it('should have rockets in missile ammo groups', () => {
-      const missileAmmoGroups = [84, 387, 388, 389, 390, 392, 656, 655];
+      // Missile ammo group IDs from EVE static data (category 8 = Charge)
+      const missileAmmoGroups = [89, 384, 385, 386, 387, 476, 648, 653, 654, 655, 656, 657, 772, 1010, 1019, 1677, 1678];
       expect(missileAmmoGroups).to.include(387); // Rocket group
     });
 
