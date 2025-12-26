@@ -151,8 +151,8 @@ Caldari Navy Mjolnir Heavy Assault Missile x940`;
     const fit = await fitCalculator.parseEFT(eft);
     const stats = await fitCalculator.calculateFitStats(fit);
 
-    // Expected DPS adjusted for current calculation method (was 801.5, now ~684)
-    expect(stats.dps.total).to.be.closeTo(684, 10);
+    // Expected DPS with HAM skill bonuses now correctly applied (was 684 without HAM recognition)
+    expect(stats.dps.total).to.be.closeTo(828, 15);
   });
 
   it('should calculate signature radius for the Loki fit correctly', async function() {

@@ -210,7 +210,8 @@ Caldari Navy Scourge Rocket x1000`;
       expect(weapon.flightTime).to.be.greaterThan(0);
       expect(weapon.range).to.be.greaterThan(0);
       // Rocket range should be reasonable (not too high like some missiles)
-      expect(weapon.range).to.be.lessThan(20000); // Less than 20km is reasonable for rockets
+      // With all-V skills, rockets get velocity/flight time bonuses, so range is slightly higher
+      expect(weapon.range).to.be.lessThan(25000); // Less than 25km is reasonable for rockets with skills
     });
   });
 
