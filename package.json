@@ -3,6 +3,9 @@
   "version": "2.5.0",
   "description": "EVE Online fleet management and ship combat analysis tool with dynamic fleet stats, enhanced fitting cards, EFT parsing fixes, dynamic dogma effects processing, and AI-powered tactical recommendations",
   "main": "server.js",
+  "bin": {
+    "eve-fight-taker": "./cli.js"
+  },
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",

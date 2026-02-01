@@ -19,6 +19,52 @@ A comprehensive EVE Online fleet management and ship combat analysis tool that u
 - **Range Analysis**: Weapon range calculations with kiting vs brawling strategy recommendations
 - **EVE SSO Authentication**: Secure character-based authentication with session management
 
+## CLI Usage
+
+The CLI allows you to calculate fit statistics without running the web server:
+
+```bash
+# Install globally (or use npx)
+npm install -g eve-fight-taker
+
+# Calculate stats from EFT file
+eve-fight-taker stats my-fit.eft
+
+# Parse from stdin
+cat my-fit.eft | eve-fight-taker stats -
+
+# Inline EFT string
+eve-fight-taker stats --eft "[Kikimora, Kite]
+Light Entropic Disintegrator II, Meson Exotic Plasma S
+..."
+
+# Compare two fits
+eve-fight-taker compare attacker.eft defender.eft
+
+# Pretty-print output
+eve-fight-taker stats my-fit.eft --pretty
+
+# Parse fit structure (without calculating stats)
+eve-fight-taker parse my-fit.eft
+```
+
+### CLI Output Format
+
+```json
+{
+  "ship": "Kikimora",
+  "name": "Kite",
+  "dps": { "total": 487.3, "em": 0, "thermal": 487.3, "kinetic": 0, "explosive": 0 },
+  "ehp": { "total": 11240, "shield": 8500, "armor": 1800, "hull": 940 },
+  "speed": 3200,
+  "signatureRadius": 52,
+  "lockRange": 50,
+  "weapons": [...]
+}
+```
+
+The CLI uses the same PyFA-compatible calculation engine as the web interface.
+
 ## Prerequisites
 
 - **Node.js**: Version 18.18.0 or higher
