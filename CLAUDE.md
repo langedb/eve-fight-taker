@@ -15,13 +15,14 @@ cp .env.example .env  # Setup environment
 
 ## Overview
 
-Node.js/Express application analyzing EVE Online ship combat using static PyFA data, all-V skill bonuses, and AI recommendations.
+Node.js/Express application analyzing EVE Online ship combat using CCP's official Static Data Export (SDE), all-V skill bonuses, and AI recommendations.
 
 ## Services
 
 - **ESIAuth** - EVE Online SSO OAuth
 - **CacheManager** - Disk caching with hourly cleanup
-- **StaticData** - PyFA static data loader
+- **SDEUpdater** (`lib/sde-updater.js`) - Downloads/refreshes CCP's JSON Lines SDE on startup
+- **StaticData** - SDE (JSON Lines) static data loader
 - **FitCalculator** - EFT parsing with all-V skill bonuses
 - **AIAnalyzer** - Gemini 2.5 Flash combat analysis (ship vs ship + fleet vs fleet)
 - **FleetManager** - Fleet composition, scenarios, database management
@@ -35,15 +36,25 @@ GOOGLE_API_KEY=<API key for Gemini 2.5 Flash>
 ESI_CLIENT_ID/SECRET=<EVE developer credentials>
 SESSION_SECRET=<session encryption>
 LOG_LEVEL=<error|warn|info|debug>
+SDE_AUTO_UPDATE=<true|false>            # Check CCP for a newer SDE build on startup (default true)
+SDE_BASE_URL=<override SDE source>      # Optional; defaults to CCP's official endpoint
 ```
 
 ## Core Components
 
+### SDE Updater (`lib/sde-updater.js`)
+- Downloads CCP's **new (Sept 2025+) JSON Lines SDE** on startup; data is no longer committed to the repo
+- Latest build metadata: `https://developers.eveonline.com/static-data/tranquility/latest.jsonl` (record with `_key === "sde"` carries the `buildNumber`)
+- Archive: `https://developers.eveonline.com/static-data/eve-online-static-data-latest-jsonl.zip`
+- Compares the latest published `buildNumber` against `staticdata/.sde-version.json`; downloads + extracts only when missing or stale
+- Extracts only the files the app needs: `types.jsonl`, `groups.jsonl`, `categories.jsonl`, `typeDogma.jsonl`, `dogmaAttributes.jsonl`, `dogmaEffects.jsonl`
+- Streaming download with exponential-backoff retries; falls back to existing data if the update check fails
+
 ### Static Data (`lib/static-data.js`)
-- PyFA JSON files in `./staticdata/`: types, groups, typedogma, dogmaattributes, dogmaeffects
-- Fast item lookup without ESI dependency
-- Complete dogma attributes and effects for calculations
-- 50,243+ dogmaEffects for dynamic ship bonus processing
+- Streams CCP JSON Lines files from `./staticdata/`: `types`, `groups`, `categories`, `typeDogma`, `dogmaAttributes`, `dogmaEffects`
+- New SDE format notes: records are keyed by `_key`; `name`/`description` are localized objects (`{ en, de, ... }`); `published`/`isDefault` are booleans
+- Compatibility shims: `dogmaEffects.name` is aliased back to `effectName`, and `typeDogma` effect `isDefault` is normalized to `0/1` so the dynamic hull-bonus logic is unchanged
+- Fast item lookup without ESI dependency; complete dogma attributes and effects for calculations
 
 ### EFT Parsing (`lib/fit-calculator.js`)
 - **Format**: `[ShipType, FitName]` header, section-based parsing

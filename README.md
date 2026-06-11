@@ -9,7 +9,7 @@ A comprehensive EVE Online fleet management and ship combat analysis tool that u
 - **Enhanced Fitting Cards**: Professional zKillboard-style UI with module icons, ship stats, and detailed visualization
 - **Dual Ship Analysis**: Compare your ship against target ships with detailed combat predictions
 - **Enhanced EFT Parsing**: Full EVE Fitting Tool format support with intelligent subsystem validation and smart cargo handling
-- **Static Data Engine**: Uses PyFA's static data for 100% offline operation with complete EVE item database
+- **Static Data Engine**: Uses CCP's official JSON Lines SDE (auto-downloaded and kept up to date on startup) for offline operation with the complete EVE item database
 - **All-V Skill Calculations**: Comprehensive skill bonus system assuming level V in all skills
 - **Advanced Weapon Systems**: Full support for fighters, breacher pods, HAW weapons, and doomsday devices
 - **T3 Strategic Cruiser Support**: Complete hull and subsystem bonus calculations
@@ -188,11 +188,13 @@ The system performs comprehensive combat analysis using verified EVE Online mech
 ## API Integration
 
 ### Static Data System
-- **PyFA Integration**: Uses PyFA's exported EVE static data for 100% offline operation
-- **Complete Item Database**: 50,243+ items with full attribute data
+- **Official SDE (JSON Lines)**: Uses CCP's new (Sept 2025+) Static Data Export
+- **Auto-download on startup**: Fetches the latest SDE and checks CCP for newer builds automatically — no manual data setup
+- **Complete Item Database**: 52,000+ items with full attribute data
 - **Dogma Attributes**: Weapon damage, cycle times, bonuses, and ship statistics
-- **DogmaEffects Processing**: 50,243+ effects for automatic ship hull bonus calculations
-- **No ESI Dependency**: All calculations work offline using static data
+- **DogmaEffects Processing**: Effects for automatic ship hull bonus calculations
+- **No ESI Dependency**: All calculations work offline once the SDE is downloaded
+- **Configurable**: `SDE_AUTO_UPDATE` toggles the startup update check; `SDE_BASE_URL` overrides the source
 
 ### Google Gemini AI
 - **Gemini 2.5 Flash**: Provides tactical analysis
@@ -211,7 +213,8 @@ The system performs comprehensive combat analysis using verified EVE Online mech
 ```
 eve-fight-taker/
 ├── lib/
-│   ├── static-data.js           # PyFA static data loader
+│   ├── sde-updater.js           # Downloads/refreshes CCP JSON Lines SDE on startup
+│   ├── static-data.js           # SDE (JSON Lines) static data loader
 │   ├── fit-calculator.js        # EFT parsing and ship statistics
 │   ├── fit-simulator.js         # PyFA-compatible fit simulation
 │   ├── modified-attribute-store.js # Advanced attribute modification system
@@ -223,12 +226,13 @@ eve-fight-taker/
 │   ├── index.html               # Dual-ship analysis interface
 │   ├── style.css                # Enhanced UI styling
 │   └── script.js                # Frontend state management
-├── staticdata/                  # PyFA-compatible EVE data
-│   ├── types.*.json             # Item definitions
-│   ├── dogmaattributes.0.json   # Attribute definitions
-│   ├── dogmaeffects.0.json      # Effect definitions for ship bonuses
-│   ├── typedogma.*.json         # Item-attribute mappings
-│   └── groups.0.json            # Item group classifications
+├── staticdata/                  # CCP SDE (JSON Lines), downloaded on startup (git-ignored)
+│   ├── types.jsonl              # Item definitions
+│   ├── dogmaAttributes.jsonl    # Attribute definitions
+│   ├── dogmaEffects.jsonl       # Effect definitions for ship bonuses
+│   ├── typeDogma.jsonl          # Item-attribute mappings
+│   ├── groups.jsonl             # Item group classifications
+│   └── .sde-version.json        # Installed SDE build number
 ├── test/                        # Comprehensive test suite (244 tests)
 ├── cache/                       # Local cache directory
 └── server.js                    # Express.js server

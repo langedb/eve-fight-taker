@@ -4,7 +4,9 @@ const { StaticData } = require('../lib/static-data');
 describe('StaticData', () => {
   let staticData;
 
-  before(async () => {
+  before(async function () {
+    // The SDE may need to be downloaded on first run.
+    this.timeout(600000);
     staticData = await StaticData.getInstance();
   });
 
@@ -87,7 +89,7 @@ describe('StaticData', () => {
       // Frigate group ID is typically 25
       const groupInfo = staticData.groupsData.get(25);
       expect(groupInfo).to.not.be.null;
-      expect(groupInfo['groupName_en-us']).to.be.a('string');
+      expect(groupInfo.name.en).to.be.a('string');
       expect(groupInfo.categoryID).to.be.a('number');
     });
 
@@ -106,7 +108,7 @@ describe('StaticData', () => {
       // Should be in a missile launcher group
       const groupInfo = staticData.groupsData.get(launcher.group_id);
       expect(groupInfo).to.not.be.null;
-      expect(groupInfo['groupName_en-us']).to.include('Missile');
+      expect(groupInfo.name.en).to.include('Missile');
     });
 
     it('should find charge items with damage attributes', async () => {

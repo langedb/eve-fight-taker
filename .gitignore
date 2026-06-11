@@ -76,8 +76,13 @@ build/
 # dotenv environment variables file
 .env*
 
-# Static data files (large PyFA exports) - staticdata/ now included as it's essential for app functionality
-# staticdata/  # Commented out - this directory is needed for the application to work
+# EVE Static Data Export (SDE)
+# The app downloads CCP's JSON Lines SDE on startup (see lib/sde-updater.js),
+# so the large data files are not committed. The directory itself is kept.
+/staticdata/*.json
+/staticdata/*.jsonl
+/staticdata/.sde-version.json
+!/staticdata/.gitkeep
 pyfa-export/
 
 # Test files (unless part of official test suite)
